@@ -1,45 +1,117 @@
 # Aplicación Web para la Gestión Integral de Servicios de Laboratorio Veterinario para Districampo
 
-Este proyecto se enfoca en el desarrollo de una aplicación web para la gestión integral de servicios de laboratorio veterinario, diseñada para optimizar los procesos de diagnóstico en la Tienda Agropecuaria Districampo, ubicada en La Virginia, Risaralda[cite: 72].
+Este proyecto se enfoca en el desarrollo de una aplicación web para la gestión integral de servicios de laboratorio veterinario, diseñada para optimizar los procesos de diagnóstico en la Tienda Agropecuaria Districampo, ubicada en La Virginia, Risaralda[cite: 24]. La solución busca mejorar la eficiencia y trazabilidad de los procesos diagnósticos[cite: 72].
 
 ## Problema Resuelto
-La aplicación aborda los desafíos logísticos y la limitada integración tecnológica en la prestación de servicios veterinarios en áreas rurales, permitiendo la programación de toma de muestras a domicilio, coordinación con laboratorios aliados, y digitalización de resultados para una atención más rápida y cómoda[cite: 32].
+
+La prestación de servicios veterinarios enfrenta obstáculos que dificultan la obtención de diagnósticos accesibles y rápidos, especialmente en áreas rurales como La Virginia, donde los desplazamientos generan demoras, costos elevados y riesgo de daño a las muestras[cite: 17, 28, 29]. Además, existe una limitada integración tecnológica y de seguimiento en estos procedimientos[cite: 30, 35].
+
+Este proyecto propone una solución digital integral que permite programar la toma de muestras a domicilio, agilizar la coordinación con laboratorios aliados para el procesamiento y digitalizar la atención, ofreciendo una respuesta más rápida y cómoda para el usuario final[cite: 32].
+
+## Justificación
+
+La iniciativa surge de la necesidad de optimizar el método de análisis veterinario en áreas rurales, donde los servicios se enfrentan a problemas de logística, carencia de laboratorios equipados y poca tecnología para el manejo de muestras[cite: 39, 40]. La plataforma web facilitará la conexión entre la recolección de muestras a domicilio y su análisis en laboratorios asociados, centralizando el flujo de datos de manera intuitiva, rastreable y segura[cite: 41].
+
+### Justificación Técnica
+La aplicación busca transformar digitalmente cada etapa del procedimiento, desde el pedido de servicios hasta la presentación de los resultados, acortando los plazos de respuesta y mejorando el seguimiento e identificación de los especímenes[cite: 42].
+
+### Justificación Operativa
+Al eliminar desplazamientos innecesarios de los animales, se reduce el estrés, se mejora la experiencia del usuario y se amplía el acceso a diagnósticos, especialmente en zonas rurales[cite: 43, 44].
+
+### Justificación Económica
+Al establecer relaciones comerciales con laboratorios veterinarios aliados, se reduce la necesidad de una inversión significativa en infraestructura propia de laboratorio, facilitando la sostenibilidad del servicio[cite: 45, 46]. El mercado global de atención veterinaria móvil está proyectado a crecer, respaldando la viabilidad de este tipo de soluciones[cite: 47, 48].
+
+## Alcance del Proyecto
+
+El proyecto tiene como objetivo el diseño, desarrollo, validación e implementación de una aplicación web integral para la gestión de servicios de laboratorio veterinario digital. Districampo, en La Virginia (Risaralda), será la empresa piloto para la implementación y validación[cite: 25, 77].
+
+La aplicación centralizará el proceso desde la solicitud del análisis clínico y la gestión de muestras, hasta la emisión de resultados en PDF, eliminando la necesidad de traslados físicos al laboratorio[cite: 78].
+
+### Funcionalidades Clave
+
+La plataforma integrará las siguientes funcionalidades organizadas en módulos[cite: 79]:
+
+* **Módulo de Usuarios:** Registro, inicio de sesión y administración de datos personales[cite: 81].
+* **Módulo de Mascotas:** Creación, edición y eliminación de registros de mascotas[cite: 82].
+* **Módulo de Análisis:** Solicitud de servicios, seguimiento del estado de análisis, historial de exámenes[cite: 82].
+* **Módulo de Resultados:** Carga y generación de reportes en formato PDF[cite: 82].
+* **Módulo Administrativo:** Control de citas y auditoría de datos para Districampo[cite: 82].
+
+### Delimitación Geográfica
+La implementación se realizará en La Virginia y Cerritos (Risaralda), zonas de influencia directa de Districampo, simulando condiciones de uso reales en entornos rurales[cite: 83, 84].
 
 ## Arquitectura del Software
 
-La aplicación se basa en una arquitectura de software en capas para asegurar la modularidad y escalabilidad.
+La aplicación se basa en una arquitectura de software en capas para asegurar la modularidad, escalabilidad y una clara separación de responsabilidades.
 
 ```mermaid
 graph TD;
     A[Capa de Presentación <br> (Frontend)] --> |Peticiones HTTP/API RESTful| B(Capa de Lógica de Aplicación <br> (Backend));
     B --> |Consultas a la Base de Datos| C(Capa de Acceso a Datos);
     C --> |Consultas SQL| D(Capa de Base de Datos);
-
 Puedes encontrar el código fuente de este diagrama en docs/architecture/Diagrama General de la App.mmd.
 
 Estructura de la Base de Datos
-La estructura completa de la base de datos se puede encontrar en el archivo docs/database/schema.sql. Este script contiene la definición de todas las tablas, relaciones y constraints necesarios para recrear la base de datos.
+La estructura completa de la base de datos se encuentra definida en el archivo docs/database/schema.sql. Este script contiene la definición de todas las tablas, sus columnas, tipos de datos, claves primarias y foráneas, y todas las restricciones necesarias para recrear la base de datos veterilab2.
 
 Tecnologías Utilizadas
-Backend: Node.js, Express.js 
+Backend: Node.js, Express.js (lógica de negocio y API) 
 Base de datos: MySQL 
 Frontend: HTML, CSS, JavaScript, Bootstrap 
 Generación de reportes PDF: PDFKit 
+
 Consumo de API: Axios 
 Control de versiones: Git, GitHub 
 Entorno de desarrollo: Visual Studio Code 
 Pruebas de API: Postman 
 Despliegue: AWS Lightsail (instancia básica) 
 Configuración del Entorno de Desarrollo
-(Aquí podrías añadir instrucciones sobre cómo clonar el repo, instalar dependencias para el backend y el frontend, y cómo correr la aplicación. Por ahora, puedes dejarlo como un placeholder o añadir pasos básicos si ya los conoces.)
+Para poner en marcha el proyecto localmente, sigue estos pasos:
+
+Clonar el repositorio:
+
+Bash
+
+git clone [https://github.com/YOUR_GITHUB_USERNAME/YOUR_REPO_NAME.git](https://github.com/YOUR_GITHUB_USERNAME/YOUR_REPO_NAME.git)
+cd YOUR_REPO_NAME
+(Asegúrate de reemplazar YOUR_GITHUB_USERNAME y YOUR_REPO_NAME con los datos de tu repositorio).
+
+Configuración de la Base de Datos:
+
+Asegúrate de tener MySQL instalado y funcionando.
+Crea una nueva base de datos llamada veterilab2.
+Importa el esquema de la base de datos utilizando el archivo docs/database/schema.sql. Puedes hacerlo desde tu gestor de base de datos (MySQL Workbench, phpMyAdmin) o desde la línea de comandos:
+Bash
+
+mysql -u tu_usuario_mysql -p veterilab2 < docs/database/schema.sql
+(Reemplaza tu_usuario_mysql con tu usuario de MySQL).
+Configuración del Backend:
+
+Bash
+
+cd backend
+npm install
+# Crea un archivo .env en la carpeta backend con tus credenciales de DB:
+# DB_HOST=localhost
+# DB_USER=tu_usuario_mysql
+# DB_PASSWORD=tu_contraseña_mysql
+# DB_NAME=veterilab2
+npm start # Para iniciar el servidor de desarrollo
+Configuración del Frontend:
+
+Bash
+
+cd frontend
+# Dependiendo de tu setup de frontend, podrías no necesitar npm install aquí
+# Si tus archivos HTML/CSS/JS son estáticos, simplemente ábrelos con un navegador.
+# Si usas un servidor de desarrollo para el frontend (ej. Live Server en VS Code), inícial
 
 Contribuciones
-(Aquí puedes añadir si aceptas contribuciones y cómo hacerlo, o si es un proyecto de curso.)
+Este es un proyecto académico desarrollado por:
 
+DAVID RICARDO RIVERA ARBELAEZ
+DANIEL FELIPE COLORADO AMAAYA
+ANDREW LOAIZA GUZMAN
 Licencia
-(Aquí puedes indicar el tipo de licencia o simplemente decir "All rights reserved" si es un proyecto de curso sin licencia explícita.)
+Todos los derechos reservados. Este proyecto es para fines académicos y no se permite su uso o distribución comercial sin autorización expresa.
 
-
-* **Importante:** He incluido el código de Mermaid directamente en el README. GitHub tiene soporte nativo para renderizar estos diagramas.
-* He referenciado tu archivo `.mmd` y tu `schema.sql` en las secciones correspondientes.
-* He incluido algunas de las tecnologías y una breve descripción basada en tu documento para que el README sea más informativo desde el inicio.
