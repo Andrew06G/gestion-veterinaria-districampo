@@ -46,7 +46,7 @@ La aplicación se basa en una arquitectura de software en capas para asegurar la
 
 ```mermaid
 graph TD;
-    A[Capa de Presentación <br> (Frontend)] --> |Peticiones HTTP/API RESTful| B(Capa de Lógica de Aplicación <br> (Backend));
+    A[Capa de Presentación (Frontend)] --> |Peticiones HTTP/API RESTful| B(Capa de Lógica de Aplicación (Backend));
     B --> |Consultas a la Base de Datos| C(Capa de Acceso a Datos);
     C --> |Consultas SQL| D(Capa de Base de Datos);
 Puedes encontrar el código fuente de este diagrama en docs/architecture/Diagrama General de la App.mmd.
@@ -113,16 +113,3 @@ ANDREW LOAIZA GUZMAN
 Licencia
 Todos los derechos reservados. Este proyecto es para fines académicos y no se permite su uso o distribución comercial sin autorización expresa.
 
-
-**Pasos a seguir:**
-
-1.  **Copia todo este texto.**
-2.  **Abre tu archivo `README.md`** en tu computadora.
-3.  **Pega este nuevo texto, reemplazando todo el contenido actual.**
-4.  **Guarda el archivo.**
-5.  Luego, abre tu terminal y ejecuta los comandos Git para subir los cambios a GitHub:
-    ```bash
-    git add README.md
-    git commit -m "Refine README.md content, remove citations and project phases"
-    git push origin main
-    ```
