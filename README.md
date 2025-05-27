@@ -63,6 +63,7 @@ flowchart TD
     G -- Seleccionar Animal y Examen --> I["Visualización de Resultados en Tabla"]
     G --> D
     H --> G
+**
 Puedes encontrar el código fuente de este diagrama en docs/architecture/Diagrama General de la App.mmd.
 
 Una representación visual de este flujo es la siguiente:
@@ -126,7 +127,7 @@ Contribuciones
 Este es un proyecto académico desarrollado por:
 
 DAVID RICARDO RIVERA ARBELAEZ
-DANIEL FELIPE COLORADO AMAAYA
+DANIEL FELIPE COLORADO AMAYA
 ANDREW LOAIZA GUZMAN
 Licencia
 Todos los derechos reservados. Este proyecto es para fines académicos y no se permite su uso o distribución comercial sin autorización expresa.
