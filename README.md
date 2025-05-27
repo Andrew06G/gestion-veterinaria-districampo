@@ -83,22 +83,22 @@ Estos mockups en HTML con Bootstrap ya establecen el flujo de navegación básic
 A continuación, se presentan capturas de pantalla de las interfaces clave de la aplicación, mostrando el diseño y la interacción propuesta:
 
 #### Vista de Inicio de Sesión
-![Vista de Inicio de Sesión](docs/screenshots/inicio de sesion.png)
+![Vista de Inicio de Sesión](docs/screenshots/inicio-de-sesion.png)
 
 #### Vista de Registro de Usuario
-![Vista de Registro de Usuario](docs/screenshots/registro de usuario.png)
+![Vista de Registro de Usuario](docs/screenshots/registro-de-usuario.png)
 
 #### Vista del Dashboard Principal
 ![Vista del Dashboard Principal](docs/screenshots/dashboard.png)
 
 #### Vista de Registro de Animales
-![Vista de Registro de Animales](docs/screenshots/registro de animalres.png)
+![Vista de Registro de Animales](docs/screenshots/registro-de-animalres.png)
 
 #### Vista de Solicitud de Análisis
-![Vista de Solicitud de Análisis](docs/screenshots/solicitud de analisis.png)
+![Vista de Solicitud de Análisis](docs/screenshots/solicitud-de-analisis.png)
 
 #### Vista de Gestión de Análisis
-![Vista de Gestión de Análisis](docs/screenshots/gestion de analisis.png)
+![Vista de Gestión de Análisis](docs/screenshots/gestion-de-analisis.png)
 
 Estos mockups en HTML con Bootstrap ya establecen el flujo de navegación básico de la aplicación, permitiendo una visualización de la interacción del usuario.
 
