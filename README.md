@@ -66,6 +66,18 @@ Se han desarrollado bocetos (mockups) iniciales de las pantallas clave de la apl
 
 Estos mockups en HTML con Bootstrap ya establecen el flujo de navegación básico de la aplicación, permitiendo una visualización de la interacción del usuario.
 
+## Mockups Iniciales y Flujo de Navegación
+
+Se han desarrollado bocetos (mockups) iniciales de las pantallas clave de la aplicación, que incluyen:
+* **Login**
+* **Registro de Usuario**
+* **Dashboard Principal**
+* **Registro de Animales**
+* **Solicitud de Análisis**
+* **Gestión de Análisis**
+
+Estos mockups en HTML con Bootstrap ya establecen el flujo de navegación básico de la aplicación, permitiendo una visualización de la interacción del usuario.
+
 ### Vistas de la Interfaz de Usuario (Mockups Visuales)
 
 A continuación, se presentan capturas de pantalla de las interfaces clave de la aplicación, mostrando el diseño y la interacción propuesta:
