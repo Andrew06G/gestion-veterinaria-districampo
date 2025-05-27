@@ -58,12 +58,35 @@ Los módulos principales de la aplicación corresponden directamente a las funci
 
 Se han desarrollado bocetos (mockups) iniciales de las pantallas clave de la aplicación, que incluyen:
 * **Login**
-* **Registro Personal**
+* **Registro de Usuario**
 * **Dashboard Principal**
 * **Registro de Animales**
-* **Agendamiento de Citas**
-* **Elección de Análisis**
-* **Petición de Resultados**
+* **Solicitud de Análisis**
+* **Gestión de Análisis**
+
+Estos mockups en HTML con Bootstrap ya establecen el flujo de navegación básico de la aplicación, permitiendo una visualización de la interacción del usuario.
+
+### Vistas de la Interfaz de Usuario (Mockups Visuales)
+
+A continuación, se presentan capturas de pantalla de las interfaces clave de la aplicación, mostrando el diseño y la interacción propuesta:
+
+#### Vista de Inicio de Sesión
+![Vista de Inicio de Sesión](docs/screenshots/inicio de sesion.png)
+
+#### Vista de Registro de Usuario
+![Vista de Registro de Usuario](docs/screenshots/registro de usuario.png)
+
+#### Vista del Dashboard Principal
+![Vista del Dashboard Principal](docs/screenshots/dashboard.png)
+
+#### Vista de Registro de Animales
+![Vista de Registro de Animales](docs/screenshots/registro de animalres.png)
+
+#### Vista de Solicitud de Análisis
+![Vista de Solicitud de Análisis](docs/screenshots/solicitud de analisis.png)
+
+#### Vista de Gestión de Análisis
+![Vista de Gestión de Análisis](docs/screenshots/gestion de analisis.png)
 
 Estos mockups en HTML con Bootstrap ya establecen el flujo de navegación básico de la aplicación, permitiendo una visualización de la interacción del usuario.
 
