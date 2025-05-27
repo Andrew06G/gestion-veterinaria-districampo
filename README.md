@@ -112,4 +112,3 @@ DANIEL FELIPE COLORADO AMAAYA
 ANDREW LOAIZA GUZMAN
 Licencia
 Todos los derechos reservados. Este proyecto es para fines académicos y no se permite su uso o distribución comercial sin autorización expresa.
-
