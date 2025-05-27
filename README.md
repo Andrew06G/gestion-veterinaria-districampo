@@ -28,8 +28,7 @@ El proyecto tiene como objetivo el diseño, desarrollo, validación e implementa
 La aplicación centralizará el proceso desde la solicitud del análisis clínico y la gestión de muestras, hasta la emisión de resultados en PDF, eliminando la necesidad de traslados físicos al laboratorio.
 
 ### Funcionalidades Clave
-
-La plataforma integrará las siguientes funcionalidades organizadas en módulos:
+**Listado detallado de funcionalidades principales:** La plataforma integrará las siguientes funcionalidades organizadas en módulos:
 
 * **Módulo de Usuarios:** Registro, inicio de sesión y administración de datos personales.
 * **Módulo de Mascotas:** Creación, edición y eliminación de registros de mascotas.
@@ -37,97 +36,149 @@ La plataforma integrará las siguientes funcionalidades organizadas en módulos:
 * **Módulo de Resultados:** Carga y generación de reportes en formato PDF.
 * **Módulo Administrativo:** Control de citas y auditoría de datos para Districampo.
 
+### Restricciones Técnicas, de Seguridad y de Rendimiento
+* **Técnicas:** Aplicación web accesible solo vía navegador; uso de MySQL para base de datos; API RESTful para gestión de datos; generación de reportes con PDFKit; arquitectura modular.
+* **Seguridad:** Necesidad de rutas protegidas (autenticación/autorización); cumplimiento de normativas legales para datos sensibles (anonimización); adherencia a protocolos de bioseguridad para muestras.
+* **Rendimiento:** Tiempo óptimo de entrega de resultados (<24h); alta integridad de muestras (>95%).
+
+### Casos de Uso Básicos
+A continuación se describen los casos de uso principales para entender las interacciones básicas:
+
+* **Registrar Nuevo Usuario:** Un usuario crea una cuenta para acceder a los servicios.
+* **Iniciar Sesión:** Un usuario registrado accede a su panel personalizado.
+* **Registrar Mascota:** Un propietario añade la información de su animal al sistema.
+* **Solicitar Toma de Muestra a Domicilio:** Un propietario agenda una cita para recolección de muestras.
+* **Consultar Estado de Análisis:** Un propietario verifica el progreso de sus muestras enviadas.
+* **Ver Resultados de Análisis:** Un propietario accede a los informes digitales en PDF de los laboratorios.
+* **Gestionar Citas (Admin):** Un administrador supervisa y controla las citas agendadas.
+
 ### Delimitación Geográfica
 La implementación se realizará en La Virginia y Cerritos (Risaralda), zonas de influencia directa de Districampo, simulando condiciones de uso reales en entornos rurales.
 
-## Diagrama de Flujo de la Aplicación
+## Arquitectura de Software y Boceto Inicial
 
-A continuación se presenta un diagrama de flujo que ilustra la navegación principal y las interacciones del usuario dentro de la aplicación.
+### Diagrama General (Arquitectura en Capas)
+La aplicación se basa en una arquitectura de software en capas para asegurar la modularidad, escalabilidad y una clara separación de responsabilidades. Una representación visual de esta arquitectura es la siguiente:
 
-```mermaid
----
-config:
-  layout: dagre
----
-flowchart TD
-    A["Inicio"] --> B{"Pestaña Inicial: Login"}
-    B -- Registrarse --> C["Pestaña de Registro de Usuario"]
-    B -- Ya tiene cuenta --> D["Pestaña del Dashboard Principal"]
-    C --> D
-    D -- Registro de Animales --> E["Pestaña de Registro de Animales"]
-    D -- Solicitar Análisis --> F["Pestaña de Solicitud de Análisis"]
-    D -- Gestión de Análisis --> G["Pestaña de Gestionar Análisis"]
-    E --> D
-    F -- Seleccionar Animal y Tipo de Análisis, Fecha --> H["Cita Agendada para Toma de Muestra"]
-    F --> D
-    G -- Seleccionar Animal y Examen --> I["Visualización de Resultados en Tabla"]
-    G --> D
-    H --> G
-**
-Puedes encontrar el código fuente de este diagrama en docs/architecture/Diagrama General de la App.mmd.
+![Diagrama de Arquitectura en Capas](docs/architecture/diagrama-arquitectura-capas.png)
+*(Aquí deberías colocar una imagen simple de un diagrama de arquitectura en capas, si tienes una. Si no, puedes crearla o simplemente omitir esta imagen y mantener la descripción textual.)*
 
-Una representación visual de este flujo es la siguiente:
+### Identificación de Módulos Principales
+Los módulos principales de la aplicación corresponden directamente a las funcionalidades clave descritas anteriormente (Usuarios, Mascotas, Análisis, Resultados, Administrativo), cada uno con su lógica de negocio y endpoints de API asociados.
 
-(Asegúrate de que 'diagrama-captura.png' sea el nombre exacto de tu archivo de imagen.)
+### Decisiones Iniciales sobre Tecnologías a Usar
+Las tecnologías seleccionadas para el desarrollo son:
+* **Backend:** Node.js, Express.js (lógica de negocio y API)
+* **Base de datos:** MySQL
+* **Frontend:** HTML, CSS, JavaScript, Bootstrap
+* **Generación de reportes PDF:** PDFKit
+* **Consumo de API:** Axios
+* **Control de versiones:** Git, GitHub
+* **Entorno de desarrollo:** Visual Studio Code
+* **Pruebas de API:** Postman
+* **Despliegue:** AWS Lightsail (instancia básica)
 
-Estructura de la Base de Datos
-La estructura completa de la base de datos se encuentra definida en el archivo docs/database/schema.sql. Este script contiene la definición de todas las tablas, sus columnas, tipos de datos, claves primarias y foráneas, y todas las restricciones necesarias para recrear la base de datos veterilab2.
+## Mockups Iniciales y Flujo de Navegación
 
-Tecnologías Utilizadas
-Backend: Node.js, Express.js (lógica de negocio y API)
-Base de datos: MySQL
-Frontend: HTML, CSS, JavaScript, Bootstrap
-Generación de reportes PDF: PDFKit
-Consumo de API: Axios
-Control de versiones: Git, GitHub
-Entorno de desarrollo: Visual Studio Code
-Pruebas de API: Postman
-Despliegue: AWS Lightsail (instancia básica)
-Configuración del Entorno de Desarrollo
+Se han desarrollado bocetos (mockups) iniciales de las pantallas clave de la aplicación, que incluyen:
+* **Login**
+* **Registro Personal**
+* **Dashboard Principal**
+* **Registro de Animales**
+* **Agendamiento de Citas**
+* **Elección de Análisis**
+* **Petición de Resultados**
+
+Estos mockups en HTML con Bootstrap ya establecen el flujo de navegación básico de la aplicación, permitiendo una visualización de la interacción del usuario.
+
+## Prototipo Funcional de Baja Fidelidad (o lo que ya tienes)
+
+El desarrollo del front-end en HTML con Bootstrap para las pantallas clave (login, registro personal, dashboard, registro de animales, agendamiento de citas, elección de análisis y petición de resultados) sirve como un prototipo funcional. Aunque el backend aún está en desarrollo, este prototipo permite la navegación entre las pantallas y representa la estructura básica de la interfaz de usuario.
+
+## Configuración del Entorno de Desarrollo y Repositorio
+
+El proyecto está gestionado en un repositorio de GitHub, que sigue una estructura organizada para facilitar la colaboración y el mantenimiento.
+
+### Repositorio y Estructura del Proyecto
+El repositorio principal (`YOUR_REPO_NAME` en GitHub) contiene la siguiente estructura básica:
+* `/backend/`: Código del servidor (Node.js/Express.js).
+* `/frontend/`: Código del cliente (HTML, CSS, JavaScript, Bootstrap).
+* `/docs/`: Documentación del proyecto, incluyendo:
+    * `/docs/architecture/`: Diagramas de arquitectura y flujo (ej. `diagrama-captura.png`).
+    * `/docs/database/`: Esquema de la base de datos (`schema.sql`).
+* `.gitignore`: Para excluir archivos no deseados (como `node_modules/` o `.env`).
+* `README.md`: Este archivo de descripción del proyecto.
+
+### Configuración de Control de Versiones y Documentación Inicial
+Se utiliza Git para el control de versiones, con el repositorio alojado en GitHub. Se aplican buenas prácticas como mensajes de commit claros. El `README.md` sirve como documentación inicial, describiendo el proyecto, la arquitectura y cómo configurar el entorno.
+
+### Dockerfile o Entorno de Desarrollo
+Para el entorno de desarrollo, se espera que los desarrolladores tengan Node.js y MySQL instalados localmente. Las dependencias se gestionan a través de `package.json`. No se utiliza Dockerfile en esta fase inicial, pero la arquitectura modular facilita su futura incorporación.
+
+## Estructura de la Base de Datos
+
+La estructura completa de la base de datos se encuentra definida en el archivo `docs/database/schema.sql`. Este script contiene la definición de todas las tablas, sus columnas, tipos de datos, claves primarias y foráneas, y todas las restricciones necesarias para recrear la base de datos `veterilab2`.
+
+## Tecnologías Utilizadas
+
+* **Backend:** Node.js, Express.js (lógica de negocio y API)
+* **Base de datos:** MySQL
+* **Frontend:** HTML, CSS, JavaScript, Bootstrap
+* **Generación de reportes PDF:** PDFKit
+* **Consumo de API:** Axios
+* **Control de versiones:** Git, GitHub
+* **Entorno de desarrollo:** Visual Studio Code
+* **Pruebas de API:** Postman
+* **Despliegue:** AWS Lightsail (instancia básica)
+
+## Configuración del Entorno de Desarrollo
+
 Para poner en marcha el proyecto localmente, sigue estos pasos:
 
-Clonar el repositorio:
+1.  **Clonar el repositorio:**
+    ```bash
+    git clone [https://github.com/YOUR_GITHUB_USERNAME/YOUR_REPO_NAME.git](https://github.com/YOUR_GITHUB_USERNAME/YOUR_REPO_NAME.git)
+    cd YOUR_REPO_NAME
+    ```
+    (Asegúrate de reemplazar `YOUR_GITHUB_USERNAME` y `YOUR_REPO_NAME` con los datos de tu repositorio).
 
-Bash
+2.  **Configuración de la Base de Datos:**
+    * Asegúrate de tener MySQL instalado y funcionando.
+    * Crea una nueva base de datos llamada `veterilab2`.
+    * Importa el esquema de la base de datos utilizando el archivo `docs/database/schema.sql`. Puedes hacerlo desde tu gestor de base de datos (MySQL Workbench, phpMyAdmin) o desde la línea de comandos:
+        ```bash
+        mysql -u tu_usuario_mysql -p veterilab2 < docs/database/schema.sql
+        ```
+        (Reemplaza `tu_usuario_mysql` con tu usuario de MySQL).
 
-git clone https://github.com/YOUR_GITHUB_USERNAME/YOUR_REPO_NAME.git
-cd YOUR_REPO_NAME
-(Asegúrate de reemplazar YOUR_GITHUB_USERNAME y YOUR_REPO_NAME con los datos de tu repositorio).
+3.  **Configuración del Backend:**
+    ```bash
+    cd backend
+    npm install
+    # Crea un archivo .env en la carpeta backend con tus credenciales de DB:
+    # DB_HOST=localhost
+    # DB_USER=tu_usuario_mysql
+    # DB_PASSWORD=tu_contraseña_mysql
+    # DB_NAME=veterilab2
+    npm start # Para iniciar el servidor de desarrollo
+    ```
 
-Configuración de la Base de Datos:
+4.  **Configuración del Frontend:**
+    ```bash
+    cd frontend
+    # Dependiendo de tu setup de frontend, podrías no necesitar npm install aquí.
+    # Si tus archivos HTML/CSS/JS son estáticos, simplemente ábrelos con un navegador.
+    # Si usas un servidor de desarrollo para el frontend (ej. Live Server en VS Code), inícialo.
+    ```
 
-Asegúrate de tener MySQL instalado y funcionando.
-Crea una nueva base de datos llamada veterilab2.
-Importa el esquema de la base de datos utilizando el archivo docs/database/schema.sql. Puedes hacerlo desde tu gestor de base de datos (MySQL Workbench, phpMyAdmin) o desde la línea de comandos:
-Bash
+## Contribuciones
 
-mysql -u tu_usuario_mysql -p veterilab2 < docs/database/schema.sql
-(Reemplaza tu_usuario_mysql con tu usuario de MySQL).
-Configuración del Backend:
-
-Bash
-
-cd backend
-npm install
-# Crea un archivo .env en la carpeta backend con tus credenciales de DB:
-# DB_HOST=localhost
-# DB_USER=tu_usuario_mysql
-# DB_PASSWORD=tu_contraseña_mysql
-# DB_NAME=veterilab2
-npm start # Para iniciar el servidor de desarrollo
-Configuración del Frontend:
-
-Bash
-
-cd frontend
-# Dependiendo de tu setup de frontend, podrías no necesitar npm install aquí.
-# Si tus archivos HTML/CSS/JS son estáticos, simplemente ábrelos con un navegador.
-# Si usas un servidor de desarrollo para el frontend (ej. Live Server en VS Code), inícialo.
-Contribuciones
 Este es un proyecto académico desarrollado por:
 
-DAVID RICARDO RIVERA ARBELAEZ
-DANIEL FELIPE COLORADO AMAYA
-ANDREW LOAIZA GUZMAN
-Licencia
+* DAVID RICARDO RIVERA ARBELAEZ
+* DANIEL FELIPE COLORADO AMAYA
+* ANDREW LOAIZA GUZMAN
+
+## Licencia
+
 Todos los derechos reservados. Este proyecto es para fines académicos y no se permite su uso o distribución comercial sin autorización expresa.
