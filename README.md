@@ -64,9 +64,10 @@ flowchart TD
     G --> D
     H --> G
 Puedes encontrar el código fuente de este diagrama en docs/architecture/Diagrama General de la App.mmd.
+
 Una representación visual de este flujo es la siguiente:
 
-(Reemplaza 'diagrama-captura.png' con el nombre exacto de tu archivo de imagen, si es diferente.)
+(Asegúrate de que 'diagrama-captura.png' sea el nombre exacto de tu archivo de imagen.)
 
 Estructura de la Base de Datos
 La estructura completa de la base de datos se encuentra definida en el archivo docs/database/schema.sql. Este script contiene la definición de todas las tablas, sus columnas, tipos de datos, claves primarias y foráneas, y todas las restricciones necesarias para recrear la base de datos veterilab2.
@@ -88,7 +89,7 @@ Clonar el repositorio:
 
 Bash
 
-git clone [https://github.com/YOUR_GITHUB_USERNAME/YOUR_REPO_NAME.git](https://github.com/YOUR_GITHUB_USERNAME/YOUR_REPO_NAME.git)
+git clone https://github.com/YOUR_GITHUB_USERNAME/YOUR_REPO_NAME.git
 cd YOUR_REPO_NAME
 (Asegúrate de reemplazar YOUR_GITHUB_USERNAME y YOUR_REPO_NAME con los datos de tu repositorio).
 
