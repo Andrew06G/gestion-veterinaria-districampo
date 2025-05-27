@@ -15,17 +15,11 @@ La iniciativa surge de la necesidad de optimizar el método de análisis veterin
 ### Justificación Técnica
 La aplicación busca transformar digitalmente cada etapa del procedimiento, desde el pedido de servicios hasta la presentación de los resultados, acortando los plazos de respuesta y mejorando el seguimiento e identificación de los especímenes.
 
-### Justificación Operativa
-Al eliminar desplazamientos innecesarios de los animales, se reduce el estrés, se mejora la experiencia del usuario y se amplía el acceso a diagnósticos, especialmente en zonas rurales.
-
-### Justificación Económica
-Al establecer relaciones comerciales con laboratorios veterinarios aliados, se reduce la necesidad de una inversión significativa en infraestructura propia de laboratorio, facilitando la sostenibilidad del servicio. El mercado global de atención veterinaria móvil está proyectado a crecer, respaldando la viabilidad de este tipo de soluciones.
-
 ## Alcance del Proyecto
 
-El proyecto tiene como objetivo el diseño, desarrollo, validación e implementación de una aplicación web integral para la gestión de servicios de laboratorio veterinario digital. Districampo, en La Virginia (Risaralda), será la empresa piloto para la implementación y validación.
+El proyecto tiene como objetivo el diseño, desarrollo, validación e implementación de una aplicación web integral para la gestión de servicios de laboratorio veterinario digital.
 
-La aplicación centralizará el proceso desde la solicitud del análisis clínico y la gestión de muestras, hasta la emisión de resultados en PDF, eliminando la necesidad de traslados físicos al laboratorio.
+La aplicación centralizará el proceso desde la solicitud del análisis clínico y la gestión de muestras, hasta la emisión de resultados en PDF.
 
 ### Funcionalidades Clave
 **Listado detallado de funcionalidades principales:** La plataforma integrará las siguientes funcionalidades organizadas en módulos:
@@ -34,7 +28,6 @@ La aplicación centralizará el proceso desde la solicitud del análisis clínic
 * **Módulo de Mascotas:** Creación, edición y eliminación de registros de mascotas.
 * **Módulo de Análisis:** Solicitud de servicios, seguimiento del estado de análisis, historial de exámenes.
 * **Módulo de Resultados:** Carga y generación de reportes en formato PDF.
-* **Módulo Administrativo:** Control de citas y auditoría de datos para Districampo.
 
 ### Restricciones Técnicas, de Seguridad y de Rendimiento
 * **Técnicas:** Aplicación web accesible solo vía navegador; uso de MySQL para base de datos; API RESTful para gestión de datos; generación de reportes con PDFKit; arquitectura modular.
@@ -50,33 +43,16 @@ A continuación se describen los casos de uso principales para entender las inte
 * **Solicitar Toma de Muestra a Domicilio:** Un propietario agenda una cita para recolección de muestras.
 * **Consultar Estado de Análisis:** Un propietario verifica el progreso de sus muestras enviadas.
 * **Ver Resultados de Análisis:** Un propietario accede a los informes digitales en PDF de los laboratorios.
-* **Gestionar Citas (Admin):** Un administrador supervisa y controla las citas agendadas.
-
-### Delimitación Geográfica
-La implementación se realizará en La Virginia y Cerritos (Risaralda), zonas de influencia directa de Districampo, simulando condiciones de uso reales en entornos rurales.
 
 ## Arquitectura de Software y Boceto Inicial
 
 ### Diagrama General (Arquitectura en Capas)
 La aplicación se basa en una arquitectura de software en capas para asegurar la modularidad, escalabilidad y una clara separación de responsabilidades. Una representación visual de esta arquitectura es la siguiente:
 
-![Diagrama de Arquitectura en Capas](docs/architecture/diagrama-arquitectura-capas.png)
-*(Aquí deberías colocar una imagen simple de un diagrama de arquitectura en capas, si tienes una. Si no, puedes crearla o simplemente omitir esta imagen y mantener la descripción textual.)*
+![Diagrama de Arquitectura en Capas](docs/architecture/diagrama-captura.png)
 
-### Identificación de Módulos Principales
+### Identificación de Módulos
 Los módulos principales de la aplicación corresponden directamente a las funcionalidades clave descritas anteriormente (Usuarios, Mascotas, Análisis, Resultados, Administrativo), cada uno con su lógica de negocio y endpoints de API asociados.
-
-### Decisiones Iniciales sobre Tecnologías a Usar
-Las tecnologías seleccionadas para el desarrollo son:
-* **Backend:** Node.js, Express.js (lógica de negocio y API)
-* **Base de datos:** MySQL
-* **Frontend:** HTML, CSS, JavaScript, Bootstrap
-* **Generación de reportes PDF:** PDFKit
-* **Consumo de API:** Axios
-* **Control de versiones:** Git, GitHub
-* **Entorno de desarrollo:** Visual Studio Code
-* **Pruebas de API:** Postman
-* **Despliegue:** AWS Lightsail (instancia básica)
 
 ## Mockups Iniciales y Flujo de Navegación
 
@@ -91,10 +67,6 @@ Se han desarrollado bocetos (mockups) iniciales de las pantallas clave de la apl
 
 Estos mockups en HTML con Bootstrap ya establecen el flujo de navegación básico de la aplicación, permitiendo una visualización de la interacción del usuario.
 
-## Prototipo Funcional de Baja Fidelidad (o lo que ya tienes)
-
-El desarrollo del front-end en HTML con Bootstrap para las pantallas clave (login, registro personal, dashboard, registro de animales, agendamiento de citas, elección de análisis y petición de resultados) sirve como un prototipo funcional. Aunque el backend aún está en desarrollo, este prototipo permite la navegación entre las pantallas y representa la estructura básica de la interfaz de usuario.
-
 ## Configuración del Entorno de Desarrollo y Repositorio
 
 El proyecto está gestionado en un repositorio de GitHub, que sigue una estructura organizada para facilitar la colaboración y el mantenimiento.
@@ -108,9 +80,6 @@ El repositorio principal (`YOUR_REPO_NAME` en GitHub) contiene la siguiente estr
     * `/docs/database/`: Esquema de la base de datos (`schema.sql`).
 * `.gitignore`: Para excluir archivos no deseados (como `node_modules/` o `.env`).
 * `README.md`: Este archivo de descripción del proyecto.
-
-### Configuración de Control de Versiones y Documentación Inicial
-Se utiliza Git para el control de versiones, con el repositorio alojado en GitHub. Se aplican buenas prácticas como mensajes de commit claros. El `README.md` sirve como documentación inicial, describiendo el proyecto, la arquitectura y cómo configurar el entorno.
 
 ### Dockerfile o Entorno de Desarrollo
 Para el entorno de desarrollo, se espera que los desarrolladores tengan Node.js y MySQL instalados localmente. Las dependencias se gestionan a través de `package.json`. No se utiliza Dockerfile en esta fase inicial, pero la arquitectura modular facilita su futura incorporación.
