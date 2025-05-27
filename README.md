@@ -1,44 +1,44 @@
 # Aplicación Web para la Gestión Integral de Servicios de Laboratorio Veterinario para Districampo
 
-Este proyecto se enfoca en el desarrollo de una aplicación web para la gestión integral de servicios de laboratorio veterinario, diseñada para optimizar los procesos de diagnóstico en la Tienda Agropecuaria Districampo, ubicada en La Virginia, Risaralda[cite: 24]. La solución busca mejorar la eficiencia y trazabilidad de los procesos diagnósticos[cite: 72].
+Este proyecto se enfoca en el desarrollo de una aplicación web para la gestión integral de servicios de laboratorio veterinario, diseñada para optimizar los procesos de diagnóstico en la Tienda Agropecuaria Districampo, ubicada en La Virginia, Risaralda. La solución busca mejorar la eficiencia y trazabilidad de los procesos diagnósticos.
 
 ## Problema Resuelto
 
-La prestación de servicios veterinarios enfrenta obstáculos que dificultan la obtención de diagnósticos accesibles y rápidos, especialmente en áreas rurales como La Virginia, donde los desplazamientos generan demoras, costos elevados y riesgo de daño a las muestras[cite: 17, 28, 29]. Además, existe una limitada integración tecnológica y de seguimiento en estos procedimientos[cite: 30, 35].
+La prestación de servicios veterinarios enfrenta obstáculos que dificultan la obtención de diagnósticos accesibles y rápidos, especialmente en áreas rurales como La Virginia, donde los desplazamientos generan demoras, costos elevados y riesgo de daño a las muestras. Además, existe una limitada integración tecnológica y de seguimiento en estos procedimientos.
 
-Este proyecto propone una solución digital integral que permite programar la toma de muestras a domicilio, agilizar la coordinación con laboratorios aliados para el procesamiento y digitalizar la atención, ofreciendo una respuesta más rápida y cómoda para el usuario final[cite: 32].
+Este proyecto propone una solución digital integral que permite programar la toma de muestras a domicilio, agilizar la coordinación con laboratorios aliados para el procesamiento y digitalizar la atención, ofreciendo una respuesta más rápida y cómoda para el usuario final.
 
 ## Justificación
 
-La iniciativa surge de la necesidad de optimizar el método de análisis veterinario en áreas rurales, donde los servicios se enfrentan a problemas de logística, carencia de laboratorios equipados y poca tecnología para el manejo de muestras[cite: 39, 40]. La plataforma web facilitará la conexión entre la recolección de muestras a domicilio y su análisis en laboratorios asociados, centralizando el flujo de datos de manera intuitiva, rastreable y segura[cite: 41].
+La iniciativa surge de la necesidad de optimizar el método de análisis veterinario en áreas rurales, donde los servicios se enfrentan a problemas de logística, carencia de laboratorios equipados y poca tecnología para el manejo de muestras. La plataforma web facilitará la conexión entre la recolección de muestras a domicilio y su análisis en laboratorios asociados, centralizando el flujo de datos de manera intuitiva, rastreable y segura.
 
 ### Justificación Técnica
-La aplicación busca transformar digitalmente cada etapa del procedimiento, desde el pedido de servicios hasta la presentación de los resultados, acortando los plazos de respuesta y mejorando el seguimiento e identificación de los especímenes[cite: 42].
+La aplicación busca transformar digitalmente cada etapa del procedimiento, desde el pedido de servicios hasta la presentación de los resultados, acortando los plazos de respuesta y mejorando el seguimiento e identificación de los especímenes.
 
 ### Justificación Operativa
-Al eliminar desplazamientos innecesarios de los animales, se reduce el estrés, se mejora la experiencia del usuario y se amplía el acceso a diagnósticos, especialmente en zonas rurales[cite: 43, 44].
+Al eliminar desplazamientos innecesarios de los animales, se reduce el estrés, se mejora la experiencia del usuario y se amplía el acceso a diagnósticos, especialmente en zonas rurales.
 
 ### Justificación Económica
-Al establecer relaciones comerciales con laboratorios veterinarios aliados, se reduce la necesidad de una inversión significativa en infraestructura propia de laboratorio, facilitando la sostenibilidad del servicio[cite: 45, 46]. El mercado global de atención veterinaria móvil está proyectado a crecer, respaldando la viabilidad de este tipo de soluciones[cite: 47, 48].
+Al establecer relaciones comerciales con laboratorios veterinarios aliados, se reduce la necesidad de una inversión significativa en infraestructura propia de laboratorio, facilitando la sostenibilidad del servicio. El mercado global de atención veterinaria móvil está proyectado a crecer, respaldando la viabilidad de este tipo de soluciones.
 
 ## Alcance del Proyecto
 
-El proyecto tiene como objetivo el diseño, desarrollo, validación e implementación de una aplicación web integral para la gestión de servicios de laboratorio veterinario digital. Districampo, en La Virginia (Risaralda), será la empresa piloto para la implementación y validación[cite: 25, 77].
+El proyecto tiene como objetivo el diseño, desarrollo, validación e implementación de una aplicación web integral para la gestión de servicios de laboratorio veterinario digital. Districampo, en La Virginia (Risaralda), será la empresa piloto para la implementación y validación.
 
-La aplicación centralizará el proceso desde la solicitud del análisis clínico y la gestión de muestras, hasta la emisión de resultados en PDF, eliminando la necesidad de traslados físicos al laboratorio[cite: 78].
+La aplicación centralizará el proceso desde la solicitud del análisis clínico y la gestión de muestras, hasta la emisión de resultados en PDF, eliminando la necesidad de traslados físicos al laboratorio.
 
 ### Funcionalidades Clave
 
-La plataforma integrará las siguientes funcionalidades organizadas en módulos[cite: 79]:
+La plataforma integrará las siguientes funcionalidades organizadas en módulos:
 
-* **Módulo de Usuarios:** Registro, inicio de sesión y administración de datos personales[cite: 81].
-* **Módulo de Mascotas:** Creación, edición y eliminación de registros de mascotas[cite: 82].
-* **Módulo de Análisis:** Solicitud de servicios, seguimiento del estado de análisis, historial de exámenes[cite: 82].
-* **Módulo de Resultados:** Carga y generación de reportes en formato PDF[cite: 82].
-* **Módulo Administrativo:** Control de citas y auditoría de datos para Districampo[cite: 82].
+* **Módulo de Usuarios:** Registro, inicio de sesión y administración de datos personales.
+* **Módulo de Mascotas:** Creación, edición y eliminación de registros de mascotas.
+* **Módulo de Análisis:** Solicitud de servicios, seguimiento del estado de análisis, historial de exámenes.
+* **Módulo de Resultados:** Carga y generación de reportes en formato PDF.
+* **Módulo Administrativo:** Control de citas y auditoría de datos para Districampo.
 
 ### Delimitación Geográfica
-La implementación se realizará en La Virginia y Cerritos (Risaralda), zonas de influencia directa de Districampo, simulando condiciones de uso reales en entornos rurales[cite: 83, 84].
+La implementación se realizará en La Virginia y Cerritos (Risaralda), zonas de influencia directa de Districampo, simulando condiciones de uso reales en entornos rurales.
 
 ## Arquitectura del Software
 
@@ -55,16 +55,15 @@ Estructura de la Base de Datos
 La estructura completa de la base de datos se encuentra definida en el archivo docs/database/schema.sql. Este script contiene la definición de todas las tablas, sus columnas, tipos de datos, claves primarias y foráneas, y todas las restricciones necesarias para recrear la base de datos veterilab2.
 
 Tecnologías Utilizadas
-Backend: Node.js, Express.js (lógica de negocio y API) 
-Base de datos: MySQL 
-Frontend: HTML, CSS, JavaScript, Bootstrap 
-Generación de reportes PDF: PDFKit 
-
-Consumo de API: Axios 
-Control de versiones: Git, GitHub 
-Entorno de desarrollo: Visual Studio Code 
-Pruebas de API: Postman 
-Despliegue: AWS Lightsail (instancia básica) 
+Backend: Node.js, Express.js (lógica de negocio y API)
+Base de datos: MySQL
+Frontend: HTML, CSS, JavaScript, Bootstrap
+Generación de reportes PDF: PDFKit
+Consumo de API: Axios
+Control de versiones: Git, GitHub
+Entorno de desarrollo: Visual Studio Code
+Pruebas de API: Postman
+Despliegue: AWS Lightsail (instancia básica)
 Configuración del Entorno de Desarrollo
 Para poner en marcha el proyecto localmente, sigue estos pasos:
 
@@ -102,10 +101,9 @@ Configuración del Frontend:
 Bash
 
 cd frontend
-# Dependiendo de tu setup de frontend, podrías no necesitar npm install aquí
+# Dependiendo de tu setup de frontend, podrías no necesitar npm install aquí.
 # Si tus archivos HTML/CSS/JS son estáticos, simplemente ábrelos con un navegador.
-# Si usas un servidor de desarrollo para el frontend (ej. Live Server en VS Code), inícial
-
+# Si usas un servidor de desarrollo para el frontend (ej. Live Server en VS Code), inícialo.
 Contribuciones
 Este es un proyecto académico desarrollado por:
 
@@ -115,3 +113,16 @@ ANDREW LOAIZA GUZMAN
 Licencia
 Todos los derechos reservados. Este proyecto es para fines académicos y no se permite su uso o distribución comercial sin autorización expresa.
 
+
+**Pasos a seguir:**
+
+1.  **Copia todo este texto.**
+2.  **Abre tu archivo `README.md`** en tu computadora.
+3.  **Pega este nuevo texto, reemplazando todo el contenido actual.**
+4.  **Guarda el archivo.**
+5.  Luego, abre tu terminal y ejecuta los comandos Git para subir los cambios a GitHub:
+    ```bash
+    git add README.md
+    git commit -m "Refine README.md content, remove citations and project phases"
+    git push origin main
+    ```
