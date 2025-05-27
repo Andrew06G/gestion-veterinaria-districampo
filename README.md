@@ -40,16 +40,33 @@ La plataforma integrará las siguientes funcionalidades organizadas en módulos:
 ### Delimitación Geográfica
 La implementación se realizará en La Virginia y Cerritos (Risaralda), zonas de influencia directa de Districampo, simulando condiciones de uso reales en entornos rurales.
 
-## Arquitectura del Software
+## Diagrama de Flujo de la Aplicación
 
-La aplicación se basa en una arquitectura de software en capas para asegurar la modularidad, escalabilidad y una clara separación de responsabilidades.
+A continuación se presenta un diagrama de flujo que ilustra la navegación principal y las interacciones del usuario dentro de la aplicación.
 
 ```mermaid
-graph TD;
-    A[Capa de Presentación (Frontend)] --> |Peticiones HTTP/API RESTful| B(Capa de Lógica de Aplicación (Backend));
-    B --> |Consultas a la Base de Datos| C(Capa de Acceso a Datos);
-    C --> |Consultas SQL| D(Capa de Base de Datos);
+---
+config:
+  layout: dagre
+---
+flowchart TD
+    A["Inicio"] --> B{"Pestaña Inicial: Login"}
+    B -- Registrarse --> C["Pestaña de Registro de Usuario"]
+    B -- Ya tiene cuenta --> D["Pestaña del Dashboard Principal"]
+    C --> D
+    D -- Registro de Animales --> E["Pestaña de Registro de Animales"]
+    D -- Solicitar Análisis --> F["Pestaña de Solicitud de Análisis"]
+    D -- Gestión de Análisis --> G["Pestaña de Gestionar Análisis"]
+    E --> D
+    F -- Seleccionar Animal y Tipo de Análisis, Fecha --> H["Cita Agendada para Toma de Muestra"]
+    F --> D
+    G -- Seleccionar Animal y Examen --> I["Visualización de Resultados en Tabla"]
+    G --> D
+    H --> G
 Puedes encontrar el código fuente de este diagrama en docs/architecture/Diagrama General de la App.mmd.
+Una representación visual de este flujo es la siguiente:
+
+(Reemplaza 'diagrama-captura.png' con el nombre exacto de tu archivo de imagen, si es diferente.)
 
 Estructura de la Base de Datos
 La estructura completa de la base de datos se encuentra definida en el archivo docs/database/schema.sql. Este script contiene la definición de todas las tablas, sus columnas, tipos de datos, claves primarias y foráneas, y todas las restricciones necesarias para recrear la base de datos veterilab2.
