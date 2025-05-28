@@ -36,10 +36,12 @@ A continuación, se presentan capturas de pantalla de las interfaces clave de la
 
 #### Vista de Inicio de Sesión
 ![Vista de Inicio de Sesión](docs/screenshots/inicio-de-sesion.png)
+
 Permite a un usuario registrado acceder a su panel personalizado y funcionalidades de la aplicación.
 
 #### Vista de Registro de Usuario
 ![Vista de Registro de Usuario](docs/screenshots/registro-de-usuario.png)
+
 Facilita la creación de una nueva cuenta para que un usuario acceda a los servicios de la plataforma.
 
 #### Vista del Dashboard Principal
@@ -49,20 +51,29 @@ Ofrece una visión general personalizada al usuario, sirviendo como punto de acc
 
 #### Vista de Registro de Animales
 ![Vista de Registro de Animales](docs/screenshots/registro-de-animalres.png)
+
 Permite a un propietario añadir y gestionar la información de sus mascotas en el sistema.
 
 #### Vista de Solicitud de Análisis
 ![Vista de Solicitud de Análisis](docs/screenshots/solicitud-de-analisis.png)
+
 Guía al propietario en el proceso de agendar una cita para la recolección de muestras a domicilio.
 
 #### Vista de Gestión de Análisis
 ![Vista de Gestión de Análisis](docs/screenshots/gestion-de-analisis.png)
+
 Permite al propietario verificar el progreso de sus muestras enviadas y acceder a los informes digitales en PDF de los laboratorios.
 
 ### Diagrama General (Flujo de uso del software)
 La aplicación se basa en una arquitectura de software en capas para asegurar la modularidad, escalabilidad y una clara separación de responsabilidades. Una representación visual de esta arquitectura es la siguiente:
 
-![Diagrama de Arquitectura en Capas](docs/architecture/diagrama-captura.png)
+![Diagrama de Flujo del Software](docs/architecture/diagrama-captura.png)
+
+### Diagrama General del Proyecto (Estructura en Capas)
+Este diagrama ilustra la arquitectura de software en capas de la aplicación.
+Muestra cómo las distintas partes de la aplicación interactúan, desde la interfaz de usuario hasta la base de datos, facilitando su desarrollo y mantenimiento.
+
+![Diagrama General del Proyecto, en Capas](docs/architecture/Diagrama-Capas.png)
 
 ## Configuración del Entorno de Desarrollo y Repositorio
 
