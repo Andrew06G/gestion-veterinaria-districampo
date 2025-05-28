@@ -28,6 +28,8 @@ Tu plataforma integral de gestión de laboratorio veterinario ofrece las siguien
     * Control integral de citas y servicios agendados.
     * Auditoría detallada de datos y procesos para la tienda agropecuaria.
 
+
+
 ### Vistas de la Interfaz de Usuario (Mockups Visuales)
 
 A continuación, se presentan capturas de pantalla de las interfaces clave de la aplicación, mostrando el diseño y la interacción propuesta:
@@ -42,10 +44,11 @@ Facilita la creación de una nueva cuenta para que un usuario acceda a los servi
 
 #### Vista del Dashboard Principal
 ![Vista del Dashboard Principal](docs/screenshots/dashboard.png)
+
 Ofrece una visión general personalizada al usuario, sirviendo como punto de acceso a las diferentes funcionalidades.
 
 #### Vista de Registro de Animales
-![Vista de Registro de Animales](docs/screenshots/registro-de-animales.png)
+![Vista de Registro de Animales](docs/screenshots/registro-de-animalres.png)
 Permite a un propietario añadir y gestionar la información de sus mascotas en el sistema.
 
 #### Vista de Solicitud de Análisis
