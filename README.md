@@ -73,7 +73,7 @@ La aplicación se basa en una arquitectura de software en capas para asegurar la
 Este diagrama ilustra la arquitectura de software en capas de la aplicación.
 Muestra cómo las distintas partes de la aplicación interactúan, desde la interfaz de usuario hasta la base de datos, facilitando su desarrollo y mantenimiento.
 
-![Diagrama General del Proyecto, en Capas](docs/architecture/Diagrama-Capas.png)
+![Diagrama de Flujo del Software](docs/architecture/diagramaCapaz.png)
 
 ## Configuración del Entorno de Desarrollo y Repositorio
 
