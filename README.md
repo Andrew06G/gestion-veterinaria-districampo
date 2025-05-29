@@ -28,8 +28,6 @@ Tu plataforma integral de gestión de laboratorio veterinario ofrece las siguien
     * Control integral de citas y servicios agendados.
     * Auditoría detallada de datos y procesos para la tienda agropecuaria.
 
-
-
 ### Vistas de la Interfaz de Usuario (Mockups Visuales)
 
 A continuación, se presentan capturas de pantalla de las interfaces clave de la aplicación, mostrando el diseño y la interacción propuesta:
@@ -75,26 +73,83 @@ Muestra cómo las distintas partes de la aplicación interactúan, desde la inte
 
 ![Diagrama de Flujo del Software](docs/architecture/diagramaCapaz.png)
 
-## Configuración del Entorno de Desarrollo y Repositorio
-
-El proyecto está gestionado en un repositorio de GitHub, que sigue una estructura organizada para facilitar la colaboración y el mantenimiento.
-
-### Repositorio y Estructura del Proyecto
-El repositorio principal (`YOUR_REPO_NAME` en GitHub) contiene la siguiente estructura básica:
-* `/backend/`: Código del servidor (Node.js/Express.js).
-* `/frontend/`: Código del cliente (HTML, CSS, JavaScript, Bootstrap).
-* `/docs/`: Documentación del proyecto, incluyendo:
-    * `/docs/architecture/`: Diagramas de arquitectura y flujo (ej. `diagrama-captura.png`).
-    * `/docs/database/`: Esquema de la base de datos (`schema.sql`).
-* `.gitignore`: Para excluir archivos no deseados (como `node_modules/` o `.env`).
-* `README.md`: Este archivo de descripción del proyecto.
-
-### Dockerfile o Entorno de Desarrollo
-Para el entorno de desarrollo, se espera que los desarrolladores tengan Node.js y MySQL instalados localmente. Las dependencias se gestionan a través de `package.json`. No se utiliza Dockerfile en esta fase inicial, pero la arquitectura modular facilita su futura incorporación.
-
 ## Estructura de la Base de Datos
 
 La estructura completa de la base de datos se encuentra definida en el archivo `docs/database/schema.sql`. Este script contiene la definición de todas las tablas, sus columnas, tipos de datos, claves primarias y foráneas, y todas las restricciones necesarias para recrear la base de datos `veterilab2`.
+
+### Modelo Entidad-Relación (MER)
+El Modelo Entidad-Relación proporciona una vista conceptual de las entidades principales de la base de datos y sus relaciones, ilustrando la organización lógica de los datos.
+
+![Modelo Entidad-Relación](docs/database/modelo-entidad-relacion.jpg)
+
+### Modelo Relacional
+El Modelo Relacional detalla la estructura física de las tablas de la base de datos, incluyendo columnas, claves primarias, claves foráneas, tipos de datos y relaciones.
+
+![Modelo Relacional](docs/database/modelo-relacional.jpg)
+
+## Configuración del Entorno de Desarrollo y Ejecución
+
+Para poner en marcha el proyecto localmente y empezar a desarrollar, hay que configurar el entorno de desarrollo:
+
+### Estructura del Repositorio
+El repositorio principal (`gestion-veterinaria-districampo` en GitHub) contiene la siguiente estructura básica:
+
+* `/backend/`: Código del servidor (Node.js/Express.js).
+* `/frontend/`: Código del cliente (HTML, CSS, JavaScript, Bootstrap).
+* `/docs/`: Documentación del proyecto, incluyendo:
+    * `/docs/architecture/`: Diagramas de arquitectura y flujo (ej. `diagrama-captura.png`, `diagrama-capas.png`).
+    * `/docs/database/`: Esquema de la base de datos (`schema.sql`, `mer.png`, `modelo-relacional.png`).
+* `.gitignore`: Para excluir archivos no deseados (como `node_modules/` o `.env`).
+* `README.md`: Este archivo de descripción del proyecto.
+
+### Pasos para la Configuración Local
+
+1.  **Clonar el repositorio:**
+    ```bash
+    git clone [https://github.com/Andrew06G/gestion-veterinaria-districampo.git](https://github.com/Andrew06G/gestion-veterinaria-districampo.git)
+    cd gestion-veterinaria-districampo
+    ```
+
+2.  **Instalar Dependencias del Backend:**
+    ```bash
+    cd backend
+    npm install
+    ```
+
+3.  **Configurar la Base de Datos:**
+    * Asegúrate de tener MySQL instalado y funcionando.
+    * Crea una nueva base de datos llamada `veterilab2`.
+    * Importa el esquema de la base de datos utilizando el archivo `docs/database/schema.sql`. Puedes hacerlo desde tu gestor de base de datos (MySQL Workbench, phpMyAdmin) o desde la línea de comandos:
+        ```bash
+        mysql -u tu_usuario_mysql -p veterilab2 < docs/database/schema.sql
+        ```
+        (Reemplaza `tu_usuario_mysql` con tu usuario de MySQL).
+
+4.  **Configurar Credenciales del Backend:**
+    * En la carpeta `backend/`, edita el archivo `.env` (o `.env.example` y renómbralo a `.env` si no existe). Incluye tus credenciales de conexión a la base de datos MySQL local:
+        ```
+        DB_HOST=localhost
+        DB_USER=tu_usuario_mysql
+        DB_PASSWORD=tu_contraseña_mysql
+        DB_NAME=veterilab2
+        ```
+        (Reemplazar `tu_usuario_mysql` y `tu_contraseña_mysql` con los datos de tu configuración local de MySQL).
+
+### Ejecución del Proyecto
+
+1.  **Iniciar el Servidor del Backend:**
+    Desde la carpeta `backend/`:
+    ```bash
+    npm start
+    ```
+
+2.  **Configuración del Frontend:**
+    ```bash
+    cd frontend
+    # Dependiendo de tu setup de frontend, podrías no necesitar npm install aquí.
+    # Si tus archivos HTML/CSS/JS son estáticos, simplemente ábrelos con un navegador.
+    # Si usas un servidor de desarrollo para el frontend (ej. Live Server en VS Code), inícialo.
+    ```
 
 ## Tecnologías Utilizadas
 
@@ -108,53 +163,7 @@ La estructura completa de la base de datos se encuentra definida en el archivo `
 * **Pruebas de API:** Postman
 * **Despliegue:** AWS Lightsail (instancia básica)
 
-## Configuración del Entorno de Desarrollo
-
-Para poner en marcha el proyecto localmente, sigue estos pasos:
-
-1.  **Clonar el repositorio:**
-    ```bash
-    git clone [https://github.com/Andrew06G/gestion-veterinaria-districampo.git](https://github.com/Andrew06G/gestion-veterinaria-districampo.git)
-    cd gestion-veterinaria-districampo
-    ```
-
-2.  **Configuración de la Base de Datos:**
-    * Se debe asegurar de tener MySQL instalado y funcionando.
-    * Crea una nueva base de datos llamada `veterilab2`.
-    * Importa el esquema de la base de datos utilizando el archivo `docs/database/schema.sql`. Puede hacerlo desde su gestor de base de datos (MySQL Workbench, phpMyAdmin) o desde la línea de comandos:
-        ```bash
-        mysql -u tu_usuario_mysql -p veterilab2 < docs/database/schema.sql
-        ```
-        (Reemplaza `tu_usuario_mysql` con tu usuario de MySQL).
-
-3.  **Configuración del Backend:**
-    ```bash
-    cd backend
-    npm install
-    ```
-    * **Configura las credenciales de la base de datos:**
-        Dirígete a la carpeta `backend/`. Allí encontrarás un archivo `.env`. Modifica este archivo para incluir tus credenciales de conexión a la base de datos MySQL local:
-        ```
-        DB_HOST=localhost
-        DB_USER=tu_usuario_mysql
-        DB_PASSWORD=tu_contraseña_mysql
-        DB_NAME=veterilab2
-        ```
-        (Reemplaza `tu_usuario_mysql` y `tu_contraseña_mysql` con los datos de tu configuración local de MySQL).
-
-    ```bash
-    npm start # Para iniciar el servidor de desarrollo
-    ```
-
     (Actualmente no se ha subido el codigo, en una futura actualización estara disponible dicho archivo, y tambien toda la logica del FonrtEnd y el BackEnd para poner a funcionar todo el proyecto siguiendo las indicaciones)
-
-4.  **Configuración del Frontend:**
-    ```bash
-    cd frontend
-    # Dependiendo de tu setup de frontend, podrías no necesitar npm install aquí.
-    # Si tus archivos HTML/CSS/JS son estáticos, simplemente ábrelos con un navegador.
-    # Si usas un servidor de desarrollo para el frontend (ej. Live Server en VS Code), inícialo.
-    ```
 
 ## Contribuciones
 
