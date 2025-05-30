@@ -62,6 +62,10 @@ Guía al propietario en el proceso de agendar una cita para la recolección de m
 
 Permite al propietario verificar el progreso de sus muestras enviadas y acceder a los informes digitales en PDF de los laboratorios.
 
+También y como un extra, contamos con el que fue el primer diseño/Mockup de la idea de este proyecto hecho en figma, se puede observar allí la idea principal de una web para gestionar todo el proceso del laboratorio integral de forma digital, registrando usuarios, seleccionando analisis, entre otras opciones, a continuacion el link para acceder a este primer diseño:
+
+A continuación, puedes acceder a este primer diseño: [Primer Diseño/Mockup en Figma](https://www.figma.com/design/GJd71HrW1hT4HkcOGHroiP/LABORATORIO-VETERINARIO?fuid=1261774445390314027)
+
 ### Diagrama General (Flujo de uso del software)
 La aplicación se basa en una arquitectura de software en capas para asegurar la modularidad, escalabilidad y una clara separación de responsabilidades. Una representación visual de esta arquitectura es la siguiente:
 
