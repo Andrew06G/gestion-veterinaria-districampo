@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       try {
-        const response = await fetch('http://localhost:3002/api/users/register', {
+        const response = await fetch('http://localhost:3001/api/users/register', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ nombres, apellidos, correo_electronico, telefono, direccion, contrasena })
@@ -94,7 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       try {
-        const response = await fetch('http://localhost:3002/api/users/login', {
+        const response = await fetch('http://localhost:3001/api/users/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ correo_electronico, contrasena })
@@ -136,7 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       try {
-        const response = await fetch('http://localhost:3002/api/animals/register', {
+        const response = await fetch('http://localhost:3001/api/animals/register', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ dPropietario: d_propietario, nombre, edad, raza })
@@ -160,7 +160,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Listar Animales
   async function listAnimals() {
     try {
-      const response = await fetch('http://localhost:3002/api/animals');
+      const response = await fetch('http://localhost:3001/api/animals');
       if (response.ok) {
         const animals = await response.json();
         const animalListDiv = document.getElementById('animalList');
@@ -206,7 +206,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.body.appendChild(generatePDFButton);
 
   generatePDFButton.addEventListener('click', () => {
-    fetch('http://localhost:3002/api/pdf/generate-pdf', {
+    fetch('http://localhost:3001/api/pdf/generate-pdf', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ message: 'Generando un reporte PDF' })

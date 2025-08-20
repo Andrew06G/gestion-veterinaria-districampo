@@ -31,4 +31,4 @@ async function testConnection() {
 // Ejecutar prueba de conexión
 testConnection();
 
-module.exports = db;
+module.exports = db; 

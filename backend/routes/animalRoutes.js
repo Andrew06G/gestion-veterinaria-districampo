@@ -1,14 +1,15 @@
-
 const express = require('express');
 const router = express.Router();
-const db = require('../config/db'); // Conexión a la base de datos
+const db = require('../config/db');
+const { authenticateToken } = require('../middleware/auth');
 
-// Registrar un animal
-router.post('/register', async (req, res) => {
+// Registrar un animal (protegido)
+router.post('/register', authenticateToken, async (req, res) => {
   try {
-    const { id_propietario, nombre_animal, edad, id_raza, id_especie } = req.body;
+    const { nombre_animal, edad, id_raza, id_especie } = req.body;
+    const id_propietario = req.user.id; // Obtener ID del usuario autenticado
 
-    if (!id_propietario || !nombre_animal || !edad || !id_raza || !id_especie) {
+    if (!nombre_animal || !edad || !id_raza || !id_especie) {
       return res.status(400).json({ message: 'Todos los campos son obligatorios' });
     }
 
@@ -23,9 +24,11 @@ router.post('/register', async (req, res) => {
   }
 });
 
-// Obtener todos los animales con información completa
-router.get('/', async (req, res) => {
+// Obtener animales del usuario autenticado (protegido)
+router.get('/', authenticateToken, async (req, res) => {
   try {
+    const id_propietario = req.user.id; // Obtener ID del usuario autenticado
+    
     const [rows] = await db.query(`
       SELECT 
         a.id_animal,
@@ -39,7 +42,8 @@ router.get('/', async (req, res) => {
       JOIN raza r ON a.id_raza = r.id_raza
       JOIN especie e ON a.id_especie = e.id_especie
       JOIN propietario p ON a.id_propietario = p.id_propietario
-    `);
+      WHERE a.id_propietario = ?
+    `, [id_propietario]);
     res.json(rows);
   } catch (error) {
     console.error('Error al obtener los animales:', error.message);
@@ -47,10 +51,12 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Obtener un animal por ID
-router.get('/:id', async (req, res) => {
+// Obtener un animal específico del usuario (protegido)
+router.get('/:id', authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;
+    const id_propietario = req.user.id; // Obtener ID del usuario autenticado
+    
     const [rows] = await db.query(`
       SELECT 
         a.id_animal,
@@ -64,8 +70,8 @@ router.get('/:id', async (req, res) => {
       JOIN raza r ON a.id_raza = r.id_raza
       JOIN especie e ON a.id_especie = e.id_especie
       JOIN propietario p ON a.id_propietario = p.id_propietario
-      WHERE a.id_animal = ?
-    `, [id]);
+      WHERE a.id_animal = ? AND a.id_propietario = ?
+    `, [id, id_propietario]);
     
     if (rows.length === 0) {
       return res.status(404).json({ message: 'Animal no encontrado' });
@@ -77,15 +83,16 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// Actualizar un animal por ID
-router.put('/:id', async (req, res) => {
+// Actualizar un animal del usuario (protegido)
+router.put('/:id', authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;
     const { nombre_animal, edad, id_raza, id_especie } = req.body;
+    const id_propietario = req.user.id; // Obtener ID del usuario autenticado
 
     const [result] = await db.query(
-      'UPDATE animal SET nombre_animal = ?, edad = ?, id_raza = ?, id_especie = ? WHERE id_animal = ?',
-      [nombre_animal, edad, id_raza, id_especie, id]
+      'UPDATE animal SET nombre_animal = ?, edad = ?, id_raza = ?, id_especie = ? WHERE id_animal = ? AND id_propietario = ?',
+      [nombre_animal, edad, id_raza, id_especie, id, id_propietario]
     );
     if (result.affectedRows === 0) {
       return res.status(404).json({ message: 'Animal no encontrado' });
@@ -97,11 +104,13 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-// Eliminar un animal por ID
-router.delete('/:id', async (req, res) => {
+// Eliminar un animal del usuario (protegido)
+router.delete('/:id', authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;
-    const [result] = await db.query('DELETE FROM animal WHERE id_animal = ?', [id]);
+    const id_propietario = req.user.id; // Obtener ID del usuario autenticado
+    
+    const [result] = await db.query('DELETE FROM animal WHERE id_animal = ? AND id_propietario = ?', [id, id_propietario]);
     if (result.affectedRows === 0) {
       return res.status(404).json({ message: 'Animal no encontrado' });
     }
@@ -112,7 +121,7 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-// Obtener razas disponibles
+// Obtener razas disponibles (público)
 router.get('/razas/list', async (req, res) => {
   try {
     const [rows] = await db.query('SELECT * FROM raza');
@@ -123,7 +132,19 @@ router.get('/razas/list', async (req, res) => {
   }
 });
 
-// Obtener especies disponibles
+// Obtener razas por especie específica (público)
+router.get('/razas/especie/:id_especie', async (req, res) => {
+  try {
+    const { id_especie } = req.params;
+    const [rows] = await db.query('SELECT * FROM raza WHERE id_especie = ? ORDER BY nombre_raza', [id_especie]);
+    res.json(rows);
+  } catch (error) {
+    console.error('Error al obtener las razas por especie:', error.message);
+    res.status(500).json({ message: 'Error al obtener las razas por especie' });
+  }
+});
+
+// Obtener especies disponibles (público)
 router.get('/especies/list', async (req, res) => {
   try {
     const [rows] = await db.query('SELECT * FROM especie');
@@ -131,6 +152,26 @@ router.get('/especies/list', async (req, res) => {
   } catch (error) {
     console.error('Error al obtener las especies:', error.message);
     res.status(500).json({ message: 'Error al obtener las especies' });
+  }
+});
+
+// Obtener lista simple de animales del usuario para dropdowns (protegido)
+router.get('/user/list', authenticateToken, async (req, res) => {
+  try {
+    const id_propietario = req.user.id; // Obtener ID del usuario autenticado
+    
+    const [rows] = await db.query(`
+      SELECT 
+        a.id_animal,
+        a.nombre_animal
+      FROM animal a
+      WHERE a.id_propietario = ?
+      ORDER BY a.nombre_animal
+    `, [id_propietario]);
+    res.json(rows);
+  } catch (error) {
+    console.error('Error al obtener la lista de animales:', error.message);
+    res.status(500).json({ message: 'Error al obtener la lista de animales' });
   }
 });
 

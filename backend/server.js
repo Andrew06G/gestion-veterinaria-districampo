@@ -102,8 +102,10 @@ app.get('/solicitar-analisis', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'pages', 'solicitar_analisis.html'));
 });
 
-app.get('/gestion-analisis', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'pages', 'gestion_analisis.html'));
+
+
+app.get('/mis-analisis', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'pages', 'mis_analisis.html'));
 });
 
 // Ruta de prueba
@@ -120,5 +122,5 @@ app.listen(PORT, () => {
   console.log('- /dashboard - Dashboard principal');
   console.log('- /animals - Gestión de animales');
   console.log('- /solicitar-analisis - Solicitar análisis');
-  console.log('- /gestion-analisis - Gestión de análisis');
+
 });

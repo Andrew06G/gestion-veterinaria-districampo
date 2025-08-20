@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mis Análisis - Veterilab</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body style="background-color: #b3b3b3;">
+  <!-- Barra de navegación -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="#">
+      
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item"><a class="nav-link" href="/dashboard">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="/animals">Animales</a></li>
+        <li class="nav-item"><a class="nav-link" href="/solicitar-analisis">Solicitar Análisis</a></li>
+
+        <li class="nav-item"><a class="nav-link active" href="/mis-analisis">Mis Análisis</a></li>
+        <li class="nav-item"><a class="nav-link" href="#" onclick="logout()">Cerrar Sesión</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="container mt-5">
+    <h2 class="text-center">Mis Análisis Clínicos</h2>
+    <p class="text-center">Aquí puedes ver todos los análisis de tus animales</p>
+
+    <!-- Filtros -->
+    <div class="row mb-4">
+      <div class="col-md-4">
+        <label for="filterAnimal">Filtrar por Animal:</label>
+        <select id="filterAnimal" class="form-control">
+          <option value="">Todos los animales</option>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <label for="filterEstado">Filtrar por Estado:</label>
+        <select id="filterEstado" class="form-control">
+          <option value="">Todos los estados</option>
+          <option value="Pendiente">Pendiente</option>
+          <option value="En Proceso">En Proceso</option>
+          <option value="Completado">Completado</option>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <label for="filterFecha">Filtrar por Fecha:</label>
+        <input type="date" id="filterFecha" class="form-control">
+      </div>
+    </div>
+
+    <!-- Tabla de análisis -->
+    <div class="table-responsive">
+      <table id="analisisTable" class="table table-striped table-bordered">
+        <thead class="thead-dark">
+          <tr>
+            <th>ID Muestra</th>
+            <th>Animal</th>
+            <th>Tipo de Análisis</th>
+            <th>Resultado</th>
+            <th>Fecha de Emisión</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="analisisTableBody">
+          <!-- Los análisis se cargarán aquí dinámicamente -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Mensaje cuando no hay análisis -->
+    <div id="noAnalisisMessage" class="text-center mt-4" style="display: none;">
+      <h4>No tienes análisis registrados</h4>
+      <p>Ve a <a href="/solicitar-analisis">Solicitar Análisis</a> para crear tu primer análisis.</p>
+    </div>
+  </div>
+
+  <!-- Incluir el sistema de gestión de sesión -->
+  <script src="../js/session.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Verificar autenticación usando el sistema de sesión
+      if (!sessionManager.requireAuth()) {
+        return;
+      }
+
+      // Cargar análisis del usuario
+      cargarAnalisis();
+      
+      // Configurar filtros
+      configurarFiltros();
+    });
+
+    // Función para cargar todos los análisis del usuario
+    async function cargarAnalisis() {
+      try {
+        const response = await sessionManager.authenticatedFetch('http://localhost:3001/api/analyses');
+        
+        if (response && response.ok) {
+          const analisis = await response.json();
+          mostrarAnalisis(analisis);
+          llenarFiltros(analisis);
+        } else if (!response) {
+          // La función authenticatedFetch ya maneja la redirección
+          return;
+        } else {
+          console.error('Error al cargar análisis');
+        }
+      } catch (error) {
+        console.error('Error al cargar análisis:', error);
+      }
+    }
+
+    // Función para mostrar los análisis en la tabla
+    function mostrarAnalisis(analisis) {
+      const tableBody = document.getElementById('analisisTableBody');
+      const noAnalisisMessage = document.getElementById('noAnalisisMessage');
+
+      if (analisis.length === 0) {
+        tableBody.innerHTML = '';
+        noAnalisisMessage.style.display = 'block';
+        return;
+      }
+
+      noAnalisisMessage.style.display = 'none';
+      
+      tableBody.innerHTML = analisis.map(analisis => `
+        <tr>
+          <td>${analisis.id_muestra}</td>
+          <td>${analisis.nombre_animal}</td>
+          <td>${analisis.nombre_analisis}</td>
+          <td>${analisis.resultado}</td>
+          <td>${formatearFecha(analisis.fecha_emision)}</td>
+          <td>
+            <span class="badge badge-${getEstadoBadge(analisis.nombre_estado)}">
+              ${analisis.nombre_estado}
+            </span>
+          </td>
+          <td>
+            <button class="btn btn-info btn-sm" onclick="verDetalles(${analisis.id_muestra})">
+              👁️ Ver
+            </button>
+            <button class="btn btn-success btn-sm" onclick="generarPDF(${analisis.id_muestra})">
+              📄 PDF
+            </button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // Función para llenar los filtros con datos únicos
+    function llenarFiltros(analisis) {
+      const filterAnimal = document.getElementById('filterAnimal');
+      const animales = [...new Set(analisis.map(a => a.nombre_animal))];
+      
+      animales.forEach(animal => {
+        const option = document.createElement('option');
+        option.value = animal;
+        option.textContent = animal;
+        filterAnimal.appendChild(option);
+      });
+    }
+
+    // Función para configurar los filtros
+    function configurarFiltros() {
+      const filterAnimal = document.getElementById('filterAnimal');
+      const filterEstado = document.getElementById('filterEstado');
+      const filterFecha = document.getElementById('filterFecha');
+
+      [filterAnimal, filterEstado, filterFecha].forEach(filter => {
+        filter.addEventListener('change', aplicarFiltros);
+      });
+    }
+
+    // Función para aplicar filtros
+    async function aplicarFiltros() {
+      const filterAnimal = document.getElementById('filterAnimal').value;
+      const filterEstado = document.getElementById('filterEstado').value;
+      const filterFecha = document.getElementById('filterFecha').value;
+
+      try {
+        const response = await sessionManager.authenticatedFetch('http://localhost:3001/api/analyses');
+        
+        if (response && response.ok) {
+          let analisis = await response.json();
+          
+          // Aplicar filtros
+          if (filterAnimal) {
+            analisis = analisis.filter(a => a.nombre_animal === filterAnimal);
+          }
+          
+          if (filterEstado) {
+            analisis = analisis.filter(a => a.nombre_estado === filterEstado);
+          }
+          
+          if (filterFecha) {
+            analisis = analisis.filter(a => a.fecha_emision.startsWith(filterFecha));
+          }
+          
+          mostrarAnalisis(analisis);
+        }
+      } catch (error) {
+        console.error('Error al aplicar filtros:', error);
+      }
+    }
+
+    // Función para formatear fecha
+    function formatearFecha(fecha) {
+      return new Date(fecha).toLocaleDateString('es-ES');
+    }
+
+    // Función para obtener el color del badge según el estado
+    function getEstadoBadge(estado) {
+      switch (estado) {
+        case 'Pendiente': return 'warning';
+        case 'En Proceso': return 'info';
+        case 'Completado': return 'success';
+        default: return 'secondary';
+      }
+    }
+
+    // Función para ver detalles de un análisis
+    function verDetalles(idMuestra) {
+      alert(`Detalles del análisis ${idMuestra}\n\nEsta funcionalidad se va a trabajar en las siguientes actualizaciones.`);
+    }
+
+    // Función para generar PDF
+    async function generarPDF(idMuestra) {
+      try {
+        const response = await sessionManager.authenticatedFetch(`http://localhost:3001/api/analyses/${idMuestra}/pdf`);
+        
+        if (response && response.ok) {
+          const analysis = await response.json();
+          alert(`PDF generado para el análisis ${idMuestra}\n\nAnimal: ${analysis.nombre_animal}\nTipo: ${analysis.nombre_analisis}\nResultado: ${analysis.resultado}`);
+        } else if (!response) {
+          return;
+        } else {
+          alert('Error al generar el PDF');
+        }
+      } catch (error) {
+        console.error('Error al generar PDF:', error);
+        alert('Error al generar el PDF');
+      }
+    }
+  </script>
+
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 

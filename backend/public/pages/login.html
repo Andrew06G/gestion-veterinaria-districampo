@@ -24,7 +24,7 @@
         <li class="nav-item"><a class="nav-link" href="/dashboard">Home</a></li>
         <li class="nav-item"><a class="nav-link" href="/animals">Animales</a></li>
         <li class="nav-item"><a class="nav-link" href="/solicitar-analisis">Solicitar Análisis</a></li>
-        <li class="nav-item"><a class="nav-link" href="/gestion-analisis">Gestión de Análisis</a></li>
+
         <li class="nav-item"><a class="nav-link" href="#" onclick="logout()">Cerrar Sesión</a></li>
       </ul>
     </div>
@@ -51,8 +51,18 @@
       <p>¿No tienes una cuenta? <a href="/register" class="btn btn-link">Regístrate aquí</a></p>
     </div>
   </div>
+  
+  <!-- Incluir el sistema de gestión de sesión -->
+  <script src="../js/session.js"></script>
+  
   <script>
     document.addEventListener('DOMContentLoaded', () => {
+      // Verificar si ya está autenticado
+      if (sessionManager.isAuthenticated()) {
+        window.location.href = '/dashboard';
+        return;
+      }
+
       const loginForm = document.getElementById('loginForm');
 
       if (loginForm) {
@@ -73,15 +83,14 @@
               })
             });
 
-            if (response.ok) {
-              const data = await response.json();
-              // Guardar el token en localStorage para autenticación
-              localStorage.setItem('token', data.token);
-              alert('Inicio de sesión exitoso');
-              window.location.href = '/dashboard'; // Redireccionar al dashboard
-            } else {
-              const errorText = await response.text();
-              alert('Error: ' + errorText);
+                         if (response.ok) {
+               const data = await response.json();
+               // Usar el sistema de gestión de sesión
+               sessionManager.setSession(data.token, data.user);
+               window.location.href = '/dashboard';
+             } else {
+              const errorData = await response.json();
+              alert('Error: ' + errorData.message);
             }
           } catch (error) {
             console.error('Error al iniciar sesión:', error);

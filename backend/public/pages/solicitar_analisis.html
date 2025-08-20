@@ -22,7 +22,8 @@
         <li class="nav-item"><a class="nav-link" href="/dashboard">Home</a></li>
         <li class="nav-item"><a class="nav-link" href="/animals">Animales</a></li>
         <li class="nav-item"><a class="nav-link active" href="/solicitar-analisis">Solicitar Análisis</a></li>
-        <li class="nav-item"><a class="nav-link" href="/gestion-analisis">Gestión de Análisis</a></li>
+
+        <li class="nav-item"><a class="nav-link" href="/mis-analisis">Mis Análisis</a></li>
         <li class="nav-item"><a class="nav-link" href="#" onclick="logout()">Cerrar Sesión</a></li>
       </ul>
     </div>
@@ -34,8 +35,11 @@
     <!-- Primer formulario -->
     <form id="requestAnalysisForm" class="mb-4">
       <div class="form-group">
-        <label for="id_animal">ID del Animal:</label>
-        <input type="number" class="form-control" id="id_animal" name="id_animal" required>
+        <label for="id_animal">Seleccionar Animal:</label>
+        <select class="form-control" id="id_animal" name="id_animal" required>
+          <option value="">Seleccione un animal...</option>
+          <!-- Opciones dinámicas -->
+        </select>
       </div>
       <div class="form-group">
         <label for="tipo_analisis">Tipo de Análisis:</label>
@@ -51,28 +55,27 @@
     </form>
   </div>
 
+  <!-- Incluir el sistema de gestión de sesión -->
+  <script src="../js/session.js"></script>
+
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      // Si no hay token, redirigir al login inmediatamente
-      if (!localStorage.getItem('token')) {
-        alert('Por favor, inicie sesión para acceder a esta página.');
-        window.location.replace('/login');
-      } else {
-        // Cargar los tipos de análisis solo si está autenticado
-        loadAnalysisTypes();
+      // Verificar autenticación usando el sistema de sesión
+      if (!sessionManager.requireAuth()) {
+        return;
       }
+      
+      // Cargar los tipos de análisis y los animales
+      loadAnalysisTypes();
+      loadUserAnimals();
     });
 
     // Cargar tipos de análisis desde el backend
     async function loadAnalysisTypes() {
       try {
-        const response = await fetch('http://localhost:3001/api/tipo_analisis', {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-          }
-        });
+        const response = await sessionManager.authenticatedFetch('http://localhost:3001/api/analyses/tipos');
 
-        if (response.ok) {
+        if (response && response.ok) {
           const analyses = await response.json();
 
           // IDs de los selectores a llenar
@@ -91,11 +94,53 @@
               });
             }
           });
+        } else if (!response) {
+          // La función authenticatedFetch ya maneja la redirección
+          return;
         } else {
           alert('Error al cargar los tipos de análisis.');
         }
       } catch (error) {
         console.error('Error al cargar los tipos de análisis:', error);
+      }
+    }
+
+    // Cargar animales del usuario desde el backend
+    async function loadUserAnimals() {
+      try {
+        const response = await sessionManager.authenticatedFetch('http://localhost:3001/api/animals/user/list');
+
+        if (response && response.ok) {
+          const animals = await response.json();
+          const animalSelect = document.getElementById('id_animal');
+
+          if (animalSelect) {
+            // Mantener la opción por defecto
+            animalSelect.innerHTML = '<option value="">Seleccione un animal...</option>';
+
+            if (animals.length === 0) {
+              const option = document.createElement('option');
+              option.value = '';
+              option.textContent = 'No hay animales registrados';
+              option.disabled = true;
+              animalSelect.appendChild(option);
+            } else {
+              animals.forEach(animal => {
+                const option = document.createElement('option');
+                option.value = animal.id_animal;
+                option.textContent = animal.nombre_animal;
+                animalSelect.appendChild(option);
+              });
+            }
+          }
+        } else if (!response) {
+          // La función authenticatedFetch ya maneja la redirección
+          return;
+        } else {
+          alert('Error al cargar los animales.');
+        }
+      } catch (error) {
+        console.error('Error al cargar los animales:', error);
       }
     }
 
@@ -116,12 +161,8 @@
 
       // Enviar la solicitud al backend
       try {
-        const response = await fetch('http://localhost:3001/api/analyses', {
+        const response = await sessionManager.authenticatedFetch('http://localhost:3001/api/analyses', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-          },
           body: JSON.stringify({
             id_animal: id_animal,
             id_tipo_analisis: id_tipo_analisis,
@@ -129,12 +170,15 @@
           })
         });
 
-        if (response.ok) {
+        if (response && response.ok) {
           alert('Análisis solicitado exitosamente');
           this.reset(); // Limpiar el formulario
+        } else if (!response) {
+          // La función authenticatedFetch ya maneja la redirección
+          return;
         } else {
-          const errorText = await response.text();
-          alert('Error al solicitar el análisis: ' + errorText);
+          const errorData = await response.json();
+          alert('Error al solicitar el análisis: ' + errorData.message);
         }
       } catch (error) {
         console.error('Error al solicitar el análisis:', error);
@@ -142,11 +186,7 @@
       }
     });
 
-    // Cerrar sesión
-    function logout() {
-      localStorage.removeItem('token');
-      window.location.href = '/login';
-    }
+    // La función logout ya está definida en session.js
   </script>
 
 </body>

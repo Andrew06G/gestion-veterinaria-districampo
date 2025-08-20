@@ -3,9 +3,10 @@ const express = require('express');
 const router = express.Router();
 const db = require('../config/db'); // Conexión a la base de datos
 const analysisController = require('../controllers/analysisController'); // Controlador adicional
+const { authenticateToken } = require('../middleware/auth'); // Importar middleware de autenticación
 
-// Obtener todos los tipos de análisis
-router.get('/', async (req, res) => {
+// Obtener todos los tipos de análisis (público)
+router.get('/tipos', async (req, res) => {
   try {
     const [rows] = await db.query('SELECT id_tipo_analisis, nombre_analisis, precio FROM tipo_analisis');
     res.json(rows);
@@ -15,8 +16,39 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Ruta POST directa para solicitar análisis (compatibilidad con frontend)
-router.post('/', async (req, res) => {
+// Obtener todos los análisis del usuario autenticado
+router.get('/', authenticateToken, async (req, res) => {
+  try {
+    const id_propietario = req.user.id;
+    const [rows] = await db.query(`
+      SELECT 
+        m.id_muestra,
+        a.nombre_animal,
+        ta.nombre_analisis,
+        r.resultado,
+        r.fecha_emision,
+        te.nombre_estado,
+        p.nombres as propietario_nombres,
+        p.apellidos as propietario_apellidos
+      FROM muestra m
+      JOIN animal a ON m.id_animal = a.id_animal
+      JOIN resultado r ON m.id_muestra = r.id_muestra
+      JOIN tipo_analisis ta ON r.id_tipo_analisis = ta.id_tipo_analisis
+      JOIN tipo_estado te ON m.id_estado = te.id_tipo_estado
+      JOIN propietario p ON a.id_propietario = p.id_propietario
+      WHERE a.id_propietario = ?
+      ORDER BY r.fecha_emision DESC
+    `, [id_propietario]);
+    
+    res.json(rows);
+  } catch (error) {
+    console.error('Error al obtener los análisis del usuario:', error.message);
+    res.status(500).json({ message: 'Error al obtener los análisis' });
+  }
+});
+
+// Ruta POST directa para solicitar análisis (protegida)
+router.post('/', authenticateToken, async (req, res) => {
   try {
     const { id_animal, id_tipo_analisis, fecha_solicitud } = req.body;
 
@@ -24,10 +56,11 @@ router.post('/', async (req, res) => {
       return res.status(400).json({ message: 'Todos los campos son obligatorios' });
     }
 
-    // Verificar que el animal existe
-    const [animalExists] = await db.query('SELECT * FROM animal WHERE id_animal = ?', [id_animal]);
+    // Verificar que el animal existe y pertenece al usuario autenticado
+    const id_propietario = req.user.id;
+    const [animalExists] = await db.query('SELECT * FROM animal WHERE id_animal = ? AND id_propietario = ?', [id_animal, id_propietario]);
     if (animalExists.length === 0) {
-      return res.status(400).json({ message: 'El animal especificado no existe' });
+      return res.status(400).json({ message: 'El animal especificado no existe o no pertenece a su cuenta' });
     }
 
     // Verificar que el tipo de análisis existe
@@ -79,8 +112,8 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// Solicitar un análisis (crear muestra y resultado)
-router.post('/solicitar', async (req, res) => {
+// Solicitar un análisis (crear muestra y resultado) - protegida
+router.post('/solicitar', authenticateToken, async (req, res) => {
   try {
     const { id_animal, id_tipo_analisis, fecha_solicitud } = req.body;
 
@@ -88,10 +121,11 @@ router.post('/solicitar', async (req, res) => {
       return res.status(400).json({ message: 'Todos los campos son obligatorios' });
     }
 
-    // Verificar que el animal existe
-    const [animalExists] = await db.query('SELECT * FROM animal WHERE id_animal = ?', [id_animal]);
+    // Verificar que el animal existe y pertenece al usuario autenticado
+    const id_propietario = req.user.id;
+    const [animalExists] = await db.query('SELECT * FROM animal WHERE id_animal = ? AND id_propietario = ?', [id_animal, id_propietario]);
     if (animalExists.length === 0) {
-      return res.status(400).json({ message: 'El animal especificado no existe' });
+      return res.status(400).json({ message: 'El animal especificado no existe o no pertenece a su cuenta' });
     }
 
     // Verificar que el tipo de análisis existe
@@ -128,10 +162,11 @@ router.post('/solicitar', async (req, res) => {
   }
 });
 
-// Obtener análisis de un animal específico
-router.get('/animal/:id_animal', async (req, res) => {
+// Obtener análisis de un animal específico del usuario autenticado
+router.get('/animal/:id_animal', authenticateToken, async (req, res) => {
   try {
     const { id_animal } = req.params;
+    const id_propietario = req.user.id;
     const [rows] = await db.query(`
       SELECT 
         m.id_muestra,
@@ -145,8 +180,8 @@ router.get('/animal/:id_animal', async (req, res) => {
       JOIN resultado r ON m.id_muestra = r.id_muestra
       JOIN tipo_analisis ta ON r.id_tipo_analisis = ta.id_tipo_analisis
       JOIN tipo_estado te ON m.id_estado = te.id_tipo_estado
-      WHERE a.id_animal = ?
-    `, [id_animal]);
+      WHERE a.id_animal = ? AND a.id_propietario = ?
+    `, [id_animal, id_propietario]);
     
     res.json(rows);
   } catch (error) {
