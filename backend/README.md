@@ -1,161 +1,227 @@
-# 🏥 Sistema de Gestión Veterinaria - Backend
+# 🏥 Sistema de Gestión Veterinaria - Veterilab
 
-Sistema backend para la gestión de análisis clínicos veterinarios, desarrollado con Node.js, Express y MySQL.
+Sistema completo de gestión de análisis clínicos veterinarios con arquitectura MVC y API REST.
 
-## 🚀 Instalación Rápida
+## 🏗️ **ARQUITECTURA DEL PROYECTO**
 
-### Prerrequisitos
-- **Node.js** (versión 16 o superior)
-- **MySQL** (versión 8.0 o superior)
-- **Git**
+### **📁 Estructura de Carpetas (MVC + REST)**
 
-### 1. Clonar el Repositorio
+```
+backend/
+├── 📁 src/                    # Código fuente principal
+│   ├── 📁 models/            # Modelos de datos (MVC)
+│   │   ├── User.js          # Modelo de usuario
+│   │   ├── Animal.js        # Modelo de animal
+│   │   └── Analysis.js      # Modelo de análisis
+│   ├── 📁 controllers/      # Controladores (MVC)
+│   │   └── userController.js # Lógica de usuarios
+│   ├── 📁 routes/           # Rutas de la API (REST)
+│   │   ├── userRoutes.js    # Endpoints de usuarios
+│   │   ├── animalRoutes.js  # Endpoints de animales
+│   │   ├── analysisRoutes.js # Endpoints de análisis
+│   │   └── pdfRoutes.js     # Endpoints de PDF
+│   ├── 📁 middleware/       # Middleware personalizado
+│   │   └── auth.js          # Autenticación JWT
+│   ├── 📁 config/           # Configuración
+│   │   └── db.js            # Conexión a base de datos
+│   └── 📁 utils/            # Utilidades
+├── 📁 public/                # Frontend (Vista)
+│   ├── 📁 pages/            # Páginas HTML
+│   └── 📁 assets/           # Recursos estáticos
+│       ├── 📁 css/          # Estilos CSS
+│       └── 📁 js/           # JavaScript frontend
+├── server.js                 # Servidor principal
+├── package.json              # Dependencias
+└── .env                      # Variables de entorno
+```
+
+### **🎯 Patrón de Diseño Implementado**
+
+- **MVC (Modelo-Vista-Controlador)**: Separación clara de responsabilidades
+- **REST API**: Endpoints RESTful para comunicación frontend-backend
+- **Middleware**: Autenticación JWT y validaciones
+- **Hasheo**: Contraseñas encriptadas con bcrypt
+- **Modelos**: Lógica de acceso a datos encapsulada
+
+---
+
+## 🚀 **INSTALACIÓN RÁPIDA**
+
+### **1. Clonar el repositorio**
 ```bash
 git clone <url-del-repositorio>
 cd gestion-veterinaria-districampo/backend
 ```
 
-### 2. Instalar Dependencias
+### **2. Instalar dependencias**
 ```bash
 npm install
 ```
 
-### 3. Configurar Base de Datos
-
-#### Opción A: Usar archivo .env (Recomendado)
+### **3. Configurar base de datos**
 ```bash
-# Copiar el archivo de ejemplo
+# Crear archivo .env basado en .env.example
 cp .env.example .env
 
-# Editar .env con tus credenciales
-nano .env  # o usar tu editor preferido
+# Editar .env con tus credenciales de base de datos
 ```
 
-**Contenido del archivo .env:**
-```env
-DB_HOST=localhost
-DB_USER=tu_usuario_mysql
-DB_PASSWORD=tu_password_mysql
-DB_NAME=nombre_de_tu_base_de_datos
-DB_PORT=3306
-PORT=3001
-JWT_SECRET=tu_clave_secreta_super_segura_aqui
-```
-
-#### Opción B: Variables de entorno del sistema
-```bash
-export DB_HOST=localhost
-export DB_USER=tu_usuario_mysql
-export DB_PASSWORD=tu_password_mysql
-export DB_NAME=nombre_de_tu_base_de_datos
-export DB_PORT=3306
-export PORT=3001
-export JWT_SECRET=tu_clave_secreta_super_segura_aqui
-```
-
-### 4. Crear Base de Datos
+### **4. Crear base de datos**
 ```sql
-CREATE DATABASE nombre_de_tu_base_de_datos;
-USE nombre_de_tu_base_de_datos;
+CREATE DATABASE veterilab2;
+USE veterilab2;
+
+-- Ejecutar el script SQL de la base de datos
+-- (consultar documentación de la base de datos)
 ```
 
-### 5. Ejecutar Scripts de Base de Datos
-```bash
-# Importar la estructura de la base de datos
-mysql -u tu_usuario -p nombre_de_tu_base_de_datos < database/schema.sql
-
-# O ejecutar manualmente los scripts SQL en tu cliente MySQL
-```
-
-### 6. Iniciar el Servidor
+### **5. Iniciar servidor**
 ```bash
 npm start
 # o
 node server.js
 ```
 
-El servidor estará disponible en: `http://localhost:3001`
+---
 
-## 📁 Estructura del Proyecto
+## 🔧 **CONFIGURACIÓN**
 
-```
-backend/
-├── config/
-│   └── db.js              # Configuración de base de datos
-├── controllers/            # Controladores de la aplicación
-├── middleware/             # Middleware de autenticación
-├── models/                 # Modelos de datos
-├── routes/                 # Rutas de la API
-├── public/                 # Archivos estáticos (frontend)
-├── .env.example           # Ejemplo de variables de entorno
-├── package.json           # Dependencias del proyecto
-└── server.js              # Punto de entrada de la aplicación
-```
+### **Variables de Entorno (.env)**
+```env
+# Base de Datos
+DB_HOST=localhost
+DB_USER=root
+DB_PASSWORD=tu_password
+DB_NAME=veterilab2
+DB_PORT=3306
 
-## 🔐 Variables de Entorno
+# Servidor
+PORT=3001
+JWT_SECRET=tu_secreto_jwt_super_seguro
 
-| Variable | Descripción | Valor por Defecto |
-|----------|-------------|-------------------|
-| `DB_HOST` | Host de la base de datos | `localhost` |
-| `DB_USER` | Usuario de MySQL | `root` |
-| `DB_PASSWORD` | Contraseña de MySQL | `` (vacío) |
-| `DB_NAME` | Nombre de la base de datos | `veterilab2` |
-| `DB_PORT` | Puerto de MySQL | `3306` |
-| `PORT` | Puerto del servidor | `3001` |
-| `JWT_SECRET` | Clave secreta para JWT | Requerido |
-
-## 🛠️ Comandos Útiles
-
-```bash
-# Instalar dependencias
-npm install
-
-# Ejecutar en modo desarrollo
-npm run dev
-
-# Ejecutar en modo producción
-npm start
-
-# Verificar sintaxis
-npm run lint
-
-# Ejecutar tests
-npm test
+# CORS
+CORS_ORIGIN=http://localhost:3000
 ```
 
-## 🔧 Solución de Problemas
+---
 
-### Error de Conexión a Base de Datos
-- Verificar que MySQL esté ejecutándose
-- Confirmar credenciales en `.env`
-- Verificar que la base de datos exista
+## 📋 **FUNCIONALIDADES PRINCIPALES**
 
-### Error de Puerto en Uso
-- Cambiar `PORT` en `.env`
-- Verificar que no haya otro servicio usando el puerto
+### **👤 Gestión de Usuarios**
+- ✅ Registro de propietarios
+- ✅ Inicio de sesión con JWT
+- ✅ Autenticación segura
 
-### Error de Módulos
-- Ejecutar `npm install` nuevamente
-- Verificar versión de Node.js
+### **🐕 Gestión de Animales**
+- ✅ Registro de animales
+- ✅ Dropdowns dependientes (especie → raza)
+- ✅ Lista de animales por propietario
 
-## 📚 API Endpoints
+### **🔬 Análisis Clínicos**
+- ✅ Solicitud de análisis
+- ✅ Seguimiento de estado
+- ✅ Generación de PDF
+- ✅ Filtros avanzados
 
-### Autenticación
+---
+
+## 🌐 **API ENDPOINTS**
+
+### **👤 Usuarios**
 - `POST /api/users/register` - Registrar usuario
 - `POST /api/users/login` - Iniciar sesión
 
-### Animales
-- `GET /api/animals` - Obtener animales del usuario
+### **🐕 Animales**
 - `POST /api/animals/register` - Registrar animal
+- `GET /api/animals` - Listar animales del usuario
+- `GET /api/animals/user/list` - Lista simple para dropdowns
 - `GET /api/animals/especies/list` - Listar especies
 - `GET /api/animals/razas/especie/:id` - Razas por especie
 
-### Análisis
-- `GET /api/analyses` - Obtener análisis del usuario
+### **🔬 Análisis**
 - `POST /api/analyses` - Solicitar análisis
+- `GET /api/analyses` - Listar análisis del usuario
 - `GET /api/analyses/tipos` - Tipos de análisis disponibles
+- `GET /api/analyses/:id/pdf` - Datos para PDF
 
-## 🤝 Contribución
+---
+
+## 🛠️ **TECNOLOGÍAS UTILIZADAS**
+
+### **Backend**
+- **Node.js** - Runtime de JavaScript
+- **Express.js** - Framework web
+- **MySQL2** - Cliente de base de datos
+- **JWT** - Autenticación
+- **bcrypt** - Encriptación de contraseñas
+- **CORS** - Cross-Origin Resource Sharing
+
+### **Frontend**
+- **HTML5** - Estructura de páginas
+- **CSS3** - Estilos y diseño
+- **JavaScript ES6+** - Lógica del cliente
+- **Bootstrap 4** - Framework CSS
+
+### **Base de Datos**
+- **MySQL** - Sistema de gestión de base de datos
+
+---
+
+## 🔒 **SEGURIDAD**
+
+- **JWT Tokens** para autenticación
+- **Contraseñas encriptadas** con bcrypt
+- **Validación de entrada** en todos los endpoints
+- **Middleware de autenticación** para rutas protegidas
+- **CORS configurado** para seguridad
+
+---
+
+## 📱 **INTERFAZ DE USUARIO**
+
+- **Responsive Design** - Adaptable a todos los dispositivos
+- **Navegación intuitiva** - Menú claro y organizado
+- **Formularios validados** - Validación en tiempo real
+- **Dropdowns dependientes** - Selección lógica de especies y razas
+- **Tablas interactivas** - Filtros y ordenamiento
+
+---
+
+## 🚀 **COMANDOS ÚTILES**
+
+```bash
+# Desarrollo
+npm start          # Iniciar servidor
+npm run dev        # Modo desarrollo (si está configurado)
+
+# Base de datos
+npm run db:test    # Probar conexión a BD (si está configurado)
+
+# Limpieza
+npm run clean      # Limpiar archivos temporales (si está configurado)
+```
+
+---
+
+## 🐛 **SOLUCIÓN DE PROBLEMAS**
+
+### **Error de conexión a base de datos**
+- Verificar credenciales en `.env`
+- Asegurar que MySQL esté ejecutándose
+- Verificar que la base de datos exista
+
+### **Error de autenticación JWT**
+- Verificar que `JWT_SECRET` esté configurado
+- Limpiar localStorage del navegador
+- Verificar que el token no haya expirado
+
+### **Error de CORS**
+- Verificar configuración de `CORS_ORIGIN`
+- Asegurar que el frontend esté en el puerto correcto
+
+---
+
+## 🤝 **CONTRIBUCIÓN**
 
 1. Fork el proyecto
 2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
@@ -163,17 +229,32 @@ npm test
 4. Push a la rama (`git push origin feature/AmazingFeature`)
 5. Abre un Pull Request
 
-## 📄 Licencia
+---
+
+## 📄 **LICENCIA**
 
 Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE` para más detalles.
 
-## 📞 Soporte
+---
 
-Si tienes problemas o preguntas:
-1. Revisa la sección de solución de problemas
-2. Busca en los issues existentes
-3. Crea un nuevo issue con detalles del problema
+## 📞 **SOPORTE**
+
+Si tienes preguntas o problemas:
+- Crear un issue en GitHub
+- Contactar al equipo de desarrollo
+- Consultar la documentación de la API
 
 ---
 
-**¡Disfruta desarrollando! 🚀** 
+## 🎯 **ROADMAP FUTURO**
+
+- [ ] Panel de administración
+- [ ] Notificaciones por email
+- [ ] API para aplicaciones móviles
+- [ ] Sistema de reportes avanzados
+- [ ] Integración con laboratorios externos
+- [ ] Historial médico completo de animales
+
+---
+
+**✨ ¡Gracias por usar la aplicación! ✨** 

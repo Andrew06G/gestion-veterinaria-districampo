@@ -4,34 +4,24 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Registro de Usuario - Veterilab</title>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/style.css">
+  <title>Registro de Usuario</title>
+  <link rel="stylesheet" href="../assets/css/bootstrap-local.css">
+  <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 <body style="background-color: #b3b3b3;">
   <!-- Barra de navegación -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <nav class="navbar navbar-dark bg-dark">
     <a class="navbar-brand" href="#">
-      
+      🏥 Veterilab
     </a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav ml-auto">
-        <li class="nav-item"><a class="nav-link" href="/dashboard">Home</a></li>
-        <li class="nav-item"><a class="nav-link" href="/animals">Animales</a></li>
-        <li class="nav-item"><a class="nav-link" href="/solicitar-analisis">Solicitar Análisis</a></li>
-
-        <li class="nav-item"><a class="nav-link" href="#" onclick="logout()">Cerrar Sesión</a></li>
-      </ul>
+    <div class="navbar-nav">
+      <a class="nav-link" href="/login">Iniciar Sesión</a>
     </div>
   </nav>
 
   <div class="container mt-5">
     <div class="text-center mb-4">
-     
+      <h1>🏥</h1>
     </div>
     <h2 class="text-center">Registro de Usuario</h2>
     <form id="registerForm">
@@ -58,17 +48,124 @@
       <div class="form-group">
         <label for="contrasena">Contraseña:</label>
         <input type="password" class="form-control" id="contrasena" name="contrasena" required minlength="8">
+        
+        <!-- Indicador de fortaleza de contraseña -->
+        <div class="mt-2">
+          <div class="progress" style="height: 8px;">
+            <div id="passwordStrengthBar" class="progress-bar" role="progressbar" style="width: 0%"></div>
+          </div>
+          <small id="passwordStrengthText" class="text-muted">Fortaleza de la contraseña</small>
+        </div>
+        
+        <!-- Lista de requisitos -->
+        <div class="mt-2">
+          <small class="text-muted">La contraseña debe cumplir:</small>
+          <ul class="list-unstyled mt-1" style="font-size: 0.85em;">
+            <li id="reqLength"><span class="text-danger">✗</span> Mínimo 8 caracteres</li>
+            <li id="reqLowercase"><span class="text-danger">✗</span> Al menos una minúscula</li>
+            <li id="reqUppercase"><span class="text-danger">✗</span> Al menos una mayúscula</li>
+            <li id="reqNumber"><span class="text-danger">✗</span> Al menos un número</li>
+            <li id="reqSpecial"><span class="text-danger">✗</span> Al menos un carácter especial</li>
+          </ul>
+        </div>
       </div>
       <button type="submit" class="btn btn-primary btn-block">Registrarse</button>
     </form>
+    
+    <div class="text-center mt-3">
+      <p>¿Ya tienes cuenta? <a href="/login">Inicia sesión aquí</a></p>
+    </div>
   </div>
 
-  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="../js/script.js"></script>
+  <script src="../assets/js/script.js"></script>
   <script>
+    // Función para validar fortaleza de contraseña
+    function validatePasswordStrength(password) {
+      const validations = {
+        length: password.length >= 8,
+        lowercase: /[a-z]/.test(password),
+        uppercase: /[A-Z]/.test(password),
+        numbers: /\d/.test(password),
+        special: /[!@#$%^&*(),.?":{}|<>]/.test(password)
+      };
+      
+      const score = Object.values(validations).filter(Boolean).length;
+      const maxScore = Object.keys(validations).length;
+      
+      let strength = 'Débil';
+      let color = 'danger';
+      
+      if (score >= 4) {
+        strength = 'Fuerte';
+        color = 'success';
+      } else if (score >= 3) {
+        strength = 'Media';
+        color = 'warning';
+      }
+      
+      return {
+        score,
+        maxScore,
+        strength,
+        color,
+        validations,
+        percentage: Math.round((score / maxScore) * 100)
+      };
+    }
+
+    // Función para actualizar indicadores de contraseña
+    function updatePasswordIndicators(password) {
+      const validation = validatePasswordStrength(password);
+      
+      // Actualizar barra de progreso
+      const strengthBar = document.getElementById('passwordStrengthBar');
+      const strengthText = document.getElementById('passwordStrengthText');
+      
+      strengthBar.style.width = validation.percentage + '%';
+      strengthBar.className = `progress-bar bg-${validation.color}`;
+      strengthText.textContent = `Fortaleza: ${validation.strength} (${validation.percentage}%)`;
+      
+      // Actualizar requisitos
+      const reqs = {
+        length: document.getElementById('reqLength'),
+        lowercase: document.getElementById('reqLowercase'),
+        uppercase: document.getElementById('reqUppercase'),
+        numbers: document.getElementById('reqNumber'),
+        special: document.getElementById('reqSpecial')
+      };
+      
+      // Actualizar cada requisito
+      Object.keys(validation.validations).forEach(key => {
+        const req = reqs[key];
+        if (req) {
+          const icon = req.querySelector('span');
+          if (validation.validations[key]) {
+            icon.className = 'text-success';
+            icon.textContent = '✓';
+          } else {
+            icon.className = 'text-danger';
+            icon.textContent = '✗';
+          }
+        }
+      });
+      
+      return validation;
+    }
+
+    // Agregar evento para validación en tiempo real
+    document.getElementById('contrasena').addEventListener('input', function() {
+      const password = this.value;
+      updatePasswordIndicators(password);
+    });
+
     document.getElementById('registerForm').addEventListener('submit', function (e) {
       e.preventDefault();
+      
+      // Mostrar spinner de carga
+      if (window.VeterilabUtils && window.VeterilabUtils.showSpinner) {
+        window.VeterilabUtils.showSpinner(true);
+      }
+      
       const nombres = document.getElementById('nombres').value.trim();
       const apellidos = document.getElementById('apellidos').value.trim();
       const correo_electronico = document.getElementById('correo_electronico').value.trim();
@@ -78,15 +175,33 @@
 
       if (!nombres || !apellidos || !correo_electronico || !telefono || !direccion || !contrasena) {
         alert('Por favor, complete todos los campos.');
+        if (window.VeterilabUtils && window.VeterilabUtils.showSpinner) {
+          window.VeterilabUtils.showSpinner(false);
+        }
         return;
       }
 
-      if (contrasena.length < 8) {
-        alert('La contraseña debe tener al menos 8 caracteres.');
+      // Validar contraseña con todos los requisitos
+      const passwordValidation = validatePasswordStrength(contrasena);
+      if (passwordValidation.score < 3) {
+        alert('La contraseña es muy débil. Debe cumplir al menos 3 de los 5 requisitos de seguridad.');
+        if (window.VeterilabUtils && window.VeterilabUtils.showSpinner) {
+          window.VeterilabUtils.showSpinner(false);
+        }
         return;
       }
 
-      // Realizar la solicitud al backend con el puerto corregido
+      // Validar formato de correo electrónico
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(correo_electronico)) {
+        alert('Por favor, ingrese un formato de correo electrónico válido.');
+        if (window.VeterilabUtils && window.VeterilabUtils.showSpinner) {
+          window.VeterilabUtils.showSpinner(false);
+        }
+        return;
+      }
+
+      // Realizar la solicitud al backend
       fetch('http://localhost:3001/api/users/register', {
         method: 'POST',
         headers: {
@@ -105,6 +220,8 @@
         if (response.ok) {
           alert('Usuario registrado exitosamente. Ahora puede iniciar sesión.');
           document.getElementById('registerForm').reset();
+          // Limpiar indicadores
+          updatePasswordIndicators('');
           // Redirigir al login después del registro exitoso
           window.location.href = '/login';
         } else {
@@ -116,10 +233,14 @@
       .catch(err => {
         alert('Error al registrar el usuario. Intente nuevamente.');
         console.error('Error:', err);
+      })
+      .finally(() => {
+        // Ocultar spinner de carga
+        if (window.VeterilabUtils && window.VeterilabUtils.showSpinner) {
+          window.VeterilabUtils.showSpinner(false);
+        }
       });
     });
-
-    // La función logout ya está definida en session.js
   </script>
 </body>
 </html>

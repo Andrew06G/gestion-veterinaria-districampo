@@ -6,7 +6,7 @@
   <title>Mis Análisis - Veterilab</title>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 <body style="background-color: #b3b3b3;">
   <!-- Barra de navegación -->
@@ -47,6 +47,7 @@
           <option value="">Todos los estados</option>
           <option value="Pendiente">Pendiente</option>
           <option value="En Proceso">En Proceso</option>
+          <option value="Finalizado">Finalizado</option>
           <option value="Completado">Completado</option>
         </select>
       </div>
@@ -84,7 +85,7 @@
   </div>
 
   <!-- Incluir el sistema de gestión de sesión -->
-  <script src="../js/session.js"></script>
+  <script src="../assets/js/session.js"></script>
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -160,8 +161,25 @@
     // Función para llenar los filtros con datos únicos
     function llenarFiltros(analisis) {
       const filterAnimal = document.getElementById('filterAnimal');
+      const filterEstado = document.getElementById('filterEstado');
       const animales = [...new Set(analisis.map(a => a.nombre_animal))];
+      const estados = [...new Set(analisis.map(a => a.nombre_estado))];
       
+      // Limpiar opciones existentes del filtro de estado
+      filterEstado.innerHTML = '<option value="">Todos los estados</option>';
+      
+      // Agregar estados únicos encontrados en los datos
+      estados.forEach(estado => {
+        const option = document.createElement('option');
+        option.value = estado;
+        option.textContent = estado;
+        filterEstado.appendChild(option);
+      });
+      
+      // Mostrar en consola los estados disponibles para depuración
+      console.log('Estados disponibles en los datos:', estados);
+      
+      // Llenar filtro de animales
       animales.forEach(animal => {
         const option = document.createElement('option');
         option.value = animal;
@@ -187,25 +205,32 @@
       const filterEstado = document.getElementById('filterEstado').value;
       const filterFecha = document.getElementById('filterFecha').value;
 
+      console.log('Aplicando filtros:', { filterAnimal, filterEstado, filterFecha });
+
       try {
         const response = await sessionManager.authenticatedFetch('http://localhost:3001/api/analyses');
         
         if (response && response.ok) {
           let analisis = await response.json();
+          console.log('📊 Total de análisis antes de filtrar:', analisis.length);
           
           // Aplicar filtros
           if (filterAnimal) {
             analisis = analisis.filter(a => a.nombre_animal === filterAnimal);
+            console.log('Filtrado por animal:', filterAnimal, 'Resultado:', analisis.length);
           }
           
           if (filterEstado) {
             analisis = analisis.filter(a => a.nombre_estado === filterEstado);
+            console.log('Filtrado por estado:', filterEstado, 'Resultado:', analisis.length);
           }
           
           if (filterFecha) {
             analisis = analisis.filter(a => a.fecha_emision.startsWith(filterFecha));
+            console.log('Filtrado por fecha:', filterFecha, 'Resultado:', analisis.length);
           }
           
+          console.log('Análisis después de aplicar filtros:', analisis.length);
           mostrarAnalisis(analisis);
         }
       } catch (error) {
