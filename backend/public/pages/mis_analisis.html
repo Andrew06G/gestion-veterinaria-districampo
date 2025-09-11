@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mis Análisis - Veterilab</title>
+  <title>Mis Análisis</title>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../assets/css/style.css">
@@ -147,11 +147,8 @@
             </span>
           </td>
           <td>
-            <button class="btn btn-info btn-sm" onclick="verDetalles(${analisis.id_muestra})">
-              👁️ Ver
-            </button>
-            <button class="btn btn-success btn-sm" onclick="generarPDF(${analisis.id_muestra})">
-              📄 PDF
+            <button class="btn btn-success btn-sm" onclick="generarPDF(${analisis.id_muestra}, this)">
+              📄 Descargar PDF
             </button>
           </td>
         </tr>
@@ -253,28 +250,119 @@
       }
     }
 
-    // Función para ver detalles de un análisis
-    function verDetalles(idMuestra) {
-      alert(`Detalles del análisis ${idMuestra}\n\nEsta funcionalidad se va a trabajar en las siguientes actualizaciones.`);
-    }
 
     // Función para generar PDF
-    async function generarPDF(idMuestra) {
+    async function generarPDF(idMuestra, buttonElement) {
       try {
-        const response = await sessionManager.authenticatedFetch(`http://localhost:3001/api/analyses/${idMuestra}/pdf`);
+        // Mostrar indicador de carga
+        const button = buttonElement || document.querySelector(`button[onclick*="${idMuestra}"]`);
+        const originalText = button.innerHTML;
+        button.innerHTML = '⏳ Generando...';
+        button.disabled = true;
+        
+        // Agregar timestamp para evitar caché
+        const timestamp = new Date().getTime();
+        const url = `http://localhost:3001/api/analyses/${idMuestra}/pdf?t=${timestamp}`;
+        console.log('Solicitando PDF desde:', url);
+        
+        const response = await sessionManager.authenticatedFetch(url);
+        
+        console.log('Respuesta recibida:', {
+          status: response.status,
+          statusText: response.statusText,
+          headers: Object.fromEntries(response.headers.entries())
+        });
         
         if (response && response.ok) {
-          const analysis = await response.json();
-          alert(`PDF generado para el análisis ${idMuestra}\n\nAnimal: ${analysis.nombre_animal}\nTipo: ${analysis.nombre_analisis}\nResultado: ${analysis.resultado}`);
+          console.log('Respuesta exitosa, obteniendo blob...');
+          // Obtener el blob del PDF
+          const blob = await response.blob();
+          console.log('Blob obtenido:', {
+            size: blob.size,
+            type: blob.type
+          });
+          
+          // Crear URL temporal para abrir en nueva ventana
+          const url = window.URL.createObjectURL(blob);
+          
+          // Abrir PDF en nueva ventana
+          const newWindow = window.open(url, '_blank');
+          
+          // Si no se pudo abrir (popup bloqueado), crear enlace de descarga
+          if (!newWindow) {
+            console.log('Popup bloqueado, creando enlace de descarga...');
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `analisis_${idMuestra}.pdf`;
+            a.style.display = 'none';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+          }
+          
+          // Limpiar URL después de un tiempo
+          setTimeout(() => {
+            window.URL.revokeObjectURL(url);
+          }, 1000);
+          
+          // Mostrar mensaje de éxito
+          showNotification('PDF generado y descargado exitosamente', 'success');
         } else if (!response) {
+          console.log('No se recibió respuesta del servidor');
           return;
         } else {
-          alert('Error al generar el PDF');
+          console.error('Error al generar PDF:', {
+            status: response.status,
+            statusText: response.statusText,
+            url: url
+          });
+          
+          try {
+            const errorData = await response.json();
+            console.error('Detalles del error:', errorData);
+            showNotification(`Error: ${errorData.message || response.statusText}`, 'error');
+          } catch (e) {
+            console.error('No se pudo parsear el error:', e);
+            showNotification(`Error ${response.status}: ${response.statusText}`, 'error');
+          }
         }
       } catch (error) {
         console.error('Error al generar PDF:', error);
-        alert('Error al generar el PDF');
+        showNotification('Error al generar el PDF', 'error');
+      } finally {
+        // Restaurar botón
+        const button = buttonElement || document.querySelector(`button[onclick*="${idMuestra}"]`);
+        button.innerHTML = '📄 Descargar PDF';
+        button.disabled = false;
       }
+    }
+
+    // Función para mostrar notificaciones
+    function showNotification(message, type = 'info') {
+      // Crear elemento de notificación
+      const notification = document.createElement('div');
+      notification.className = `alert alert-${type === 'error' ? 'danger' : type} alert-dismissible fade show`;
+      notification.style.position = 'fixed';
+      notification.style.top = '20px';
+      notification.style.right = '20px';
+      notification.style.zIndex = '9999';
+      notification.style.minWidth = '300px';
+      
+      notification.innerHTML = `
+        ${message}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      `;
+      
+      document.body.appendChild(notification);
+      
+      // Auto-remover después de 5 segundos
+      setTimeout(() => {
+        if (notification.parentNode) {
+          notification.parentNode.removeChild(notification);
+        }
+      }, 5000);
     }
   </script>
 

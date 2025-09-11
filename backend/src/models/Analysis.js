@@ -80,26 +80,34 @@ class Analysis {
     try {
       console.log('📄 Modelo: Obteniendo análisis para PDF, ID:', id);
       
-      // Corregir la consulta: usar JOIN con animal para obtener id_propietario
+      // Consulta corregida según la estructura real de la BD
       const [rows] = await db.query(`
         SELECT 
           m.id_muestra,
+          a.id_animal,
           a.nombre_animal,
           a.edad,
+          p.id_propietario,
           p.nombres as propietario_nombres,
           p.apellidos as propietario_apellidos,
           p.telefono as propietario_telefono,
           p.direccion as propietario_direccion,
+          p.correo_electronico as propietario_email,
+          e.nombre_especie,
+          ra.nombre_raza,
+          tm.nombre_tipo_muestra,
           ta.nombre_analisis,
           ta.precio,
           r.resultado,
           r.fecha_emision,
           te.nombre_estado,
-          m.fecha_toma,
-          a.id_propietario
+          m.fecha_toma
         FROM muestra m
         JOIN animal a ON m.id_animal = a.id_animal
         JOIN propietario p ON a.id_propietario = p.id_propietario
+        JOIN especie e ON a.id_especie = e.id_especie
+        JOIN raza ra ON a.id_raza = ra.id_raza
+        JOIN tipo_muestra tm ON m.id_tipo_muestra = tm.id_tipo_muestra
         JOIN resultado r ON m.id_muestra = r.id_muestra
         JOIN tipo_analisis ta ON r.id_tipo_analisis = ta.id_tipo_analisis
         JOIN tipo_estado te ON m.id_estado = te.id_tipo_estado

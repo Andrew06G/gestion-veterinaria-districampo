@@ -79,5 +79,4 @@ app.listen(PORT, () => {
   console.log('- /animals - Gestión de animales');
   console.log('- /solicitar-analisis - Solicitar análisis');
   console.log('- /mis-analisis - Mis análisis');
-  console.log('Arquitectura: MVC + REST API');
 });
