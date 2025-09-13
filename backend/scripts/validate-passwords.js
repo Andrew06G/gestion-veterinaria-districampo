@@ -40,7 +40,8 @@ function isCommonPassword(password) {
     '123456', 'password', '123456789', '12345678', '12345', 'qwerty',
     'abc123', '111111', '123123', 'admin', 'letmein', 'welcome',
     'monkey', '1234567890', 'dragon', 'baseball', 'football',
-    'shadow', 'master', 'jordan', 'superman', 'harley', 'hunter'
+    'shadow', 'master', 'jordan', 'superman', 'harley', 'hunter', 'contraseña',
+    '654321', '54321', 'messi', 'cristiano',  
   ];
   
   return commonPasswords.includes(password.toLowerCase());
