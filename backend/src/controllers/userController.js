@@ -2,7 +2,13 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
-const JWT_SECRET = process.env.JWT_SECRET || 'tu_secreto_jwt_aqui'; //Pronto se cambiara
+const JWT_SECRET = process.env.JWT_SECRET;
+
+// Validar que JWT_SECRET esté configurado
+if (!JWT_SECRET) {
+  console.error('ERROR: JWT_SECRET no está configurado en las variables de entorno');
+  console.error('Agrega JWT_SECRET=tu_clave_aqui a tu archivo .env');
+}
 
 // Registrar un nuevo usuario
 const registerUser = async (req, res) => {
@@ -78,7 +84,7 @@ const loginUser = async (req, res) => {
     }
 
     // Buscar usuario
-    const user = await User.findByEmail(correo_electronico);
+    const user = await User.findByEmailDecrypted(correo_electronico);
     if (!user) {
       return res.status(401).json({ message: 'Credenciales inválidas' });
     }

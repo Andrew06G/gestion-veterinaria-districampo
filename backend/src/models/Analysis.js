@@ -1,41 +1,37 @@
 const db = require('../config/db');
+const { decryptObject } = require('../utils/crypto');
+
+// Campos sensibles que requieren descifrado
+const SENSITIVE_FIELDS = ['nombre_animal', 'propietario_nombres', 'propietario_apellidos', 'propietario_telefono', 'propietario_direccion', 'propietario_email'];
 
 class Analysis {
   static async create(analysisData) {
     try {
-      console.log(' Modelo: Creando análisis...');
       const { id_animal, id_tipo_analisis, fecha_solicitud, id_propietario } = analysisData;
       
-      console.log(' Datos para crear:', { id_animal, id_tipo_analisis, fecha_solicitud, id_propietario });
-      
       // Crear la muestra (incluyendo id_tipo_muestra que es requerido)
-      console.log(' Insertando muestra...');
       const [muestraResult] = await db.query(
         'INSERT INTO muestra (id_animal, id_estado, fecha_toma, id_tipo_muestra) VALUES (?, 1, ?, 1)',
         [id_animal, fecha_solicitud]
       );
       
       const id_muestra = muestraResult.insertId;
-      console.log(' Muestra creada con ID:', id_muestra);
       
       // Crear el resultado (incluyendo id_animal que es requerido)
-      console.log(' Insertando resultado...');
       await db.query(
         'INSERT INTO resultado (id_muestra, id_tipo_analisis, resultado, fecha_emision, id_animal) VALUES (?, ?, "Pendiente", ?, ?)',
         [id_muestra, id_tipo_analisis, fecha_solicitud, id_animal]
       );
       
-      console.log(' Resultado creado exitosamente');
       return id_muestra;
     } catch (error) {
-      console.error('❌ Error en modelo create:', error);
+      console.error('Error en modelo create:', error);
       throw new Error(`Error al crear análisis: ${error.message}`);
     }
   }
 
   static async findByOwner(ownerId) {
     try {
-      console.log(' Modelo: Buscando análisis del propietario:', ownerId);
       
       // Corregir la consulta: usar JOIN con animal para obtener id_propietario
       const [rows] = await db.query(`
@@ -56,29 +52,27 @@ class Analysis {
         ORDER BY m.fecha_toma DESC
       `, [ownerId]);
       
-      console.log(' Análisis encontrados en modelo:', rows.length);
-      return rows;
+      
+      // Descifrar los datos sensibles
+      return rows.map(row => decryptObject(row, SENSITIVE_FIELDS));
     } catch (error) {
-      console.error('❌ Error en modelo findByOwner:', error);
+      console.error('Error en modelo findByOwner:', error);
       throw new Error(`Error al buscar análisis del propietario: ${error.message}`);
     }
   }
 
   static async getAnalysisTypes() {
     try {
-      console.log(' Modelo: Obteniendo tipos de análisis...');
       const [rows] = await db.query('SELECT id_tipo_analisis, nombre_analisis, precio FROM tipo_analisis');
-      console.log(' Tipos de análisis encontrados:', rows.length);
       return rows;
     } catch (error) {
-      console.error('❌ Error en modelo getAnalysisTypes:', error);
+      console.error('Error en modelo getAnalysisTypes:', error);
       throw new Error(`Error al obtener tipos de análisis: ${error.message}`);
     }
   }
 
   static async getByIdForPDF(id) {
     try {
-      console.log('📄 Modelo: Obteniendo análisis para PDF, ID:', id);
       
       // Consulta corregida según la estructura real de la BD
       const [rows] = await db.query(`
@@ -114,10 +108,15 @@ class Analysis {
         WHERE m.id_muestra = ?
       `, [id]);
       
-      console.log(' Análisis para PDF encontrado:', rows.length > 0);
+      
+      if (rows[0]) {
+        // Descifrar los datos sensibles antes de devolver
+        return decryptObject(rows[0], SENSITIVE_FIELDS);
+      }
+      
       return rows[0];
     } catch (error) {
-      console.error('❌ Error en modelo getByIdForPDF:', error);
+      console.error('Error en modelo getByIdForPDF:', error);
       throw new Error(`Error al obtener análisis para PDF: ${error.message}`);
     }
   }

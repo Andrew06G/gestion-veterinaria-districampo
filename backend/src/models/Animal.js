@@ -1,12 +1,20 @@
 const db = require('../config/db');
+const { encrypt, decrypt, encryptObject, decryptObject } = require('../utils/crypto');
+
+// Campos sensibles que requieren cifrado
+const SENSITIVE_FIELDS = ['nombre_animal'];
 
 class Animal {
   static async create(animalData) {
     try {
       const { nombre_animal, edad, id_raza, id_especie, id_propietario } = animalData;
+      
+      // Cifrar el nombre del animal
+      const encryptedData = encryptObject({ nombre_animal }, SENSITIVE_FIELDS);
+      
       const [result] = await db.query(
         'INSERT INTO animal (nombre_animal, edad, id_raza, id_especie, id_propietario) VALUES (?, ?, ?, ?, ?)',
-        [nombre_animal, edad, id_raza, id_especie, id_propietario]
+        [encryptedData.nombre_animal, edad, id_raza, id_especie, id_propietario]
       );
       return result.insertId;
     } catch (error) {
@@ -32,7 +40,9 @@ class Animal {
         WHERE a.id_propietario = ?
         ORDER BY a.nombre_animal
       `, [ownerId]);
-      return rows;
+      
+      // Descifrar los datos sensibles
+      return rows.map(row => decryptObject(row, SENSITIVE_FIELDS));
     } catch (error) {
       throw new Error(`Error al buscar animales del propietario: ${error.message}`);
     }
@@ -46,7 +56,9 @@ class Animal {
         WHERE id_propietario = ?
         ORDER BY nombre_animal
       `, [ownerId]);
-      return rows;
+      
+      // Descifrar los nombres de los animales
+      return rows.map(row => decryptObject(row, SENSITIVE_FIELDS));
     } catch (error) {
       throw new Error(`Error al obtener lista simple de animales: ${error.message}`);
     }

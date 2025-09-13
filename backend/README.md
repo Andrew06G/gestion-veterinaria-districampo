@@ -97,7 +97,8 @@ DB_PORT=3306
 
 # Servidor
 PORT=3001
-JWT_SECRET=tu_secreto_jwt_super_seguro
+JWT_SECRET=!V3t3R1L4b @!
+ENCRYPTION_KEY=your_32_byte_hex_encryption_key_here
 
 # CORS
 CORS_ORIGIN=http://localhost:3000
@@ -108,12 +109,13 @@ CORS_ORIGIN=http://localhost:3000
 ## 📋 **FUNCIONALIDADES PRINCIPALES**
 
 ### **👤 Gestión de Usuarios**
-- ✅ Registro de propietarios
-- ✅ Inicio de sesión con JWT
-- ✅ Autenticación segura
+- ✅ Registro de propietarios con validación de contraseñas
+- ✅ Inicio de sesión con JWT seguro
+- ✅ Autenticación con tokens de 24h
+- ✅ Cifrado de datos sensibles (email, teléfono, dirección)
 
 ### **🐕 Gestión de Animales**
-- ✅ Registro de animales
+- ✅ Registro de animales con cifrado de nombres
 - ✅ Dropdowns dependientes (especie → raza)
 - ✅ Lista de animales por propietario
 
@@ -200,6 +202,31 @@ npm run db:test    # Probar conexión a BD (si está configurado)
 # Limpieza
 npm run clean      # Limpiar archivos temporales (si está configurado)
 ```
+
+---
+
+## 🔒 **SEGURIDAD**
+
+### **Contraseñas**
+- Hash bcrypt con 12 salt rounds
+- Validación de fortaleza en frontend y backend
+- Criterios: longitud mínima, complejidad, caracteres especiales
+
+### **Datos Sensibles**
+- Cifrado AES-256-CBC para datos sensibles
+- Campos cifrados: emails, teléfonos, direcciones, nombres de animales
+- IV aleatorio para cada cifrado
+- Descifrado automático en consultas
+
+### **Autenticación**
+- JWT con clave segura configurada
+- Tokens con expiración de 24 horas
+- Middleware de autenticación en todas las rutas protegidas
+
+### **Variables de Entorno**
+- `JWT_SECRET`: Clave para firmar tokens JWT
+- `ENCRYPTION_KEY`: Clave de 32 bytes para cifrado AES-256
+- Nunca commitear archivos `.env` al repositorio
 
 ---
 
