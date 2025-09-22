@@ -12,7 +12,7 @@
   <!-- Barra de navegación -->
   <nav class="navbar navbar-dark bg-dark">
     <a class="navbar-brand" href="#">
-      🏥 Veterilab
+      🏥 DistriCampo
     </a>
     <div class="navbar-nav">
       <a class="nav-link" href="/login">Iniciar Sesión</a>
@@ -162,8 +162,8 @@
       e.preventDefault();
       
       // Mostrar spinner de carga
-      if (window.VeterilabUtils && window.VeterilabUtils.showSpinner) {
-        window.VeterilabUtils.showSpinner(true);
+      if (window.DistriCampoUtils && window.DistriCampoUtils.showSpinner) {
+        window.DistriCampoUtils.showSpinner(true);
       }
       
       const nombres = document.getElementById('nombres').value.trim();
@@ -175,8 +175,8 @@
 
       if (!nombres || !apellidos || !correo_electronico || !telefono || !direccion || !contrasena) {
         alert('Por favor, complete todos los campos.');
-        if (window.VeterilabUtils && window.VeterilabUtils.showSpinner) {
-          window.VeterilabUtils.showSpinner(false);
+        if (window.DistriCampoUtils && window.DistriCampoUtils.showSpinner) {
+          window.DistriCampoUtils.showSpinner(false);
         }
         return;
       }
@@ -185,8 +185,8 @@
       const passwordValidation = validatePasswordStrength(contrasena);
       if (passwordValidation.score < 3) {
         alert('La contraseña es muy débil. Debe cumplir al menos 3 de los 5 requisitos de seguridad.');
-        if (window.VeterilabUtils && window.VeterilabUtils.showSpinner) {
-          window.VeterilabUtils.showSpinner(false);
+        if (window.DistriCampoUtils && window.DistriCampoUtils.showSpinner) {
+          window.DistriCampoUtils.showSpinner(false);
         }
         return;
       }
@@ -195,8 +195,8 @@
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(correo_electronico)) {
         alert('Por favor, ingrese un formato de correo electrónico válido.');
-        if (window.VeterilabUtils && window.VeterilabUtils.showSpinner) {
-          window.VeterilabUtils.showSpinner(false);
+        if (window.DistriCampoUtils && window.DistriCampoUtils.showSpinner) {
+          window.DistriCampoUtils.showSpinner(false);
         }
         return;
       }
@@ -236,8 +236,8 @@
       })
       .finally(() => {
         // Ocultar spinner de carga
-        if (window.VeterilabUtils && window.VeterilabUtils.showSpinner) {
-          window.VeterilabUtils.showSpinner(false);
+        if (window.DistriCampoUtils && window.DistriCampoUtils.showSpinner) {
+          window.DistriCampoUtils.showSpinner(false);
         }
       });
     });

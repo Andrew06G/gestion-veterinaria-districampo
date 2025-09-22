@@ -231,7 +231,7 @@ function throttle(func, limit) {
 }
 
 // Exportar funciones para uso global
-window.VeterilabUtils = {
+window.DistriCampoUtils = {
   showNotification,
   isValidEmail,
   isValidPhone,
@@ -253,4 +253,4 @@ window.VeterilabUtils = {
 };
 
 // Log de inicialización
-console.log('🔧 Veterilab Utils cargado correctamente');
+console.log('🔧 DistriCampo Utils cargado correctamente');

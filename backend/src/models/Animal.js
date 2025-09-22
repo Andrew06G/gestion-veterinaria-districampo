@@ -84,6 +84,83 @@ class Animal {
       throw new Error(`Error al obtener razas por especie: ${error.message}`);
     }
   }
+
+  static async findById(id) {
+    try {
+      const [rows] = await db.query(
+        'SELECT * FROM animal WHERE id_animal = ?',
+        [id]
+      );
+      
+      if (rows.length === 0) {
+        return null;
+      }
+      
+      // Descifrar los datos sensibles
+      return decryptObject(rows[0], SENSITIVE_FIELDS);
+    } catch (error) {
+      throw new Error(`Error al buscar animal por ID: ${error.message}`);
+    }
+  }
+
+  static async update(id, animalData) {
+    try {
+      const { nombre_animal, edad, id_raza, id_especie } = animalData;
+      
+      // Cifrar el nombre del animal
+      const encryptedData = encryptObject({ nombre_animal }, SENSITIVE_FIELDS);
+      
+      await db.query(
+        'UPDATE animal SET nombre_animal = ?, edad = ?, id_raza = ?, id_especie = ? WHERE id_animal = ?',
+        [encryptedData.nombre_animal, edad, id_raza, id_especie, id]
+      );
+      
+      return true;
+    } catch (error) {
+      throw new Error(`Error al actualizar animal: ${error.message}`);
+    }
+  }
+
+  static async delete(id) {
+    try {
+      console.log(`Iniciando eliminación del animal ID: ${id}`);
+      
+      // Primero eliminar los resultados relacionados a las muestras del animal
+      console.log('Eliminando resultados relacionados...');
+      const result1 = await db.query(`
+        DELETE r FROM resultado r 
+        INNER JOIN muestra m ON r.id_muestra = m.id_muestra 
+        WHERE m.id_animal = ?
+      `, [id]);
+      console.log(`Resultados eliminados: ${result1[0].affectedRows}`);
+      
+      // Luego eliminar las muestras relacionadas
+      console.log('Eliminando muestras relacionadas...');
+      const result2 = await db.query('DELETE FROM muestra WHERE id_animal = ?', [id]);
+      console.log(`Muestras eliminadas: ${result2[0].affectedRows}`);
+      
+      // Intentar eliminar de la tabla usuario_animal si existe (manejar error si no existe)
+      try {
+        console.log('Intentando eliminar de usuario_animal...');
+        const result3 = await db.query('DELETE FROM usuario_animal WHERE id_animal = ?', [id]);
+        console.log(`Registros de usuario_animal eliminados: ${result3[0].affectedRows}`);
+      } catch (tableError) {
+        // Si la tabla no existe, continuar sin error
+        console.log('Tabla usuario_animal no existe, continuando...');
+      }
+      
+      // Finalmente eliminar el animal
+      console.log('Eliminando el animal...');
+      const result4 = await db.query('DELETE FROM animal WHERE id_animal = ?', [id]);
+      console.log(`Animal eliminado: ${result4[0].affectedRows}`);
+      
+      console.log('Eliminación completada exitosamente');
+      return true;
+    } catch (error) {
+      console.error('Error detallado en eliminación:', error);
+      throw new Error(`Error al eliminar animal: ${error.message}`);
+    }
+  }
 }
 
 module.exports = Animal;

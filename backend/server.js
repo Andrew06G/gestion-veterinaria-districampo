@@ -56,6 +56,10 @@ app.get('/animals', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'pages', 'animals.html'));
 });
 
+app.get('/animal-info', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'pages', 'animal_info.html'));
+});
+
 app.get('/solicitar-analisis', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'pages', 'solicitar_analisis.html'));
 });
@@ -76,7 +80,8 @@ app.listen(PORT, () => {
   console.log('- /login - Página de inicio de sesión');
   console.log('- /register - Página de registro');
   console.log('- /dashboard - Dashboard principal');
-  console.log('- /animals - Gestión de animales');
+  console.log('- /animals - Registro de animales');
+  console.log('- /animal-info - Información de animales');
   console.log('- /solicitar-analisis - Solicitar análisis');
   console.log('- /mis-analisis - Mis análisis');
 });

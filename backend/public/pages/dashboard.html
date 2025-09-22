@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard - Veterilab</title>
+  <title>Dashboard - DistriCampo</title>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../assets/css/style.css">
@@ -41,9 +41,9 @@
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ml-auto">
         <li class="nav-item"><a class="nav-link" href="/dashboard">Home</a></li>
-        <li class="nav-item"><a class="nav-link" href="/animals">Animales</a></li>
+        <li class="nav-item"><a class="nav-link" href="/animals">Registro de Animales</a></li>
+        <li class="nav-item"><a class="nav-link" href="/animal-info">Información de Animales</a></li>
         <li class="nav-item"><a class="nav-link" href="/solicitar-analisis">Solicitar Análisis</a></li>
-
         <li class="nav-item"><a class="nav-link" href="/mis-analisis">Mis Análisis</a></li>
         <li class="nav-item"><a class="nav-link" href="#" onclick="logout()">Cerrar Sesión</a></li>
       </ul>
@@ -106,7 +106,7 @@
           const url = window.URL.createObjectURL(blob);
           const a = document.createElement('a');
           a.href = url;
-          a.download = 'Reporte_Veterilab.pdf';
+          a.download = 'Reporte_DistriCampo.pdf';
           document.body.appendChild(a);
           a.click();
           a.remove();

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Registro de Animales - Veterilab</title>
+  <title>Registro de Animales - DistriCampo</title>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../assets/css/style.css">
@@ -20,9 +20,9 @@
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ml-auto">
         <li class="nav-item"><a class="nav-link" href="/dashboard">Home</a></li>
-        <li class="nav-item"><a class="nav-link active" href="/animals">Animales</a></li>
+        <li class="nav-item"><a class="nav-link active" href="/animals">Registro de Animales</a></li>
+        <li class="nav-item"><a class="nav-link" href="/animal-info">Información de Animales</a></li>
         <li class="nav-item"><a class="nav-link" href="/solicitar-analisis">Solicitar Análisis</a></li>
-
         <li class="nav-item"><a class="nav-link" href="/mis-analisis">Mis Análisis</a></li>
         <li class="nav-item"><a class="nav-link" href="#" onclick="logout()">Cerrar Sesión</a></li>
       </ul>
@@ -60,12 +60,12 @@
       <button type="submit" class="btn btn-primary btn-block">Registrar Animal</button>
     </form>
 
-    <!-- Sección para mostrar animales registrados -->
-    <div class="mt-5">
-      <h3 class="text-center">Mis Animales Registrados</h3>
-      <div id="animalesList" class="row">
-        <!-- Los animales se cargarán aquí dinámicamente -->
-      </div>
+    <!-- Enlace a la página de información de animales -->
+    <div class="mt-5 text-center">
+      <p class="text-muted">¿Quieres ver, editar o eliminar tus animales registrados?</p>
+      <a href="/animal-info" class="btn btn-info btn-lg">
+        <i class="fas fa-paw"></i> Ver Información de Animales
+      </a>
     </div>
   </div>
 
@@ -83,9 +83,6 @@
       // Cargar especies y configurar dropdowns dependientes
       cargarEspecies();
       configurarDropdownsDependientes();
-
-      // Cargar lista de animales
-      cargarAnimales();
 
       // Lógica de manejo del formulario para registrar un animal
       const animalForm = document.getElementById('animalForm');
@@ -127,7 +124,6 @@
             if (response && response.ok) {
               alert('Animal registrado exitosamente');
               animalForm.reset(); // Limpiar el formulario después del registro exitoso
-              cargarAnimales(); // Recargar la lista de animales
             } else if (!response) {
               // La función authenticatedFetch ya maneja la redirección
               return;
@@ -142,46 +138,6 @@
         });
       }
     });
-
-    // Función para cargar la lista de animales
-    async function cargarAnimales() {
-      try {
-        const response = await sessionManager.authenticatedFetch('http://localhost:3001/api/animals');
-        
-        if (response && response.ok) {
-          const animales = await response.json();
-          const animalesList = document.getElementById('animalesList');
-          
-          if (animales.length === 0) {
-            animalesList.innerHTML = '<div class="col-12 text-center"><p>No tienes animales registrados</p></div>';
-            return;
-          }
-
-          animalesList.innerHTML = animales.map(animal => `
-            <div class="col-md-4 mb-3">
-              <div class="card">
-                <div class="card-body">
-                  <h5 class="card-title">${animal.nombre_animal}</h5>
-                  <p class="card-text">
-                    <strong>Edad:</strong> ${animal.edad} años<br>
-                    <strong>Raza:</strong> ${animal.nombre_raza}<br>
-                    <strong>Especie:</strong> ${animal.nombre_especie}<br>
-                    <strong>Propietario:</strong> ${animal.propietario_nombres} ${animal.propietario_apellidos}
-                  </p>
-                </div>
-              </div>
-            </div>
-          `).join('');
-        } else if (!response) {
-          // La función authenticatedFetch ya maneja la redirección
-          return;
-        } else {
-          console.error('Error al cargar animales');
-        }
-      } catch (error) {
-        console.error('Error al cargar animales:', error);
-      }
-    }
 
     // Cargar especies disponibles
     async function cargarEspecies() {
