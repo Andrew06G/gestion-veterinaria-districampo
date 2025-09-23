@@ -55,6 +55,22 @@ h2.text-center::after {
   background: #f8f9fa;
 }
 
+/* Corregir los selects (altura mayor y alineación) */
+select.form-control {
+  min-height: 44px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  line-height: 1.4;
+}
+
+/* Corrección para los selects, compatibilidad con Bootstrap 4  */
+.custom-select {
+  min-height: 44px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  line-height: 1.4;
+}
+
 .form-control:focus {
   border-color: #667eea;
   box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
