@@ -111,7 +111,7 @@
           }
 
           try {
-            const response = await sessionManager.authenticatedFetch('http://localhost:3001/api/animals/register', {
+            const response = await sessionManager.authenticatedFetch('/api/animals/register', {
               method: 'POST',
               body: JSON.stringify({
                 nombre_animal: nombre_animal,
@@ -142,7 +142,7 @@
     // Cargar especies disponibles
     async function cargarEspecies() {
       try {
-        const response = await sessionManager.authenticatedFetch('http://localhost:3001/api/animals/especies/list');
+        const response = await sessionManager.authenticatedFetch('/api/animals/especies/list');
         
         if (response && response.ok) {
           const especies = await response.json();
@@ -194,7 +194,7 @@
     // Cargar razas por especie
     async function cargarRazasPorEspecie(especieId) {
       try {
-        const response = await sessionManager.authenticatedFetch(`http://localhost:3001/api/animals/razas/especie/${especieId}`);
+        const response = await sessionManager.authenticatedFetch(`/api/animals/razas/especie/${especieId}`);
         
         if (response && response.ok) {
           const razas = await response.json();

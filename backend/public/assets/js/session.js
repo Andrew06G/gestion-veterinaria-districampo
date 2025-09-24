@@ -1,4 +1,4 @@
-// Sistema de gestión de sesión para Veterilab
+// Sistema de gestión de sesión para DistriCampo
 class SessionManager {
   constructor() {
     this.token = localStorage.getItem('token');
@@ -71,9 +71,14 @@ class SessionManager {
     };
 
     const finalOptions = { ...defaultOptions, ...options };
+    // Permitir usar rutas relativas sin puerto hardcodeado
+    let requestUrl = url;
+    if (typeof url === 'string' && !/^https?:\/\//i.test(url)) {
+      requestUrl = `${window.location.origin}${url.startsWith('/') ? '' : '/'}${url}`;
+    }
     
     try {
-      const response = await fetch(url, finalOptions);
+      const response = await fetch(requestUrl, finalOptions);
       
       if (response.status === 401) {
         alert('Sesión expirada. Por favor, inicie sesión nuevamente.');

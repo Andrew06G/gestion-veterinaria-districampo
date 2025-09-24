@@ -104,7 +104,7 @@
     // Función para cargar todos los análisis del usuario
     async function cargarAnalisis() {
       try {
-        const response = await sessionManager.authenticatedFetch('http://localhost:3001/api/analyses');
+        const response = await sessionManager.authenticatedFetch('/api/analyses');
         
         if (response && response.ok) {
           const analisis = await response.json();
@@ -205,7 +205,7 @@
       console.log('Aplicando filtros:', { filterAnimal, filterEstado, filterFecha });
 
       try {
-        const response = await sessionManager.authenticatedFetch('http://localhost:3001/api/analyses');
+        const response = await sessionManager.authenticatedFetch('/api/analyses');
         
         if (response && response.ok) {
           let analisis = await response.json();
@@ -262,7 +262,7 @@
         
         // Agregar timestamp para evitar caché
         const timestamp = new Date().getTime();
-        const url = `http://localhost:3001/api/analyses/${idMuestra}/pdf?t=${timestamp}`;
+        const url = `/api/analyses/${idMuestra}/pdf?t=${timestamp}`;
         console.log('Solicitando PDF desde:', url);
         
         const response = await sessionManager.authenticatedFetch(url);

@@ -73,7 +73,7 @@
     // Cargar tipos de análisis desde el backend
     async function loadAnalysisTypes() {
       try {
-        const response = await sessionManager.authenticatedFetch('http://localhost:3001/api/analyses/tipos');
+        const response = await sessionManager.authenticatedFetch('/api/analyses/tipos');
 
         if (response && response.ok) {
           const analyses = await response.json();
@@ -108,7 +108,7 @@
     // Cargar animales del usuario desde el backend
     async function loadUserAnimals() {
       try {
-        const response = await sessionManager.authenticatedFetch('http://localhost:3001/api/animals/user/list');
+        const response = await sessionManager.authenticatedFetch('/api/animals/user/list');
 
         if (response && response.ok) {
           const animals = await response.json();
@@ -161,7 +161,7 @@
 
       // Enviar la solicitud al backend
       try {
-        const response = await sessionManager.authenticatedFetch('http://localhost:3001/api/analyses', {
+        const response = await sessionManager.authenticatedFetch('/api/analyses', {
           method: 'POST',
           body: JSON.stringify({
             id_animal: id_animal,

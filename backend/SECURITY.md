@@ -2,7 +2,7 @@
 
 ## 📋 **RESUMEN EJECUTIVO**
 
-Este documento describe las medidas de seguridad implementadas en el sistema Veterilab para proteger la información de usuarios y animales.
+Este documento describe las medidas de seguridad implementadas en el sistema DistriCampo para proteger la información de usuarios y animales.
 
 ## 🛡️ **MEDIDAS DE SEGURIDAD IMPLEMENTADAS**
 
@@ -214,6 +214,6 @@ node validate-passwords.js test "MiContraseña123!"
 
 **Última actualización**: $(date)
 **Versión**: 1.0.0
-**Responsable**: Equipo de Seguridad Veterilab
+**Responsable**: Equipo de Seguridad DistriCampo
 
 

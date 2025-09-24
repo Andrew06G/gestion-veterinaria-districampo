@@ -1,4 +1,4 @@
-# 🏥 Sistema de Gestión Veterinaria - Veterilab
+# 🏥 Sistema de Gestión Veterinaria - DistriCampo
 
 Sistema completo de gestión de análisis clínicos veterinarios con arquitectura MVC y API REST.
 

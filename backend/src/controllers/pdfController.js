@@ -73,7 +73,7 @@ function generatePDFContent(doc, analysis) {
   // Header
   doc.fontSize(24)
      .fillColor('#007bff')
-     .text('Veterilab', 50, 50, { align: 'center' });
+     .text('DistriCampo', 50, 50, { align: 'center' });
   
   doc.fontSize(16)
      .fillColor('#333')
@@ -184,7 +184,7 @@ function generatePDFContent(doc, analysis) {
   // Footer breve
   doc.fontSize(10)
      .fillColor('#666')
-     .text('Informe generado por Veterilab', 50, yPosition, { align: 'center' });
+     .text('Informe generado por DistriCampo', 50, yPosition, { align: 'center' });
 }
 
 // (Función de prueba eliminada para la versión oficial)

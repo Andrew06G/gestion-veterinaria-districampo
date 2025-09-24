@@ -1,5 +1,5 @@
 /**
- * Script principal de utilidades para Veterilab
+ * Script principal de utilidades para DistriCampo
  * Funciones comunes utilizadas en múltiples páginas
  */
 
