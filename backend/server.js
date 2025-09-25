@@ -68,6 +68,27 @@ app.get('/mis-analisis', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'pages', 'mis_analisis.html'));
 });
 
+// Páginas del módulo Admin (estructura modular)
+app.get('/admin', (req, res) => {
+  res.sendFile(path.join(__dirname, 'admin', 'public', 'pages', 'admin_dashboard.html'));
+});
+
+app.get('/admin/login', (req, res) => {
+  res.sendFile(path.join(__dirname, 'admin', 'public', 'pages', 'admin_login.html'));
+});
+
+app.get('/admin/propietarios', (req, res) => {
+  res.sendFile(path.join(__dirname, 'admin', 'public', 'pages', 'admin_propietarios.html'));
+});
+
+app.get('/admin/animales', (req, res) => {
+  res.sendFile(path.join(__dirname, 'admin', 'public', 'pages', 'admin_animales.html'));
+});
+
+app.get('/admin/analisis', (req, res) => {
+  res.sendFile(path.join(__dirname, 'admin', 'public', 'pages', 'admin_analisis.html'));
+});
+
 app.get('/test', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'pages', 'test.html'));
 });
@@ -84,4 +105,6 @@ app.listen(PORT, () => {
   console.log('- /animal-info - Información de animales');
   console.log('- /solicitar-analisis - Solicitar análisis');
   console.log('- /mis-analisis - Mis análisis');
+  console.log('- /admin - Admin Dashboard (beta)');
+  console.log('- /admin/login - Admin Login (beta)');
 });
