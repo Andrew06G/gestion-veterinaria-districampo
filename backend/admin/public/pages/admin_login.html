@@ -13,19 +13,57 @@
   </nav>
 
   <div class="container mt-5">
-    <h2 class="text-center">Ingreso Administrativo</hn2>
-    <form style="max-width:420px;margin:0 auto;">
+    <h2 class="text-center">Ingreso Administrativo</h2>
+    <form id="adminLoginForm" style="max-width:420px;margin:0 auto;">
       <div class="form-group">
         <label>Correo</label>
-        <input type="email" class="form-control" placeholder="admin@dominio.com">
+        <input type="email" id="email" class="form-control" placeholder="admin@districampo.com" required>
       </div>
       <div class="form-group">
         <label>Contraseña</label>
-        <input type="password" class="form-control" placeholder="********">
+        <input type="password" id="password" class="form-control" placeholder="********" required>
       </div>
-      <button type="button" class="btn btn-primary btn-block" onclick="window.location.href='/admin'">Entrar (mock)</button>
+      <button type="submit" class="btn btn-primary btn-block">Entrar</button>
     </form>
+    <div id="errorMessage" class="alert alert-danger mt-3" style="display:none;"></div>
   </div>
+
+  <script>
+    document.getElementById('adminLoginForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const errorDiv = document.getElementById('errorMessage');
+      
+      try {
+        const response = await fetch('/api/admin/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ correo_electronico: email, contrasena: password })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          // Guardar token en localStorage
+          localStorage.setItem('adminToken', data.token);
+          localStorage.setItem('adminUser', JSON.stringify(data.admin));
+          
+          // Redirigir al dashboard
+          window.location.href = '/admin';
+        } else {
+          errorDiv.textContent = data.message;
+          errorDiv.style.display = 'block';
+        }
+      } catch (error) {
+        errorDiv.textContent = 'Error de conexión. Intenta nuevamente.';
+        errorDiv.style.display = 'block';
+      }
+    });
+  </script>
 </body>
 </html>
 

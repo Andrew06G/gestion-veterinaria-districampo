@@ -222,6 +222,7 @@ npm run clean      # Limpiar archivos temporales (si está configurado)
 - JWT con clave segura configurada
 - Tokens con expiración de 24 horas
 - Middleware de autenticación en todas las rutas protegidas
+- Sistema de administradores con roles (admin/super_admin)
 
 ### **Variables de Entorno**
 - `JWT_SECRET`: Clave para firmar tokens JWT

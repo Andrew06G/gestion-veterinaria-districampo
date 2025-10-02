@@ -20,14 +20,16 @@
         <li class="nav-item"><a class="nav-link" href="/admin/propietarios">Propietarios</a></li>
         <li class="nav-item"><a class="nav-link" href="/admin/animales">Animales</a></li>
         <li class="nav-item"><a class="nav-link" href="/admin/analisis">Análisis</a></li>
-        <li class="nav-item"><a class="nav-link" href="/admin/login">Salir</a></li>
+        <li class="nav-item"><a class="nav-link" href="#" onclick="logout()">Salir</a></li>
       </ul>
     </div>
   </nav>
 
   <div class="container mt-5">
     <h2 class="text-center">Panel Administrativo</h2>
-    <p class="text-center text-muted">Versión inicial de estructura. Próximamente: autenticación y gestión completa.</p>
+    <div id="adminInfo" class="text-center mb-4">
+      <p class="text-muted">Cargando información...</p>
+    </div>
     <div class="row mt-4">
       <div class="col-md-4 text-center">
         <a href="/admin/propietarios" class="btn btn-info btn-lg mb-3">Propietarios</a>
@@ -40,6 +42,40 @@
       </div>
     </div>
   </div>
+
+  <script>
+    // Verificar autenticación al cargar la página
+    document.addEventListener('DOMContentLoaded', function() {
+      const token = localStorage.getItem('adminToken');
+      const adminUser = localStorage.getItem('adminUser');
+      
+      if (!token || !adminUser) {
+        // No hay token, redirigir al login
+        window.location.href = '/admin/login';
+        return;
+      }
+      
+      // Mostrar información del admin
+      try {
+        const admin = JSON.parse(adminUser);
+        const adminInfo = document.getElementById('adminInfo');
+        adminInfo.innerHTML = `
+          <h4>Bienvenido, ${admin.nombres} ${admin.apellidos}</h4>
+          <p class="text-muted">${admin.correo_electronico} | Rol: ${admin.rol}</p>
+        `;
+      } catch (error) {
+        console.error('Error al parsear datos del admin:', error);
+        window.location.href = '/admin/login';
+      }
+    });
+    
+    // Función para cerrar sesión
+    function logout() {
+      localStorage.removeItem('adminToken');
+      localStorage.removeItem('adminUser');
+      window.location.href = '/admin/login';
+    }
+  </script>
 </body>
 </html>
 

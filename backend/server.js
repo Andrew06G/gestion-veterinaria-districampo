@@ -29,11 +29,17 @@ const animalRoutes = require('./src/routes/animalRoutes');
 const analysisRoutes = require('./src/routes/analysisRoutes');
 const pdfRoutes = require('./src/routes/pdfRoutes');
 
+// Importar rutas del módulo admin
+const adminRoutes = require('./admin/src/routes/adminRoutes');
+
 // Usar las rutas
 app.use('/api/users', userRoutes);
 app.use('/api/animals', animalRoutes);
 app.use('/api/analyses', analysisRoutes);
 app.use('/api/pdf', pdfRoutes);
+
+// Usar las rutas del admin
+app.use('/api/admin', adminRoutes);
 
 // Rutas para servir las páginas HTML
 app.get('/', (req, res) => {
@@ -107,4 +113,6 @@ app.listen(PORT, () => {
   console.log('- /mis-analisis - Mis análisis');
   console.log('- /admin - Admin Dashboard (beta)');
   console.log('- /admin/login - Admin Login (beta)');
+  console.log('- /api/admin/login - API Login Admin');
+  console.log('- /api/admin/profile - API Perfil Admin');
 });
