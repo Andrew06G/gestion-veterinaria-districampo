@@ -9,6 +9,7 @@ const {
   deactivateAdmin
 } = require('../controllers/adminController');
 const { authenticateAdmin, requireSuperAdmin, requireAdmin } = require('../middleware/authAdmin');
+const { listOwners, getOwner, updateOwner, deleteOwner } = require('../controllers/ownerAdminController');
 
 // Rutas públicas
 router.post('/login', loginAdmin);
@@ -19,6 +20,12 @@ router.use(authenticateAdmin);
 // Rutas que requieren cualquier rol de admin
 router.get('/profile', getProfile);
 router.put('/profile', updateAdmin);
+
+// Gestión de propietarios (admin)
+router.get('/owners', requireAdmin, listOwners);
+router.get('/owners/:id', requireAdmin, getOwner);
+router.put('/owners/:id', requireAdmin, updateOwner);
+router.delete('/owners/:id', requireSuperAdmin, deleteOwner);
 
 // Rutas que requieren rol de super_admin
 router.post('/create', requireSuperAdmin, createAdmin);

@@ -25,7 +25,6 @@ class Admin {
       const admin = decryptObject(rows[0], this.SENSITIVE_FIELDS);
       return admin;
     } catch (error) {
-      console.error('FindByEmail error:', error.message);
       throw error;
     }
   }
@@ -44,7 +43,6 @@ class Admin {
       
       return null;
     } catch (error) {
-      console.error('FindByEmailDecrypted error:', error.message);
       throw error;
     }
   }
@@ -65,7 +63,6 @@ class Admin {
       const admin = decryptObject(rows[0], this.SENSITIVE_FIELDS);
       return admin;
     } catch (error) {
-      console.error('FindById error:', error.message);
       throw error;
     }
   }
@@ -115,7 +112,6 @@ class Admin {
         rol
       };
     } catch (error) {
-      console.error('Create admin error:', error.message);
       throw error;
     }
   }
@@ -125,7 +121,6 @@ class Admin {
     try {
       return await bcrypt.compare(plainPassword, hashedPassword);
     } catch (error) {
-      console.error('Verify password error:', error.message);
       throw error;
     }
   }
@@ -138,7 +133,6 @@ class Admin {
         [id]
       );
     } catch (error) {
-      console.error('Update last access error:', error.message);
       throw error;
     }
   }
@@ -151,7 +145,6 @@ class Admin {
       // Descifrar campos sensibles de todos los admins
       return rows.map(admin => decryptObject(admin, this.SENSITIVE_FIELDS));
     } catch (error) {
-      console.error('FindAll error:', error.message);
       throw error;
     }
   }
@@ -211,7 +204,6 @@ class Admin {
 
       return await this.findById(id);
     } catch (error) {
-      console.error('Update admin error:', error.message);
       throw error;
     }
   }
@@ -225,7 +217,6 @@ class Admin {
       );
       return true;
     } catch (error) {
-      console.error('Deactivate admin error:', error.message);
       throw error;
     }
   }

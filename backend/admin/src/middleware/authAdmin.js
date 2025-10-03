@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 // Verificar configuración JWT
 const jwtSecret = process.env.JWT_SECRET;
 if (!jwtSecret) {
-  console.error('JWT_SECRET no configurado');
+  throw new Error('JWT_SECRET no configurado');
 }
 
 // Middleware para autenticar administradores
@@ -47,8 +47,6 @@ const authenticateAdmin = (req, res, next) => {
 
     next();
   } catch (error) {
-    console.error('Auth error:', error.message);
-    
     if (error.name === 'JsonWebTokenError') {
       return res.status(401).json({
         success: false,

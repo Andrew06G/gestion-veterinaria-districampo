@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 // Verificar configuración JWT
 const jwtSecret = process.env.JWT_SECRET;
 if (!jwtSecret) {
-  console.error('JWT_SECRET no configurado');
+  throw new Error('JWT_SECRET no configurado');
 }
 
 // Login de administrador
@@ -68,7 +68,6 @@ const loginAdmin = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Login error:', error.message);
     res.status(500).json({
       success: false,
       message: 'Error interno del servidor'
@@ -111,8 +110,6 @@ const createAdmin = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Create admin error:', error.message);
-    
     if (error.message === 'El correo electrónico ya está registrado') {
       return res.status(409).json({
         success: false,
@@ -156,7 +153,6 @@ const getProfile = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Profile error:', error.message);
     res.status(500).json({
       success: false,
       message: 'Error interno del servidor'
@@ -193,7 +189,6 @@ const getAllAdmins = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Get admins error:', error.message);
     res.status(500).json({
       success: false,
       message: 'Error interno del servidor'
@@ -239,7 +234,6 @@ const updateAdmin = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Update admin error:', error.message);
     res.status(500).json({
       success: false,
       message: 'Error interno del servidor'
@@ -275,7 +269,6 @@ const deactivateAdmin = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Deactivate admin error:', error.message);
     res.status(500).json({
       success: false,
       message: 'Error interno del servidor'

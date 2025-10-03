@@ -13,9 +13,167 @@
   </nav>
 
   <div class="container mt-5">
-    <h2>Gestión de Propietarios (estructura)</h2>
-    <p class="text-muted">En próximas versiones: listado, filtros, acciones CRUD.</p>
+    <h2>Gestión de Propietarios</h2>
+    <div id="ownersContainer" class="row"></div>
+
+    <hr class="my-4" />
+    <h4>Editar Propietario</h4>
+    <form id="editOwnerForm" class="mt-3">
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label>Nombres</label>
+          <input type="text" id="owner_nombres" class="form-control" required>
+        </div>
+        <div class="form-group col-md-6">
+          <label>Apellidos</label>
+          <input type="text" id="owner_apellidos" class="form-control" required>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label>Correo</label>
+          <input type="email" id="owner_email" class="form-control" required>
+        </div>
+        <div class="form-group col-md-6">
+          <label>Teléfono</label>
+          <input type="text" id="owner_telefono" class="form-control">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Dirección</label>
+        <input type="text" id="owner_direccion" class="form-control">
+      </div>
+      <div class="d-flex justify-content-end">
+        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+      </div>
+    </form>
   </div>
+
+  <style>
+    .owner-card {
+      transition: transform .15s ease, box-shadow .15s ease;
+      border-radius: .9rem;
+      box-shadow: 0 .35rem 1rem rgba(0,0,0,.08);
+    }
+    .owner-card:hover {
+      transform: translateY(-3px) scale(1.01);
+      box-shadow: 0 .75rem 1.5rem rgba(0,0,0,.18) !important;
+    }
+    .owner-card .card-body { padding: 1.25rem 1.25rem; }
+    @media (min-width: 992px) {
+      .owner-card .card-body { padding: 1.5rem 1.5rem; }
+    }
+    .owner-actions .btn { min-width: 108px; }
+  </style>
+
+  <script>
+    function getToken() {
+      return localStorage.getItem('adminToken');
+    }
+    if (!getToken()) {
+      window.location.href = '/admin/login';
+    }
+
+    let currentOwnerId = null;
+
+    async function api(path, options = {}) {
+      const tk = getToken();
+      if (!tk) {
+        window.location.href = '/admin/login';
+        return;
+      }
+      const res = await fetch(path, {
+        ...options,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + tk,
+          ...(options.headers || {})
+        }
+      });
+      if (res.status === 401) {
+        // token inválido/expirado
+        window.location.href = '/admin/login';
+        return;
+      }
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(text || ('Error ' + res.status));
+      }
+      return res.json();
+    }
+
+    function ownerCard(owner) {
+      return `
+        <div class="col-md-6 mb-3">
+          <div class="card h-100 owner-card border-0">
+            <div class="card-body d-flex flex-column">
+              <div class="d-flex justify-content-between align-items-start">
+                <div>
+                  <h5 class="card-title mb-1">${owner.nombres} ${owner.apellidos}</h5>
+                  <p class="mb-1"><strong>Correo:</strong> ${owner.correo_electronico || '-'}</p>
+                  <p class="mb-1"><strong>Teléfono:</strong> ${owner.telefono || '-'}</p>
+                  <p class="mb-0"><strong>Dirección:</strong> ${owner.direccion || '-'}</p>
+                </div>
+              </div>
+              <div class="mt-auto d-flex justify-content-end owner-actions">
+                <button class="btn btn-sm btn-primary mr-2" onclick="selectOwner(${owner.id_propietario})">Editar</button>
+                <button class="btn btn-sm btn-danger" onclick="deleteOwner(${owner.id_propietario})">Eliminar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    async function loadOwners() {
+      try {
+        const data = await api('/api/admin/owners');
+        if (!data) return; // redirigido
+        const container = document.getElementById('ownersContainer');
+        container.innerHTML = data.owners.map(ownerCard).join('');
+      } catch (e) {
+        alert('No se pudieron cargar los propietarios.');
+      }
+    }
+
+    async function selectOwner(id) {
+      const data = await api('/api/admin/owners/' + id);
+      if (!data) return; // redirigido
+      const o = data.owner;
+      currentOwnerId = o.id_propietario;
+      document.getElementById('owner_nombres').value = o.nombres || '';
+      document.getElementById('owner_apellidos').value = o.apellidos || '';
+      document.getElementById('owner_email').value = o.correo_electronico || '';
+      document.getElementById('owner_telefono').value = o.telefono || '';
+      document.getElementById('owner_direccion').value = o.direccion || '';
+      setTimeout(() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }), 50);
+    }
+
+    async function deleteOwner(id) {
+      if (!confirm('¿Eliminar propietario y sus datos asociados?')) return;
+      const res = await api('/api/admin/owners/' + id, { method: 'DELETE' });
+      if (!res) return; // redirigido
+      await loadOwners();
+    }
+
+    document.getElementById('editOwnerForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!currentOwnerId) return alert('Seleccione un propietario');
+      const body = {
+        nombres: document.getElementById('owner_nombres').value.trim(),
+        apellidos: document.getElementById('owner_apellidos').value.trim(),
+        correo_electronico: document.getElementById('owner_email').value.trim(),
+        telefono: document.getElementById('owner_telefono').value.trim(),
+        direccion: document.getElementById('owner_direccion').value.trim()
+      };
+      const res = await api('/api/admin/owners/' + currentOwnerId, { method: 'PUT', body: JSON.stringify(body) });
+      if (!res) return; // redirigido
+      await loadOwners();
+      alert('Guardado');
+    });
+
+    loadOwners();
+  </script>
 </body>
 </html>
 

@@ -2,6 +2,7 @@ const crypto = require('crypto');
 
 // Clave de cifrado (debería estar en variables de entorno en producción)
 const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY || crypto.randomBytes(32).toString('hex');
+const OLD_ENCRYPTION_KEY = process.env.OLD_ENCRYPTION_KEY || null;
 const ALGORITHM = 'aes-256-cbc';
 
 /**
@@ -55,18 +56,25 @@ function decrypt(encryptedText) {
     const iv = Buffer.from(parts[0], 'base64');
     const encrypted = parts[1];
     
-    // Intentar con createDecipheriv primero (nuevo formato)
+    // Descifrar usando createDecipheriv (formato moderno con IV explícito)
     try {
       const decipher = crypto.createDecipheriv(ALGORITHM, Buffer.from(ENCRYPTION_KEY, 'hex'), iv);
       let decrypted = decipher.update(encrypted, 'base64', 'utf8');
       decrypted += decipher.final('utf8');
       return decrypted;
-    } catch (error) {
-      // Si falla, intentar con createDecipher (formato antiguo)
-      const decipher = crypto.createDecipher(ALGORITHM, Buffer.from(ENCRYPTION_KEY, 'hex'));
-      let decrypted = decipher.update(encrypted, 'base64', 'utf8');
-      decrypted += decipher.final('utf8');
-      return decrypted;
+    } catch (e) {
+      // Intentar con clave antigua si está configurada
+      if (OLD_ENCRYPTION_KEY) {
+        try {
+          const fallbackDecipher = crypto.createDecipheriv(ALGORITHM, Buffer.from(OLD_ENCRYPTION_KEY, 'hex'), iv);
+          let decrypted = fallbackDecipher.update(encrypted, 'base64', 'utf8');
+          decrypted += fallbackDecipher.final('utf8');
+          return decrypted;
+        } catch (_) {
+          // continuará abajo para manejo genérico
+        }
+      }
+      throw e;
     }
     
   } catch (error) {
