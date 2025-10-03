@@ -6,17 +6,437 @@
   <title>Admin - Animales</title>
   <link rel="stylesheet" href="/assets/css/bootstrap-local.css">
   <link rel="stylesheet" href="/assets/css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
   <nav class="navbar navbar-dark bg-dark">
     <a class="navbar-brand" href="/admin"><strong>Admin</strong></a>
+    <div class="navbar-nav ml-auto">
+      <a class="nav-link" href="/admin/propietarios">Propietarios</a>
+      <a class="nav-link active" href="/admin/animales">Animales</a>
+      <a class="nav-link" href="/admin/analisis">Análisis</a>
+      <a class="nav-link" href="#" onclick="logout()">Salir</a>
+    </div>
   </nav>
 
   <div class="container mt-5">
-    <h2>Gestión de Animales (estructura)</h2>
-    <p class="text-muted">En próximas versiones: listado, filtros, acciones CRUD.</p>
+    <h2>Gestión de Animales</h2>
+    
+    <!-- Filtro por propietario -->
+    <div class="row mb-4">
+      <div class="col-md-4">
+        <label for="ownerFilter">Filtrar por Propietario:</label>
+        <select id="ownerFilter" class="form-control" onchange="filterAnimals()">
+          <option value="">-- Todos los propietarios --</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Lista de animales -->
+    <div id="animalsContainer" class="row">
+      <!-- Los animales se cargarán aquí dinámicamente -->
+    </div>
+
+    <hr class="my-4" />
+    
+    <!-- Formulario de edición -->
+    <div class="card">
+      <div class="card-header">
+        <h4 class="mb-0">Editar Animal</h4>
+      </div>
+      <div class="card-body">
+        <form id="editAnimalForm">
+          <div class="form-group">
+            <label>Seleccionar Animal</label>
+            <select id="animal_select" class="form-control" onchange="selectAnimalFromDropdown()">
+              <option value="">-- Seleccione un animal --</option>
+            </select>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <label>Nombre del Animal</label>
+              <input type="text" id="animal_nombre" class="form-control" required>
+            </div>
+            <div class="form-group col-md-6">
+              <label>Edad (años)</label>
+              <input type="number" id="animal_edad" class="form-control" min="0" max="50" required>
+            </div>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <label>Especie</label>
+              <select id="animal_especie" class="form-control" required onchange="loadRacesBySpecies()">
+                <option value="">Seleccionar especie</option>
+              </select>
+            </div>
+            <div class="form-group col-md-6">
+              <label>Raza</label>
+              <select id="animal_raza" class="form-control" required>
+                <option value="">Seleccionar raza</option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="d-flex justify-content-between">
+            <button type="button" class="btn btn-danger" onclick="deleteSelectedAnimal()">
+              <i class="fas fa-trash"></i> Eliminar Animal
+            </button>
+            <button type="submit" class="btn btn-primary">
+              <i class="fas fa-save"></i> Guardar Cambios
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
+
+  <style>
+    .animal-card {
+      transition: transform .15s ease, box-shadow .15s ease;
+      border-radius: .9rem;
+      box-shadow: 0 .35rem 1rem rgba(0,0,0,.08);
+    }
+    .animal-card:hover {
+      transform: translateY(-3px) scale(1.01);
+      box-shadow: 0 .75rem 1.5rem rgba(0,0,0,.18) !important;
+    }
+    .animal-card .card-body { 
+      padding: 1.25rem 1.25rem; 
+    }
+    @media (min-width: 992px) {
+      .animal-card .card-body { 
+        padding: 1.5rem 1.5rem; 
+      }
+    }
+    .animal-actions .btn { 
+      min-width: 108px; 
+    }
+  </style>
+
+  <script>
+    function getToken() {
+      return localStorage.getItem('adminToken');
+    }
+    
+    if (!getToken()) {
+      window.location.href = '/admin/login';
+    }
+
+    let currentAnimalId = null;
+    let allAnimals = [];
+    let allOwners = [];
+
+    async function api(path, options = {}) {
+      const tk = getToken();
+      if (!tk) {
+        window.location.href = '/admin/login';
+        return;
+      }
+      const res = await fetch(path, {
+        ...options,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + tk,
+          ...(options.headers || {})
+        }
+      });
+      if (res.status === 401) {
+        window.location.href = '/admin/login';
+        return;
+      }
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(text || ('Error ' + res.status));
+      }
+      return res.json();
+    }
+
+    function animalCard(animal) {
+      return `
+        <div class="col-md-6 mb-4">
+          <div class="card animal-card">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-start">
+                <div class="animal-info flex-grow-1">
+                  <h4 class="card-title mb-3">${animal.nombre_animal}</h4>
+                  <div class="animal-details">
+                    <div class="detail-item mb-1"><strong>Propietario:</strong> ${animal.propietario_nombre}</div>
+                    <div class="detail-item mb-1"><strong>Edad:</strong> ${animal.edad} años</div>
+                    <div class="detail-item mb-1"><strong>Raza:</strong> ${animal.nombre_raza}</div>
+                    <div class="detail-item mb-1"><strong>Especie:</strong> ${animal.nombre_especie}</div>
+                  </div>
+                </div>
+                <div class="animal-actions ml-3">
+                  <button class="btn btn-warning btn-sm mb-2 d-block" onclick="selectAnimal(${animal.id_animal})">
+                    <i class="fas fa-edit"></i> Editar
+                  </button>
+                  <button class="btn btn-danger btn-sm d-block" onclick="deleteAnimal(${animal.id_animal}, '${animal.nombre_animal}')">
+                    <i class="fas fa-trash"></i> Eliminar
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    async function loadAnimals() {
+      try {
+        const data = await api('/api/admin/animals');
+        if (!data) return;
+        
+        allAnimals = data.animals;
+        displayAnimals(allAnimals);
+        populateAnimalDropdown(allAnimals);
+      } catch (e) {
+        alert('No se pudieron cargar los animales.');
+      }
+    }
+
+    async function loadOwners() {
+      try {
+        const data = await api('/api/admin/owners');
+        if (!data) return;
+        
+        allOwners = data.owners;
+        populateOwnerFilter();
+      } catch (e) {
+        // Filtro de propietarios no crítico para el funcionamiento básico
+        allOwners = [];
+      }
+    }
+
+    function populateOwnerFilter() {
+      const select = document.getElementById('ownerFilter');
+      select.innerHTML = '<option value="">-- Todos los propietarios --</option>';
+      
+      allOwners.forEach(owner => {
+        const option = document.createElement('option');
+        option.value = owner.id_propietario;
+        option.textContent = `${owner.nombres} ${owner.apellidos}`;
+        select.appendChild(option);
+      });
+    }
+
+    // Función para cargar razas cuando se selecciona una especie
+    async function loadRacesBySpecies() {
+      const speciesId = document.getElementById('animal_especie').value;
+      const breedsSelect = document.getElementById('animal_raza');
+      
+      breedsSelect.innerHTML = '<option value="">Seleccionar raza</option>';
+      
+      if (!speciesId) return;
+      
+      try {
+        const data = await api(`/api/animals/razas/especie/${speciesId}`);
+        if (data) {
+          data.forEach(breed => {
+            const option = document.createElement('option');
+            option.value = breed.id_raza;
+            option.textContent = breed.nombre_raza;
+            breedsSelect.appendChild(option);
+          });
+        }
+      } catch (e) {
+        // Error cargando razas, continuar sin mostrar al usuario
+      }
+    }
+
+    function populateAnimalDropdown(animals) {
+      const select = document.getElementById('animal_select');
+      select.innerHTML = '<option value="">-- Seleccione un animal --</option>';
+      
+      animals.forEach(animal => {
+        const option = document.createElement('option');
+        option.value = animal.id_animal;
+        option.textContent = `${animal.nombre_animal} (${animal.propietario_nombre})`;
+        select.appendChild(option);
+      });
+    }
+
+    function displayAnimals(animals) {
+      const container = document.getElementById('animalsContainer');
+      
+      if (animals.length === 0) {
+        container.innerHTML = '<div class="col-12"><div class="alert alert-info text-center">No hay animales registrados.</div></div>';
+        return;
+      }
+
+      container.innerHTML = animals.map(animalCard).join('');
+    }
+
+    function filterAnimals() {
+      const ownerId = document.getElementById('ownerFilter').value;
+      
+      if (!ownerId) {
+        displayAnimals(allAnimals);
+        populateAnimalDropdown(allAnimals);
+      } else {
+        const filtered = allAnimals.filter(animal => animal.id_propietario == ownerId);
+        displayAnimals(filtered);
+        populateAnimalDropdown(filtered);
+      }
+    }
+
+    function selectAnimalFromDropdown() {
+      const select = document.getElementById('animal_select');
+      const animalId = select.value;
+      if (animalId) {
+        selectAnimal(parseInt(animalId));
+      } else {
+        clearForm();
+        // Scroll al formulario cuando se limpia
+        setTimeout(() => {
+          const formCard = document.querySelector('#editAnimalForm').closest('.card');
+          if (formCard) {
+            formCard.scrollIntoView({ 
+              behavior: 'smooth', 
+              block: 'start' 
+            });
+          }
+        }, 100);
+      }
+    }
+
+    async function selectAnimal(id) {
+      try {
+        const data = await api('/api/admin/animals/' + id);
+        if (!data) return;
+        
+        const animal = data.animal;
+        currentAnimalId = animal.id_animal;
+        
+        // Actualizar dropdown
+        document.getElementById('animal_select').value = animal.id_animal;
+        
+        // Llenar formulario
+        document.getElementById('animal_nombre').value = animal.nombre_animal || '';
+        document.getElementById('animal_edad').value = animal.edad || '';
+        document.getElementById('animal_especie').value = animal.id_especie || '';
+        
+        // Cargar razas para la especie seleccionada
+        if (animal.id_especie) {
+          await loadRacesBySpecies();
+          document.getElementById('animal_raza').value = animal.id_raza || '';
+        }
+        
+        // Scroll al formulario
+        setTimeout(() => {
+          const formCard = document.querySelector('#editAnimalForm').closest('.card');
+          if (formCard) {
+            formCard.scrollIntoView({ 
+              behavior: 'smooth', 
+              block: 'start' 
+            });
+          }
+        }, 100);
+        
+      } catch (e) {
+        alert('Error al cargar el animal.');
+      }
+    }
+
+    function clearForm() {
+      currentAnimalId = null;
+      document.getElementById('animal_select').value = '';
+      document.getElementById('animal_nombre').value = '';
+      document.getElementById('animal_edad').value = '';
+      document.getElementById('animal_especie').value = '';
+      document.getElementById('animal_raza').value = '';
+    }
+
+    async function deleteAnimal(id, nombre) {
+      if (!confirm(`¿Eliminar animal "${nombre}" y sus datos asociados?`)) return;
+      
+      try {
+        const res = await api('/api/admin/animals/' + id, { method: 'DELETE' });
+        if (!res) return;
+        
+        await loadAnimals();
+        alert('Animal eliminado exitosamente');
+      } catch (e) {
+        alert('Error al eliminar el animal.');
+      }
+    }
+
+    function deleteSelectedAnimal() {
+      if (!currentAnimalId) {
+        alert('Seleccione un animal para eliminar');
+        return;
+      }
+      
+      const animal = allAnimals.find(a => a.id_animal === currentAnimalId);
+      if (animal) {
+        deleteAnimal(currentAnimalId, animal.nombre_animal);
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem('adminToken');
+      localStorage.removeItem('adminUser');
+      window.location.href = '/admin/login';
+    }
+
+    // Cargar especies y razas
+    async function loadSpeciesAndBreeds() {
+      try {
+        // Cargar especies
+        const speciesData = await api('/api/animals/especies/list');
+        if (speciesData) {
+          const speciesSelect = document.getElementById('animal_especie');
+          speciesSelect.innerHTML = '<option value="">Seleccionar especie</option>';
+          speciesData.forEach(species => {
+            const option = document.createElement('option');
+            option.value = species.id_especie;
+            option.textContent = species.nombre_especie;
+            speciesSelect.appendChild(option);
+          });
+        }
+
+        // Cargar razas (se cargarán dinámicamente cuando se seleccione una especie)
+        const breedsSelect = document.getElementById('animal_raza');
+        breedsSelect.innerHTML = '<option value="">Seleccionar raza</option>';
+      } catch (e) {
+        // Error cargando especies, continuar sin mostrar al usuario
+      }
+    }
+
+    // Event listeners
+    document.getElementById('editAnimalForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!currentAnimalId) return alert('Seleccione un animal');
+      
+      try {
+        const body = {
+          nombre_animal: document.getElementById('animal_nombre').value.trim(),
+          edad: parseInt(document.getElementById('animal_edad').value),
+          id_especie: parseInt(document.getElementById('animal_especie').value),
+          id_raza: parseInt(document.getElementById('animal_raza').value)
+        };
+        
+        const res = await api('/api/admin/animals/' + currentAnimalId, { 
+          method: 'PUT', 
+          body: JSON.stringify(body) 
+        });
+        if (!res) return;
+        
+        await loadAnimals();
+        alert('Animal actualizado exitosamente');
+        clearForm();
+        
+      } catch (e) {
+        alert('Error al actualizar el animal.');
+      }
+    });
+
+    // Inicializar
+    loadOwners();
+    loadAnimals();
+    loadSpeciesAndBreeds();
+  </script>
 </body>
 </html>
-
-

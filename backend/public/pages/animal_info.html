@@ -214,7 +214,7 @@
       
       // Hacer scroll al formulario de edición con un pequeño delay
       setTimeout(() => {
-        const formulario = document.querySelector('.card:last-child');
+        const formulario = document.querySelector('#editAnimalForm').closest('.card');
         if (formulario) {
           formulario.scrollIntoView({ 
             behavior: 'smooth', 

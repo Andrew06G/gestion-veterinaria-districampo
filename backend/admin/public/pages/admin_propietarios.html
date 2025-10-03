@@ -19,6 +19,12 @@
     <hr class="my-4" />
     <h4>Editar Propietario</h4>
     <form id="editOwnerForm" class="mt-3">
+      <div class="form-group">
+        <label>Seleccionar Propietario</label>
+        <select id="owner_select" class="form-control" onchange="selectOwnerFromDropdown()">
+          <option value="">-- Seleccione un propietario --</option>
+        </select>
+      </div>
       <div class="form-row">
         <div class="form-group col-md-6">
           <label>Nombres</label>
@@ -131,8 +137,39 @@
         if (!data) return; // redirigido
         const container = document.getElementById('ownersContainer');
         container.innerHTML = data.owners.map(ownerCard).join('');
+        
+        // Llenar dropdown de selección
+        populateOwnerDropdown(data.owners);
       } catch (e) {
         alert('No se pudieron cargar los propietarios.');
+      }
+    }
+
+    function populateOwnerDropdown(owners) {
+      const select = document.getElementById('owner_select');
+      select.innerHTML = '<option value="">-- Seleccione un propietario --</option>';
+      
+      owners.forEach(owner => {
+        const option = document.createElement('option');
+        option.value = owner.id_propietario;
+        option.textContent = `${owner.nombres} ${owner.apellidos}`;
+        select.appendChild(option);
+      });
+    }
+
+    function selectOwnerFromDropdown() {
+      const select = document.getElementById('owner_select');
+      const ownerId = select.value;
+      if (ownerId) {
+        selectOwner(parseInt(ownerId));
+      } else {
+        // Limpiar formulario si no hay selección
+        currentOwnerId = null;
+        document.getElementById('owner_nombres').value = '';
+        document.getElementById('owner_apellidos').value = '';
+        document.getElementById('owner_email').value = '';
+        document.getElementById('owner_telefono').value = '';
+        document.getElementById('owner_direccion').value = '';
       }
     }
 
@@ -141,11 +178,18 @@
       if (!data) return; // redirigido
       const o = data.owner;
       currentOwnerId = o.id_propietario;
+      
+      // Actualizar dropdown para mostrar selección actual
+      document.getElementById('owner_select').value = o.id_propietario;
+      
+      // Llenar formulario
       document.getElementById('owner_nombres').value = o.nombres || '';
       document.getElementById('owner_apellidos').value = o.apellidos || '';
       document.getElementById('owner_email').value = o.correo_electronico || '';
       document.getElementById('owner_telefono').value = o.telefono || '';
       document.getElementById('owner_direccion').value = o.direccion || '';
+      
+      // Scroll al formulario
       setTimeout(() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }), 50);
     }
 
@@ -169,7 +213,16 @@
       const res = await api('/api/admin/owners/' + currentOwnerId, { method: 'PUT', body: JSON.stringify(body) });
       if (!res) return; // redirigido
       await loadOwners();
-      alert('Guardado');
+      alert('Propietario actualizado exitosamente');
+      
+      // Limpiar formulario después de guardar
+      document.getElementById('owner_select').value = '';
+      currentOwnerId = null;
+      document.getElementById('owner_nombres').value = '';
+      document.getElementById('owner_apellidos').value = '';
+      document.getElementById('owner_email').value = '';
+      document.getElementById('owner_telefono').value = '';
+      document.getElementById('owner_direccion').value = '';
     });
 
     loadOwners();
