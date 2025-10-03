@@ -65,6 +65,7 @@
             <th>ID Muestra</th>
             <th>Animal</th>
             <th>Tipo de Análisis</th>
+            <th>Tipo de Muestra</th>
             <th>Resultado</th>
             <th>Fecha de Emisión</th>
             <th>Estado</th>
@@ -139,6 +140,7 @@
           <td>${analisis.id_muestra}</td>
           <td>${analisis.nombre_animal}</td>
           <td>${analisis.nombre_analisis}</td>
+          <td>${analisis.nombre_tipo_muestra || 'N/A'}</td>
           <td>${analisis.resultado}</td>
           <td>${formatearFecha(analisis.fecha_emision)}</td>
           <td>
@@ -173,8 +175,6 @@
         filterEstado.appendChild(option);
       });
       
-      // Mostrar en consola los estados disponibles para depuración
-      console.log('Estados disponibles en los datos:', estados);
       
       // Llenar filtro de animales
       animales.forEach(animal => {
@@ -263,24 +263,12 @@
         // Agregar timestamp para evitar caché
         const timestamp = new Date().getTime();
         const url = `/api/analyses/${idMuestra}/pdf?t=${timestamp}`;
-        console.log('Solicitando PDF desde:', url);
         
         const response = await sessionManager.authenticatedFetch(url);
         
-        console.log('Respuesta recibida:', {
-          status: response.status,
-          statusText: response.statusText,
-          headers: Object.fromEntries(response.headers.entries())
-        });
-        
         if (response && response.ok) {
-          console.log('Respuesta exitosa, obteniendo blob...');
           // Obtener el blob del PDF
           const blob = await response.blob();
-          console.log('Blob obtenido:', {
-            size: blob.size,
-            type: blob.type
-          });
           
           // Crear URL temporal para abrir en nueva ventana
           const url = window.URL.createObjectURL(blob);

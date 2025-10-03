@@ -9,23 +9,34 @@ class Analysis {
     try {
       const { id_animal, id_tipo_analisis, fecha_solicitud, id_propietario } = analysisData;
       
-      // Crear la muestra (incluyendo id_tipo_muestra que es requerido)
+      // Obtener el tipo de muestra correspondiente al análisis
+      const [tipoAnalisis] = await db.query(
+        'SELECT id_tipo_muestra FROM tipo_analisis WHERE id_tipo_analisis = ?',
+        [id_tipo_analisis]
+      );
+      
+      if (!tipoAnalisis[0]) {
+        throw new Error('Tipo de análisis no encontrado');
+      }
+      
+      const id_tipo_muestra = tipoAnalisis[0].id_tipo_muestra;
+      
+      // Crear la muestra con el tipo de muestra correcto
       const [muestraResult] = await db.query(
-        'INSERT INTO muestra (id_animal, id_estado, fecha_toma, id_tipo_muestra) VALUES (?, 1, ?, 1)',
-        [id_animal, fecha_solicitud]
+        'INSERT INTO muestra (id_animal, id_estado, fecha_toma, id_tipo_muestra) VALUES (?, 1, ?, ?)',
+        [id_animal, fecha_solicitud, id_tipo_muestra]
       );
       
       const id_muestra = muestraResult.insertId;
       
       // Crear el resultado (incluyendo id_animal que es requerido)
       await db.query(
-        'INSERT INTO resultado (id_muestra, id_tipo_analisis, resultado, fecha_emision, id_animal) VALUES (?, ?, "Pendiente", ?, ?)',
+        'INSERT INTO resultado (id_muestra, id_tipo_analisis, resultado, fecha_emision, id_animal, id_estado) VALUES (?, ?, "Pendiente", ?, ?, 1)',
         [id_muestra, id_tipo_analisis, fecha_solicitud, id_animal]
       );
       
       return id_muestra;
     } catch (error) {
-      console.error('Error en modelo create:', error);
       throw new Error(`Error al crear análisis: ${error.message}`);
     }
   }
@@ -39,15 +50,18 @@ class Analysis {
           m.id_muestra,
           a.nombre_animal,
           ta.nombre_analisis,
+          tm.nombre_tipo_muestra,
           r.resultado,
           r.fecha_emision,
+          r.observaciones,
           te.nombre_estado,
           m.fecha_toma
         FROM muestra m
         JOIN animal a ON m.id_animal = a.id_animal
         JOIN resultado r ON m.id_muestra = r.id_muestra
         JOIN tipo_analisis ta ON r.id_tipo_analisis = ta.id_tipo_analisis
-        JOIN tipo_estado te ON m.id_estado = te.id_tipo_estado
+        JOIN tipo_muestra tm ON m.id_tipo_muestra = tm.id_tipo_muestra
+        JOIN tipo_estado te ON r.id_estado = te.id_tipo_estado
         WHERE a.id_propietario = ?
         ORDER BY m.fecha_toma DESC
       `, [ownerId]);
@@ -56,17 +70,23 @@ class Analysis {
       // Descifrar los datos sensibles
       return rows.map(row => decryptObject(row, SENSITIVE_FIELDS));
     } catch (error) {
-      console.error('Error en modelo findByOwner:', error);
       throw new Error(`Error al buscar análisis del propietario: ${error.message}`);
     }
   }
 
   static async getAnalysisTypes() {
     try {
-      const [rows] = await db.query('SELECT id_tipo_analisis, nombre_analisis, precio FROM tipo_analisis');
+      const [rows] = await db.query(`
+        SELECT 
+          ta.id_tipo_analisis, 
+          ta.nombre_analisis, 
+          ta.precio,
+          tm.nombre_tipo_muestra as tipo_muestra
+        FROM tipo_analisis ta
+        JOIN tipo_muestra tm ON ta.id_tipo_muestra = tm.id_tipo_muestra
+      `);
       return rows;
     } catch (error) {
-      console.error('Error en modelo getAnalysisTypes:', error);
       throw new Error(`Error al obtener tipos de análisis: ${error.message}`);
     }
   }
@@ -94,6 +114,7 @@ class Analysis {
           ta.precio,
           r.resultado,
           r.fecha_emision,
+          r.observaciones,
           te.nombre_estado,
           m.fecha_toma
         FROM muestra m
@@ -104,7 +125,7 @@ class Analysis {
         JOIN tipo_muestra tm ON m.id_tipo_muestra = tm.id_tipo_muestra
         JOIN resultado r ON m.id_muestra = r.id_muestra
         JOIN tipo_analisis ta ON r.id_tipo_analisis = ta.id_tipo_analisis
-        JOIN tipo_estado te ON m.id_estado = te.id_tipo_estado
+        JOIN tipo_estado te ON r.id_estado = te.id_tipo_estado
         WHERE m.id_muestra = ?
       `, [id]);
       
@@ -116,7 +137,6 @@ class Analysis {
       
       return rows[0];
     } catch (error) {
-      console.error('Error en modelo getByIdForPDF:', error);
       throw new Error(`Error al obtener análisis para PDF: ${error.message}`);
     }
   }

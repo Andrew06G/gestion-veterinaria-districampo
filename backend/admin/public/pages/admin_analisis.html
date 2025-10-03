@@ -6,17 +6,476 @@
   <title>Admin - Análisis</title>
   <link rel="stylesheet" href="/assets/css/bootstrap-local.css">
   <link rel="stylesheet" href="/assets/css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
   <nav class="navbar navbar-dark bg-dark">
     <a class="navbar-brand" href="/admin"><strong>Admin</strong></a>
+    <div class="navbar-nav ml-auto">
+      <a class="nav-link" href="/admin/propietarios">Propietarios</a>
+      <a class="nav-link" href="/admin/animales">Animales</a>
+      <a class="nav-link active" href="/admin/analisis">Análisis</a>
+      <a class="nav-link" href="#" onclick="logout()">Salir</a>
+    </div>
   </nav>
 
   <div class="container mt-5">
-    <h2>Gestión de Análisis (estructura)</h2>
-    <p class="text-muted">En próximas versiones: listado, filtros, acciones administrativas.</p>
+    <h2>Gestión de Análisis</h2>
+    
+    <!-- Filtros -->
+    <div class="row mb-4">
+      <div class="col-md-4">
+        <label for="ownerFilter">Filtrar por Propietario:</label>
+        <select id="ownerFilter" class="form-control" onchange="loadAnimalsByOwner()">
+          <option value="">-- Todos los propietarios --</option>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <label for="animalFilter">Filtrar por Animal:</label>
+        <select id="animalFilter" class="form-control" onchange="loadAnalysesByAnimal()">
+          <option value="">-- Seleccione un animal --</option>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <label for="statusFilter">Filtrar por Estado:</label>
+        <select id="statusFilter" class="form-control" onchange="filterByStatus()">
+          <option value="">-- Todos los estados --</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Lista de análisis -->
+    <div id="analysesContainer" class="row">
+      <!-- Los análisis se cargarán aquí dinámicamente -->
+    </div>
+
+    <div id="noAnalysesMessage" class="alert alert-info text-center" style="display: none;">
+      No se encontraron análisis para este filtro.
+    </div>
   </div>
+
+  <style>
+    .analysis-card {
+      transition: transform .15s ease, box-shadow .15s ease;
+      border-radius: .9rem;
+      box-shadow: 0 .35rem 1rem rgba(0,0,0,.08);
+      background-color: #f8f9fa;
+      border: 1px solid #e9ecef;
+      margin-bottom: 1.5rem;
+    }
+    .analysis-card:hover {
+      transform: translateY(-3px) scale(1.01);
+      box-shadow: 0 .75rem 1.5rem rgba(0,0,0,.18) !important;
+    }
+    .analysis-card .card-body { 
+      padding: 1.5rem 2rem; 
+    }
+    .animal-name {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #2c3e50;
+      margin-bottom: 0.5rem;
+    }
+    .analysis-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #34495e;
+      margin-bottom: 0.3rem;
+    }
+    .analysis-detail {
+      font-size: 0.95rem;
+      color: #6c757d;
+      margin-bottom: 0.2rem;
+    }
+    .analysis-detail strong {
+      color: #495057;
+      font-weight: 600;
+    }
+    .analysis-actions .btn { 
+      min-width: 120px; 
+    }
+    .form-control:focus {
+      border-color: #007bff;
+      box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+    .resultado-categorico {
+      display: none;
+    }
+    .resultado-libre {
+      display: none;
+    }
+  </style>
+
+  <script>
+    function getToken() {
+      return localStorage.getItem('adminToken');
+    }
+    
+    if (!getToken()) {
+      window.location.href = '/admin/login';
+    }
+
+    let allAnalyses = [];
+    let allOwners = [];
+    let allAnimals = [];
+    let allStatuses = [];
+
+    async function api(path, options = {}) {
+      const tk = getToken();
+      if (!tk) {
+        window.location.href = '/admin/login';
+        return;
+      }
+      const res = await fetch(path, {
+        ...options,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + tk,
+          ...(options.headers || {})
+        }
+      });
+      if (res.status === 401) {
+        window.location.href = '/admin/login';
+        return;
+      }
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(text || ('Error ' + res.status));
+      }
+      return res.json();
+    }
+
+    function analysisCard(analysis) {
+      const statusOptions = allStatuses.map(status => 
+        `<option value="${status.id_tipo_estado}" ${analysis.id_estado == status.id_tipo_estado ? 'selected' : ''}>${status.nombre_estado}</option>`
+      ).join('');
+
+      const resultadoCategorico = ['Positivo', 'Negativo', 'Reactivo', 'No Reactivo', 'Normal', 'Anormal'];
+      const resultadoOptions = resultadoCategorico.map(res => 
+        `<option value="${res}" ${analysis.resultado === res ? 'selected' : ''}>${res}</option>`
+      ).join('');
+
+      return `
+        <div class="col-12">
+          <div class="card analysis-card">
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-8">
+                  <div class="animal-name">${analysis.nombre_animal}</div>
+                  <div class="analysis-title">${analysis.nombre_analisis}</div>
+                  <div class="analysis-details">
+                    <div class="analysis-detail"><strong>Tipo de Muestra:</strong> ${analysis.nombre_tipo_muestra}</div>
+                    <div class="analysis-detail"><strong>Propietario:</strong> ${analysis.propietario_nombre}</div>
+                    <div class="analysis-detail"><strong>Fecha de Toma:</strong> ${formatDate(analysis.fecha_toma)}</div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <form class="analysis-form" data-id="${analysis.id_resultado}">
+                    <div class="form-group">
+                      <label><strong>Estado:</strong></label>
+                      <select class="form-control estado-select" required>
+                        <option value="">Seleccionar estado</option>
+                        ${statusOptions}
+                      </select>
+                    </div>
+                    
+                    <div class="form-group">
+                      <label><strong>Fecha de Emisión:</strong></label>
+                      <input type="date" class="form-control fecha-emision" value="${analysis.fecha_emision}" required>
+                    </div>
+
+                    <div class="form-group">
+                      <label><strong>Tipo de Resultado:</strong></label>
+                      <select class="form-control tipo-resultado" onchange="toggleResultadoType(this)">
+                        <option value="categorico" ${analysis.resultado && resultadoCategorico.includes(analysis.resultado) ? 'selected' : ''}>Categórico</option>
+                        <option value="libre" ${analysis.resultado && !resultadoCategorico.includes(analysis.resultado) ? 'selected' : ''}>Texto Libre</option>
+                      </select>
+                    </div>
+
+                    <div class="form-group resultado-categorico">
+                      <label><strong>Resultado Categórico:</strong></label>
+                      <select class="form-control resultado-categorico-select">
+                        <option value="">Seleccionar resultado</option>
+                        ${resultadoOptions}
+                        <option value="otro" ${!resultadoCategorico.includes(analysis.resultado) && analysis.resultado ? 'selected' : ''}>Otro</option>
+                      </select>
+                    </div>
+
+                    <div class="form-group resultado-libre">
+                      <label><strong>Resultado (Texto Libre):</strong></label>
+                      <input type="text" class="form-control resultado-libre-input" 
+                             value="${analysis.resultado && !resultadoCategorico.includes(analysis.resultado) ? analysis.resultado : ''}" 
+                             placeholder="Ej: Hemoglobina: 12 g/dL">
+                    </div>
+
+                    <div class="form-group">
+                      <label><strong>Observaciones:</strong></label>
+                      <textarea class="form-control observaciones" rows="2" 
+                                placeholder="Observaciones adicionales...">${analysis.observaciones || ''}</textarea>
+                    </div>
+
+                    <div class="d-flex justify-content-end analysis-actions">
+                      <button type="button" class="btn btn-primary" onclick="saveAnalysis(${analysis.id_resultado})">
+                        <i class="fas fa-save"></i> Guardar Cambios
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    async function loadOwners() {
+      try {
+        const data = await api('/api/admin/owners');
+        if (!data) return;
+        
+        allOwners = data.owners;
+        populateOwnerFilter();
+      } catch (e) {
+        // Error cargando propietarios, continuar sin mostrar al usuario
+      }
+    }
+
+    async function loadStatuses() {
+      try {
+        const data = await api('/api/admin/statuses');
+        if (!data) return;
+        
+        allStatuses = data.statuses;
+        populateStatusFilter();
+      } catch (e) {
+        // Error cargando estados, continuar sin mostrar al usuario
+      }
+    }
+
+    function populateOwnerFilter() {
+      const select = document.getElementById('ownerFilter');
+      select.innerHTML = '<option value="">-- Todos los propietarios --</option>';
+      
+      allOwners.forEach(owner => {
+        const option = document.createElement('option');
+        option.value = owner.id_propietario;
+        option.textContent = `${owner.nombres} ${owner.apellidos}`;
+        select.appendChild(option);
+      });
+    }
+
+    function populateStatusFilter() {
+      const select = document.getElementById('statusFilter');
+      select.innerHTML = '<option value="">-- Todos los estados --</option>';
+      
+      allStatuses.forEach(status => {
+        const option = document.createElement('option');
+        option.value = status.id_tipo_estado;
+        option.textContent = status.nombre_estado;
+        select.appendChild(option);
+      });
+    }
+
+    async function loadAnimalsByOwner() {
+      const ownerId = document.getElementById('ownerFilter').value;
+      const animalSelect = document.getElementById('animalFilter');
+      
+      animalSelect.innerHTML = '<option value="">-- Seleccione un animal --</option>';
+      
+      if (!ownerId) {
+        allAnimals = [];
+        loadAllAnalyses();
+        return;
+      }
+
+      try {
+        const data = await api(`/api/admin/animals?owner=${ownerId}`);
+        if (!data) return;
+        
+        allAnimals = data.animals;
+        
+        allAnimals.forEach(animal => {
+          const option = document.createElement('option');
+          option.value = animal.id_animal;
+          option.textContent = animal.nombre_animal;
+          animalSelect.appendChild(option);
+        });
+
+        // Cargar análisis del propietario seleccionado
+        loadAnalysesByOwner(ownerId);
+      } catch (e) {
+        // Error cargando animales, continuar sin mostrar al usuario
+      }
+    }
+
+    async function loadAnalysesByOwner(ownerId) {
+      try {
+        const data = await api(`/api/admin/analyses?owner=${ownerId}`);
+        if (!data) return;
+        
+        allAnalyses = data.analyses;
+        displayAnalyses(allAnalyses);
+      } catch (e) {
+        // Error cargando análisis, continuar sin mostrar al usuario
+      }
+    }
+
+    async function loadAnalysesByAnimal() {
+      const animalId = document.getElementById('animalFilter').value;
+      
+      if (!animalId) {
+        const ownerId = document.getElementById('ownerFilter').value;
+        if (ownerId) {
+          loadAnalysesByOwner(ownerId);
+        } else {
+          loadAllAnalyses();
+        }
+        return;
+      }
+
+      try {
+        const data = await api(`/api/admin/analyses?animal=${animalId}`);
+        if (!data) return;
+        
+        allAnalyses = data.analyses;
+        displayAnalyses(allAnalyses);
+      } catch (e) {
+        // Error cargando análisis, continuar sin mostrar al usuario
+      }
+    }
+
+    async function loadAllAnalyses() {
+      try {
+        const data = await api('/api/admin/analyses');
+        if (!data) return;
+        
+        allAnalyses = data.analyses;
+        displayAnalyses(allAnalyses);
+      } catch (e) {
+        // Error cargando análisis, continuar sin mostrar al usuario
+      }
+    }
+
+    function displayAnalyses(analyses) {
+      const container = document.getElementById('analysesContainer');
+      const noMessage = document.getElementById('noAnalysesMessage');
+      
+      // Limpiar contenedor antes de mostrar nuevos resultados
+      container.innerHTML = '';
+      
+      if (analyses.length === 0) {
+        noMessage.style.display = 'block';
+        return;
+      }
+
+      noMessage.style.display = 'none';
+      container.innerHTML = analyses.map(analysisCard).join('');
+    }
+
+    function filterByStatus() {
+      const statusId = document.getElementById('statusFilter').value;
+      const ownerId = document.getElementById('ownerFilter').value;
+      const animalId = document.getElementById('animalFilter').value;
+      
+      if (!statusId) {
+        // Sin filtro de estado, usar filtros existentes
+        if (animalId) {
+          loadAnalysesByAnimal();
+        } else if (ownerId) {
+          loadAnalysesByOwner(ownerId);
+        } else {
+          loadAllAnalyses();
+        }
+      } else {
+        // Aplicar filtro de estado a los análisis actuales
+        const filtered = allAnalyses.filter(analysis => analysis.id_estado == statusId);
+        displayAnalyses(filtered);
+      }
+    }
+
+    function toggleResultadoType(select) {
+      const form = select.closest('.analysis-form');
+      const categorico = form.querySelector('.resultado-categorico');
+      const libre = form.querySelector('.resultado-libre');
+      
+      if (select.value === 'categorico') {
+        categorico.style.display = 'block';
+        libre.style.display = 'none';
+        libre.querySelector('input').value = '';
+      } else {
+        categorico.style.display = 'none';
+        libre.style.display = 'block';
+        categorico.querySelector('select').value = '';
+      }
+    }
+
+    async function saveAnalysis(resultadoId) {
+      const form = document.querySelector(`form[data-id="${resultadoId}"]`);
+      const estado = form.querySelector('.estado-select').value;
+      const fechaEmision = form.querySelector('.fecha-emision').value;
+      const tipoResultado = form.querySelector('.tipo-resultado').value;
+      const observaciones = form.querySelector('.observaciones').value;
+      
+      let resultado = '';
+      if (tipoResultado === 'categorico') {
+        const select = form.querySelector('.resultado-categorico-select');
+        resultado = select.value === 'otro' ? '' : select.value;
+      } else {
+        resultado = form.querySelector('.resultado-libre-input').value;
+      }
+
+      // Validaciones
+      if (!estado) {
+        alert('Por favor seleccione un estado');
+        return;
+      }
+      if (!fechaEmision) {
+        alert('Por favor seleccione una fecha de emisión');
+        return;
+      }
+      if (!resultado.trim()) {
+        alert('Por favor ingrese un resultado');
+        return;
+      }
+
+      try {
+        const res = await api(`/api/admin/analyses/${resultadoId}`, {
+          method: 'PUT',
+          body: JSON.stringify({
+            id_estado: parseInt(estado),
+            fecha_emision: fechaEmision,
+            resultado: resultado.trim(),
+            observaciones: observaciones.trim()
+          })
+        });
+        
+        if (!res) return;
+        
+        alert('Análisis actualizado exitosamente');
+        loadAnalysesByAnimal(); // Recargar análisis
+        
+      } catch (e) {
+        alert('Error al actualizar el análisis');
+      }
+    }
+
+    function formatDate(dateString) {
+      if (!dateString) return 'N/A';
+      const date = new Date(dateString);
+      return date.toLocaleDateString('es-ES');
+    }
+
+    function logout() {
+      localStorage.removeItem('adminToken');
+      localStorage.removeItem('adminUser');
+      window.location.href = '/admin/login';
+    }
+
+    // Inicializar
+    loadOwners();
+    loadStatuses();
+    loadAllAnalyses();
+  </script>
 </body>
 </html>
-
-

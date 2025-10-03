@@ -43,9 +43,13 @@
       </div>
       <div class="form-group">
         <label for="tipo_analisis">Tipo de Análisis:</label>
-        <select class="form-control" id="tipo_analisis" name="id_tipo_analisis" required>
+        <select class="form-control" id="tipo_analisis" name="id_tipo_analisis" required onchange="showSampleType()">
           <!-- Opciones dinámicas -->
         </select>
+      </div>
+      <div class="form-group">
+        <label for="tipo_muestra_info">Tipo de Muestra (asignado automáticamente):</label>
+        <input type="text" class="form-control" id="tipo_muestra_info" readonly style="background-color: #f8f9fa;">
       </div>
       <div class="form-group">
         <label for="fecha_solicitud">Fecha de Solicitud:</label>
@@ -90,6 +94,7 @@
                 const option = document.createElement('option');
                 option.value = analysis.id_tipo_analisis;
                 option.textContent = analysis.nombre_analisis;
+                option.dataset.tipoMuestra = analysis.tipo_muestra || '';
                 select.appendChild(option);
               });
             }
@@ -101,7 +106,21 @@
           alert('Error al cargar los tipos de análisis.');
         }
       } catch (error) {
-        console.error('Error al cargar los tipos de análisis:', error);
+        // Error al cargar los tipos de análisis
+      }
+    }
+
+    // Mostrar tipo de muestra cuando se selecciona un análisis
+    function showSampleType() {
+      const select = document.getElementById('tipo_analisis');
+      const infoField = document.getElementById('tipo_muestra_info');
+      
+      if (select.value) {
+        const selectedOption = select.options[select.selectedIndex];
+        const tipoMuestra = selectedOption.dataset.tipoMuestra;
+        infoField.value = tipoMuestra || 'Se asignará automáticamente';
+      } else {
+        infoField.value = '';
       }
     }
 
@@ -140,7 +159,7 @@
           alert('Error al cargar los animales.');
         }
       } catch (error) {
-        console.error('Error al cargar los animales:', error);
+        // Error al cargar los animales
       }
     }
 
@@ -181,7 +200,6 @@
           alert('Error al solicitar el análisis: ' + errorData.message);
         }
       } catch (error) {
-        console.error('Error al solicitar el análisis:', error);
         alert('Error al solicitar el análisis');
       }
     });
