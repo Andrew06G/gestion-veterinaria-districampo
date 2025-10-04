@@ -87,6 +87,23 @@ const createAdmin = async (req, res) => {
       });
     }
 
+    // Validar fortaleza de contraseña
+    const passwordValidation = {
+      length: contrasena.length >= 8,
+      lowercase: /[a-z]/.test(contrasena),
+      uppercase: /[A-Z]/.test(contrasena),
+      numbers: /\d/.test(contrasena),
+      special: /[!@#$%^&*(),.?":{}|<>]/.test(contrasena)
+    };
+
+    const allRequirementsMet = Object.values(passwordValidation).every(Boolean);
+    if (!allRequirementsMet) {
+      return res.status(400).json({
+        success: false,
+        message: 'La contraseña debe cumplir todos los requisitos de seguridad: mínimo 8 caracteres, al menos una minúscula, una mayúscula, un número y un carácter especial'
+      });
+    }
+
     const newAdmin = await Admin.create({
       nombres,
       apellidos,

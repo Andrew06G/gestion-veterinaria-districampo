@@ -4,6 +4,16 @@ const { encrypt, decrypt } = require('../../../src/utils/crypto');
 // Listar todos los animales con información del propietario
 async function listAnimals(req, res) {
   try {
+    const { owner } = req.query;
+    
+    let whereClause = '';
+    let params = [];
+    
+    if (owner) {
+      whereClause = 'WHERE a.id_propietario = ?';
+      params.push(owner);
+    }
+    
     const [rows] = await db.query(`
       SELECT 
         a.id_animal,
@@ -19,8 +29,9 @@ async function listAnimals(req, res) {
       LEFT JOIN especie e ON a.id_especie = e.id_especie
       LEFT JOIN raza r ON a.id_raza = r.id_raza
       LEFT JOIN propietario p ON a.id_propietario = p.id_propietario
+      ${whereClause}
       ORDER BY a.id_animal DESC
-    `);
+    `, params);
     
     // Descifrar nombres de animales
     const animals = rows.map(animal => ({

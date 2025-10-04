@@ -253,4 +253,4 @@ window.DistriCampoUtils = {
 };
 
 // Log de inicialización
-console.log('🔧 DistriCampo Utils cargado correctamente');
+console.log('DistriCampo Utils cargado correctamente');

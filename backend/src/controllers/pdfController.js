@@ -4,35 +4,24 @@ const PDFDocument = require('pdfkit');
 // Generar PDF de análisis
 const generatePDF = async (req, res) => {
   try {
-    console.log('=== INICIO GENERACIÓN PDF ===');
-    console.log('Parámetros recibidos:', req.params);
-    console.log('Usuario autenticado:', req.user);
-    
     const { id } = req.params;
     const id_propietario = req.user.id;
 
-    console.log('Buscando análisis con ID:', id);
     // Obtener datos del análisis
     const analysis = await Analysis.getByIdForPDF(id);
     
-    console.log('Datos del análisis obtenidos:', analysis);
-    
     if (!analysis) {
-      console.log('Análisis no encontrado');
       return res.status(404).json({ message: 'Análisis no encontrado' });
     }
 
     // Verificar que el análisis pertenece al usuario autenticado
     if (analysis.id_propietario !== id_propietario) {
-      console.log('Usuario no tiene permisos para este análisis');
       return res.status(403).json({ message: 'No tienes permisos para acceder a este análisis' });
     }
 
-    console.log('Creando documento PDF...');
     // Crear documento PDF
     const doc = new PDFDocument({ margin: 50 });
     
-    console.log('Configurando headers...');
     // Configurar headers para descarga (sin caché)
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', `inline; filename="analisis_${analysis.id_muestra}.pdf"`);
@@ -40,28 +29,16 @@ const generatePDF = async (req, res) => {
     res.setHeader('Pragma', 'no-cache');
     res.setHeader('Expires', '0');
     
-    console.log('Headers configurados:', {
-      'Content-Type': 'application/pdf',
-      'Content-Disposition': `inline; filename="analisis_${analysis.id_muestra}.pdf"`,
-      'Cache-Control': 'no-cache, no-store, must-revalidate'
-    });
-    
-    console.log('Conectando PDF al response...');
     // Pipe PDF al response
     doc.pipe(res);
     
-    console.log('Generando contenido del PDF...');
     // Generar contenido completo del PDF
     generatePDFContent(doc, analysis);
     
-    console.log('Finalizando PDF...');
     // Finalizar PDF
     doc.end();
-    
-    console.log('PDF generado exitosamente');
 
   } catch (error) {
-    console.error('Error al generar PDF:', error);
     res.status(500).json({ message: 'Error interno del servidor' });
   }
 };
@@ -179,7 +156,25 @@ function generatePDFContent(doc, analysis) {
      .fillColor('#333')
      .text(analysis.resultado || 'Pendiente', 70, yPosition);
   
-  yPosition += 60;
+  yPosition += 30;
+  
+  // Observaciones del veterinario
+  if (analysis.observaciones) {
+    doc.fontSize(16)
+       .fillColor('#007bff')
+       .text('Observaciones del veterinario:', 50, yPosition);
+    
+    yPosition += 25;
+    
+    doc.fontSize(12)
+       .fillColor('#333')
+       .text(analysis.observaciones, 70, yPosition, { 
+         width: 480,
+         align: 'left'
+       });
+    
+    yPosition += 40;
+  }
   
   // Footer breve
   doc.fontSize(10)

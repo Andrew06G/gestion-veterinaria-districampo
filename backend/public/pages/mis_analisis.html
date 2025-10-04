@@ -45,10 +45,7 @@
         <label for="filterEstado">Filtrar por Estado:</label>
         <select id="filterEstado" class="form-control">
           <option value="">Todos los estados</option>
-          <option value="Pendiente">Pendiente</option>
-          <option value="En Proceso">En Proceso</option>
-          <option value="Finalizado">Finalizado</option>
-          <option value="Completado">Completado</option>
+          <!-- Los estados se cargarán dinámicamente -->
         </select>
       </div>
       <div class="col-md-4">
@@ -97,6 +94,9 @@
 
       // Cargar análisis del usuario
       cargarAnalisis();
+      
+      // Cargar estados desde la base de datos
+      cargarEstados();
       
       // Configurar filtros
       configurarFiltros();
@@ -157,24 +157,55 @@
       `).join('');
     }
 
+    // Función para cargar estados desde la base de datos
+    async function cargarEstados() {
+      try {
+        const response = await sessionManager.authenticatedFetch('/api/analyses/estados');
+        
+        if (response && response.ok) {
+          const data = await response.json();
+          const filterEstado = document.getElementById('filterEstado');
+          
+          // Limpiar opciones existentes
+          filterEstado.innerHTML = '<option value="">Todos los estados</option>';
+          
+          // Agregar estados desde la base de datos
+          if (data.estados && data.estados.length > 0) {
+            data.estados.forEach(estado => {
+              const option = document.createElement('option');
+              option.value = estado.nombre_estado;
+              option.textContent = estado.nombre_estado;
+              filterEstado.appendChild(option);
+            });
+          }
+        } else {
+          // Si falla la carga, usar estados por defecto
+          const filterEstado = document.getElementById('filterEstado');
+          const estadosDefault = ['Pendiente', 'En Proceso', 'Finalizado', 'Cancelado'];
+          estadosDefault.forEach(estado => {
+            const option = document.createElement('option');
+            option.value = estado;
+            option.textContent = estado;
+            filterEstado.appendChild(option);
+          });
+        }
+      } catch (error) {
+        // Error cargando estados, usar estados por defecto
+        const filterEstado = document.getElementById('filterEstado');
+        const estadosDefault = ['Pendiente', 'En Proceso', 'Finalizado', 'Cancelado'];
+        estadosDefault.forEach(estado => {
+          const option = document.createElement('option');
+          option.value = estado;
+          option.textContent = estado;
+          filterEstado.appendChild(option);
+        });
+      }
+    }
+
     // Función para llenar los filtros con datos únicos
     function llenarFiltros(analisis) {
       const filterAnimal = document.getElementById('filterAnimal');
-      const filterEstado = document.getElementById('filterEstado');
       const animales = [...new Set(analisis.map(a => a.nombre_animal))];
-      const estados = [...new Set(analisis.map(a => a.nombre_estado))];
-      
-      // Limpiar opciones existentes del filtro de estado
-      filterEstado.innerHTML = '<option value="">Todos los estados</option>';
-      
-      // Agregar estados únicos encontrados en los datos
-      estados.forEach(estado => {
-        const option = document.createElement('option');
-        option.value = estado;
-        option.textContent = estado;
-        filterEstado.appendChild(option);
-      });
-      
       
       // Llenar filtro de animales
       animales.forEach(animal => {

@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registro de Administrador - DistriCampo</title>
+  <link href="/assets/css/bootstrap-local.css" rel="stylesheet">
+  <link href="/assets/css/style.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body style="background-color: #b3b3b3;">
+  <nav class="navbar navbar-dark bg-dark">
+    <a class="navbar-brand" href="/admin">
+      <i class="fas fa-shield-alt"></i> DistriCampo Admin
+    </a>
+    <div class="navbar-nav">
+      <a class="nav-link" href="/admin">Dashboard</a>
+      <a class="nav-link" href="/admin/propietarios">Propietarios</a>
+      <a class="nav-link" href="/admin/animales">Animales</a>
+      <a class="nav-link" href="/admin/analisis">Análisis</a>
+      <a class="nav-link active" href="/admin/registro">Registro Admin</a>
+      <a class="nav-link" href="#" onclick="logout()">Salir</a>
+    </div>
+  </nav>
+
+  <div class="container mt-5">
+    <div class="text-center mb-4">
+      <h1><i class="fas fa-shield-alt"></i></h1>
+    </div>
+    <h2 class="text-center">Registro de Administrador</h2>
+    <form id="adminRegistrationForm">
+      <div class="form-group">
+        <label for="nombres">Nombres:</label>
+        <input type="text" class="form-control" id="nombres" name="nombres" required>
+      </div>
+      <div class="form-group">
+        <label for="apellidos">Apellidos:</label>
+        <input type="text" class="form-control" id="apellidos" name="apellidos" required>
+      </div>
+      <div class="form-group">
+        <label for="correo_electronico">Correo Electrónico:</label>
+        <input type="email" class="form-control" id="correo_electronico" name="correo_electronico" required>
+      </div>
+      <div class="form-group">
+        <label for="telefono">Teléfono:</label>
+        <input type="tel" class="form-control" id="telefono" name="telefono">
+      </div>
+      <div class="form-group">
+        <label for="direccion">Dirección:</label>
+        <input type="text" class="form-control" id="direccion" name="direccion">
+      </div>
+      <div class="form-group">
+        <label for="contrasena">Contraseña:</label>
+        <input type="password" class="form-control" id="contrasena" name="contrasena" required minlength="8">
+        
+        <!-- Indicador de fortaleza de contraseña -->
+        <div class="mt-2">
+          <div class="progress" style="height: 8px;">
+            <div id="passwordStrengthBar" class="progress-bar" role="progressbar" style="width: 0%"></div>
+          </div>
+          <small id="passwordStrengthText" class="text-muted">Fortaleza de la contraseña</small>
+        </div>
+        
+        <!-- Lista de requisitos -->
+        <div class="mt-2">
+          <small class="text-muted">La contraseña debe cumplir:</small>
+          <ul class="list-unstyled mt-1" style="font-size: 0.85em;">
+            <li id="reqLength"><span class="text-danger">✗</span> Mínimo 8 caracteres</li>
+            <li id="reqLowercase"><span class="text-danger">✗</span> Al menos una minúscula</li>
+            <li id="reqUppercase"><span class="text-danger">✗</span> Al menos una mayúscula</li>
+            <li id="reqNumber"><span class="text-danger">✗</span> Al menos un número</li>
+            <li id="reqSpecial"><span class="text-danger">✗</span> Al menos un carácter especial</li>
+          </ul>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="confirmar_contrasena">Confirmar Contraseña:</label>
+        <input type="password" class="form-control" id="confirmar_contrasena" name="confirmar_contrasena" required>
+      </div>
+      <div class="form-group">
+        <label for="rol">Rol:</label>
+        <select class="form-control" id="rol" name="rol" required>
+          <option value="">Seleccionar rol</option>
+          <option value="admin">Administrador</option>
+          <option value="super_admin">Super Administrador</option>
+        </select>
+        <small class="form-text text-muted">Los Super Administradores pueden crear otros administradores</small>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block">Registrar Administrador</button>
+    </form>
+  </div>
+
+
+  <script>
+    // Verificar autenticación
+    function getToken() {
+      return localStorage.getItem('adminToken');
+    }
+
+    if (!getToken()) {
+      window.location.href = '/admin/login';
+    }
+
+    // API helper
+    async function api(path, options = {}) {
+      const tk = getToken();
+      if (!tk) {
+        window.location.href = '/admin/login';
+        return null;
+      }
+
+      const defaultOptions = {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${tk}`
+        }
+      };
+
+      const response = await fetch(`/api/admin${path}`, { ...defaultOptions, ...options });
+      
+      if (response.status === 401) {
+        localStorage.removeItem('adminToken');
+        localStorage.removeItem('adminUser');
+        window.location.href = '/admin/login';
+        return null;
+      }
+
+      return response;
+    }
+
+    // Función para validar fortaleza de contraseña
+    function validatePasswordStrength(password) {
+      const validations = {
+        length: password.length >= 8,
+        lowercase: /[a-z]/.test(password),
+        uppercase: /[A-Z]/.test(password),
+        numbers: /\d/.test(password),
+        special: /[!@#$%^&*(),.?":{}|<>]/.test(password)
+      };
+      
+      const score = Object.values(validations).filter(Boolean).length;
+      const maxScore = Object.keys(validations).length;
+      
+      let strength = 'Débil';
+      let color = 'danger';
+      
+      if (score >= 4) {
+        strength = 'Fuerte';
+        color = 'success';
+      } else if (score >= 2) {
+        strength = 'Media';
+        color = 'warning';
+      }
+      
+      // Actualizar barra de progreso
+      const percentage = (score / maxScore) * 100;
+      document.getElementById('passwordStrengthBar').style.width = percentage + '%';
+      document.getElementById('passwordStrengthBar').className = `progress-bar bg-${color}`;
+      document.getElementById('passwordStrengthText').textContent = `Fortaleza: ${strength}`;
+      
+      // Actualizar indicadores de requisitos
+      document.getElementById('reqLength').innerHTML = validations.length ? 
+        '<span class="text-success">✓</span> Mínimo 8 caracteres' : 
+        '<span class="text-danger">✗</span> Mínimo 8 caracteres';
+      
+      document.getElementById('reqLowercase').innerHTML = validations.lowercase ? 
+        '<span class="text-success">✓</span> Al menos una minúscula' : 
+        '<span class="text-danger">✗</span> Al menos una minúscula';
+      
+      document.getElementById('reqUppercase').innerHTML = validations.uppercase ? 
+        '<span class="text-success">✓</span> Al menos una mayúscula' : 
+        '<span class="text-danger">✗</span> Al menos una mayúscula';
+      
+      document.getElementById('reqNumber').innerHTML = validations.numbers ? 
+        '<span class="text-success">✓</span> Al menos un número' : 
+        '<span class="text-danger">✗</span> Al menos un número';
+      
+      document.getElementById('reqSpecial').innerHTML = validations.special ? 
+        '<span class="text-success">✓</span> Al menos un carácter especial' : 
+        '<span class="text-danger">✗</span> Al menos un carácter especial';
+      
+      return validations;
+    }
+
+    // Event listener para validación de contraseña en tiempo real
+    document.getElementById('contrasena').addEventListener('input', function() {
+      validatePasswordStrength(this.value);
+    });
+
+    // Manejar envío del formulario
+    document.getElementById('adminRegistrationForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const formData = new FormData(this);
+      const data = Object.fromEntries(formData.entries());
+
+      // Validar contraseñas
+      if (data.contrasena !== data.confirmar_contrasena) {
+        alert('Las contraseñas no coinciden');
+        return;
+      }
+
+      // Validar fortaleza de contraseña
+      const passwordValidation = validatePasswordStrength(data.contrasena);
+      const allRequirementsMet = Object.values(passwordValidation).every(Boolean);
+      
+      if (!allRequirementsMet) {
+        alert('La contraseña debe cumplir todos los requisitos de seguridad');
+        return;
+      }
+
+      // Remover confirmar_contrasena del objeto
+      delete data.confirmar_contrasena;
+
+      try {
+        const response = await api('/create', {
+          method: 'POST',
+          body: JSON.stringify(data)
+        });
+
+        if (!response) return;
+
+        const result = await response.json();
+
+        if (result.success) {
+          alert('Administrador registrado exitosamente');
+          this.reset();
+          // Limpiar indicadores de contraseña
+          document.getElementById('passwordStrengthBar').style.width = '0%';
+          document.getElementById('passwordStrengthText').textContent = 'Fortaleza de la contraseña';
+          document.querySelectorAll('[id^="req"]').forEach(el => {
+            el.innerHTML = el.innerHTML.replace('✓', '✗').replace('text-success', 'text-danger');
+          });
+        } else {
+          alert(result.message || 'Error al registrar administrador');
+        }
+      } catch (error) {
+        alert('Error al registrar administrador');
+      }
+    });
+
+    function logout() {
+      localStorage.removeItem('adminToken');
+      localStorage.removeItem('adminUser');
+      window.location.href = '/admin/login';
+    }
+  </script>
+</body>
+</html>

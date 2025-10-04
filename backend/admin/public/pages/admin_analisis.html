@@ -16,12 +16,15 @@
       <a class="nav-link" href="/admin/propietarios">Propietarios</a>
       <a class="nav-link" href="/admin/animales">Animales</a>
       <a class="nav-link active" href="/admin/analisis">Análisis</a>
+      <a class="nav-link" href="/admin/registro">Registro Admin</a>
       <a class="nav-link" href="#" onclick="logout()">Salir</a>
     </div>
   </nav>
 
-  <div class="container mt-5">
-    <h2>Gestión de Análisis</h2>
+  <div class="container-fluid mt-5">
+    <div class="row justify-content-center">
+      <div class="col-12 col-xl-10 col-lg-11">
+        <h2 class="text-center mb-4">Gestión de Análisis</h2>
     
     <!-- Filtros -->
     <div class="row mb-4">
@@ -46,30 +49,109 @@
     </div>
 
     <!-- Lista de análisis -->
-    <div id="analysesContainer" class="row">
+    <div id="analysesContainer" class="analyses-container">
       <!-- Los análisis se cargarán aquí dinámicamente -->
+    </div>
+
+    <!-- Controles de paginación -->
+    <div id="paginationContainer" class="pagination-container" style="display: none;">
+      <div class="d-flex justify-content-center align-items-center">
+        <nav aria-label="Paginación de análisis">
+          <ul class="pagination mb-0">
+            <li class="page-item" id="prevPage">
+              <a class="page-link" href="#" onclick="changePage('prev')">
+                <i class="fas fa-chevron-left"></i> Anterior
+              </a>
+            </li>
+            <li class="page-item active" id="currentPage">
+              <span class="page-link" id="currentPageText">1</span>
+            </li>
+            <li class="page-item" id="nextPage">
+              <a class="page-link" href="#" onclick="changePage('next')">
+                Siguiente <i class="fas fa-chevron-right"></i>
+              </a>
+            </li>
+          </ul>
+        </nav>
+        <div class="pagination-info ms-3">
+          <small id="paginationInfo" class="text-muted">Mostrando 1-10 de 50 análisis</small>
+        </div>
+      </div>
     </div>
 
     <div id="noAnalysesMessage" class="alert alert-info text-center" style="display: none;">
       No se encontraron análisis para este filtro.
     </div>
+      </div>
+    </div>
   </div>
 
   <style>
+    .analyses-container {
+      max-width: 100%;
+      width: 100%;
+    }
     .analysis-card {
       transition: transform .15s ease, box-shadow .15s ease;
       border-radius: .9rem;
       box-shadow: 0 .35rem 1rem rgba(0,0,0,.08);
       background-color: #f8f9fa;
       border: 1px solid #e9ecef;
-      margin-bottom: 1.5rem;
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto 1.5rem auto;
     }
     .analysis-card:hover {
       transform: translateY(-3px) scale(1.01);
       box-shadow: 0 .75rem 1.5rem rgba(0,0,0,.18) !important;
     }
     .analysis-card .card-body { 
-      padding: 1.5rem 2rem; 
+      padding: 2rem 3rem; 
+    }
+    .pagination-container {
+      margin-top: 2rem;
+      padding: 1rem 0;
+    }
+    .pagination {
+      margin-bottom: 0;
+    }
+    .pagination .page-link {
+      color: #007bff;
+      border-color: #dee2e6;
+      padding: 0.5rem 1rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+    .pagination .page-link:hover {
+      color: #0056b3;
+      background-color: #e9ecef;
+      border-color: #dee2e6;
+    }
+    .pagination .page-item.active .page-link {
+      background-color: #007bff;
+      border-color: #007bff;
+      color: white;
+    }
+    .pagination .page-item.disabled .page-link {
+      color: #6c757d;
+      background-color: #fff;
+      border-color: #dee2e6;
+      cursor: not-allowed;
+    }
+    .pagination .page-item.disabled .page-link:hover {
+      color: #6c757d;
+      background-color: #fff;
+      border-color: #dee2e6;
+    }
+    .pagination-info {
+      font-size: 0.9rem;
+      color: #6c757d;
+    }
+    .analysis-actions {
+      margin-top: 1rem;
+    }
+    .analysis-actions .btn {
+      min-width: 120px;
     }
     .animal-name {
       font-size: 1.4rem;
@@ -120,6 +202,10 @@
     let allOwners = [];
     let allAnimals = [];
     let allStatuses = [];
+    let currentPage = 1;
+    let totalPages = 1;
+    let totalRecords = 0;
+    let currentFilters = {};
 
     async function api(path, options = {}) {
       const tk = getToken();
@@ -157,11 +243,12 @@
       ).join('');
 
       return `
-        <div class="col-12">
-          <div class="card analysis-card">
-            <div class="card-body">
-              <div class="row">
-                <div class="col-md-8">
+        <div class="row mb-4 justify-content-center">
+          <div class="col-12">
+            <div class="card analysis-card">
+              <div class="card-body">
+                <!-- Información del análisis -->
+                <div class="analysis-info mb-4">
                   <div class="animal-name">${analysis.nombre_animal}</div>
                   <div class="analysis-title">${analysis.nombre_analisis}</div>
                   <div class="analysis-details">
@@ -170,58 +257,68 @@
                     <div class="analysis-detail"><strong>Fecha de Toma:</strong> ${formatDate(analysis.fecha_toma)}</div>
                   </div>
                 </div>
-                <div class="col-md-4">
-                  <form class="analysis-form" data-id="${analysis.id_resultado}">
-                    <div class="form-group">
-                      <label><strong>Estado:</strong></label>
-                      <select class="form-control estado-select" required>
-                        <option value="">Seleccionar estado</option>
-                        ${statusOptions}
-                      </select>
-                    </div>
-                    
-                    <div class="form-group">
-                      <label><strong>Fecha de Emisión:</strong></label>
-                      <input type="date" class="form-control fecha-emision" value="${analysis.fecha_emision}" required>
-                    </div>
 
-                    <div class="form-group">
-                      <label><strong>Tipo de Resultado:</strong></label>
-                      <select class="form-control tipo-resultado" onchange="toggleResultadoType(this)">
-                        <option value="categorico" ${analysis.resultado && resultadoCategorico.includes(analysis.resultado) ? 'selected' : ''}>Categórico</option>
-                        <option value="libre" ${analysis.resultado && !resultadoCategorico.includes(analysis.resultado) ? 'selected' : ''}>Texto Libre</option>
-                      </select>
+                <!-- Formulario de edición -->
+                <form class="analysis-form" data-id="${analysis.id_resultado}">
+                  <div class="row">
+                    <div class="col-lg-3 col-md-6">
+                      <div class="form-group">
+                        <label><strong>Estado:</strong></label>
+                        <select class="form-control estado-select" required onchange="toggleResultadoFields(this)">
+                          <option value="">Seleccionar estado</option>
+                          ${statusOptions}
+                        </select>
+                      </div>
                     </div>
+                    <div class="col-lg-3 col-md-6">
+                      <div class="form-group">
+                        <label><strong>Fecha de Emisión:</strong></label>
+                        <input type="date" class="form-control fecha-emision" value="${formatDateForInput(analysis.fecha_emision)}" required>
+                      </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                      <div class="form-group">
+                        <label><strong>Tipo de Resultado:</strong></label>
+                        <select class="form-control tipo-resultado" onchange="toggleResultadoType(this)" disabled>
+                          <option value="">Seleccionar tipo de resultado...</option>
+                          <option value="categorico">Categórico</option>
+                          <option value="libre">Texto Libre</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                      <div class="form-group resultado-categorico">
+                        <label><strong>Resultado Categórico:</strong></label>
+                        <select class="form-control resultado-categorico-select" disabled>
+                          <option value="">Seleccionar resultado</option>
+                          ${resultadoOptions}
+                          <option value="otro" ${!resultadoCategorico.includes(analysis.resultado) && analysis.resultado ? 'selected' : ''}>Otro</option>
+                        </select>
+                      </div>
+                      <div class="form-group resultado-libre">
+                        <label><strong>Resultado (Texto Libre):</strong></label>
+                        <input type="text" class="form-control resultado-libre-input" 
+                               value="${analysis.resultado && !resultadoCategorico.includes(analysis.resultado) ? analysis.resultado : ''}" 
+                               placeholder="Ej: Hemoglobina: 12 g/dL" disabled>
+                      </div>
+                    </div>
+                  </div>
 
-                    <div class="form-group resultado-categorico">
-                      <label><strong>Resultado Categórico:</strong></label>
-                      <select class="form-control resultado-categorico-select">
-                        <option value="">Seleccionar resultado</option>
-                        ${resultadoOptions}
-                        <option value="otro" ${!resultadoCategorico.includes(analysis.resultado) && analysis.resultado ? 'selected' : ''}>Otro</option>
-                      </select>
-                    </div>
+                  <div class="form-group">
+                    <label><strong>Observaciones:</strong></label>
+                    <textarea class="form-control observaciones" rows="3" 
+                              placeholder="Observaciones adicionales...">${analysis.observaciones || ''}</textarea>
+                  </div>
 
-                    <div class="form-group resultado-libre">
-                      <label><strong>Resultado (Texto Libre):</strong></label>
-                      <input type="text" class="form-control resultado-libre-input" 
-                             value="${analysis.resultado && !resultadoCategorico.includes(analysis.resultado) ? analysis.resultado : ''}" 
-                             placeholder="Ej: Hemoglobina: 12 g/dL">
-                    </div>
-
-                    <div class="form-group">
-                      <label><strong>Observaciones:</strong></label>
-                      <textarea class="form-control observaciones" rows="2" 
-                                placeholder="Observaciones adicionales...">${analysis.observaciones || ''}</textarea>
-                    </div>
-
-                    <div class="d-flex justify-content-end analysis-actions">
-                      <button type="button" class="btn btn-primary" onclick="saveAnalysis(${analysis.id_resultado})">
-                        <i class="fas fa-save"></i> Guardar Cambios
-                      </button>
-                    </div>
-                  </form>
-                </div>
+                  <div class="d-flex justify-content-between analysis-actions">
+                    <button type="button" class="btn btn-danger" onclick="deleteAnalysis(${analysis.id_resultado}, '${analysis.nombre_animal}')">
+                      <i class="fas fa-trash"></i> Eliminar
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="saveAnalysis(${analysis.id_resultado})">
+                      <i class="fas fa-save"></i> Guardar Cambios
+                    </button>
+                  </div>
+                </form>
               </div>
             </div>
           </div>
@@ -278,13 +375,23 @@
     }
 
     async function loadAnimalsByOwner() {
+      currentPage = 1; // Resetear a página 1
       const ownerId = document.getElementById('ownerFilter').value;
       const animalSelect = document.getElementById('animalFilter');
       
       animalSelect.innerHTML = '<option value="">-- Seleccione un animal --</option>';
       
+      // Actualizar filtros actuales
+      currentFilters = { 
+        owner: ownerId, 
+        animal: '', 
+        status: currentFilters.status || '' 
+      };
+      
       if (!ownerId) {
         allAnimals = [];
+        // Cargar todos los animales cuando no hay propietario seleccionado
+        loadAllAnimals();
         loadAllAnalyses();
         return;
       }
@@ -309,22 +416,61 @@
       }
     }
 
+    async function loadAllAnimals() {
+      try {
+        currentPage = 1; // Resetear a página 1
+        
+        // Actualizar filtros actuales
+        currentFilters = { 
+          owner: '', 
+          animal: '', 
+          status: currentFilters.status || '' 
+        };
+        
+        const data = await api('/api/admin/animals');
+        if (!data) return;
+        
+        allAnimals = data.animals;
+        
+        const animalSelect = document.getElementById('animalFilter');
+        animalSelect.innerHTML = '<option value="">-- Seleccione un animal --</option>';
+        
+        allAnimals.forEach(animal => {
+          const option = document.createElement('option');
+          option.value = animal.id_animal;
+          option.textContent = animal.nombre_animal;
+          animalSelect.appendChild(option);
+        });
+      } catch (e) {
+        // Error cargando animales, continuar sin mostrar al usuario
+      }
+    }
+
     async function loadAnalysesByOwner(ownerId) {
       try {
-        const data = await api(`/api/admin/analyses?owner=${ownerId}`);
+        const params = new URLSearchParams({
+          owner: ownerId,
+          page: currentPage,
+          limit: 10
+        });
+        
+        // Agregar filtros solo si tienen valor
+        if (currentFilters.status) params.append('status', currentFilters.status);
+        
+        const data = await api(`/api/admin/analyses?${params}`);
         if (!data) return;
         
         allAnalyses = data.analyses;
-        displayAnalyses(allAnalyses);
+        displayAnalyses(data);
       } catch (e) {
         // Error cargando análisis, continuar sin mostrar al usuario
       }
     }
 
-    async function loadAnalysesByAnimal() {
-      const animalId = document.getElementById('animalFilter').value;
+    async function loadAnalysesByAnimal(animalId = null) {
+      const selectedAnimalId = animalId || document.getElementById('animalFilter').value;
       
-      if (!animalId) {
+      if (!selectedAnimalId) {
         const ownerId = document.getElementById('ownerFilter').value;
         if (ownerId) {
           loadAnalysesByOwner(ownerId);
@@ -335,11 +481,20 @@
       }
 
       try {
-        const data = await api(`/api/admin/analyses?animal=${animalId}`);
+        const params = new URLSearchParams({
+          animal: selectedAnimalId,
+          page: currentPage,
+          limit: 10
+        });
+        
+        // Agregar filtros solo si tienen valor
+        if (currentFilters.status) params.append('status', currentFilters.status);
+        
+        const data = await api(`/api/admin/analyses?${params}`);
         if (!data) return;
         
         allAnalyses = data.analyses;
-        displayAnalyses(allAnalyses);
+        displayAnalyses(data);
       } catch (e) {
         // Error cargando análisis, continuar sin mostrar al usuario
       }
@@ -347,50 +502,71 @@
 
     async function loadAllAnalyses() {
       try {
-        const data = await api('/api/admin/analyses');
+        const params = new URLSearchParams({
+          page: currentPage,
+          limit: 10
+        });
+        
+        // Agregar filtros solo si tienen valor
+        if (currentFilters.status) params.append('status', currentFilters.status);
+        
+        const data = await api(`/api/admin/analyses?${params}`);
         if (!data) return;
         
         allAnalyses = data.analyses;
-        displayAnalyses(allAnalyses);
+        displayAnalyses(data);
       } catch (e) {
         // Error cargando análisis, continuar sin mostrar al usuario
       }
     }
 
-    function displayAnalyses(analyses) {
+    function displayAnalyses(data) {
       const container = document.getElementById('analysesContainer');
       const noMessage = document.getElementById('noAnalysesMessage');
+      const paginationContainer = document.getElementById('paginationContainer');
       
       // Limpiar contenedor antes de mostrar nuevos resultados
       container.innerHTML = '';
       
-      if (analyses.length === 0) {
+      if (data.analyses.length === 0) {
         noMessage.style.display = 'block';
+        paginationContainer.style.display = 'none';
         return;
       }
 
       noMessage.style.display = 'none';
-      container.innerHTML = analyses.map(analysisCard).join('');
+      container.innerHTML = data.analyses.map(analysisCard).join('');
+      
+      // Actualizar información de paginación
+      if (data.pagination) {
+        currentPage = data.pagination.currentPage;
+        totalPages = data.pagination.totalPages;
+        totalRecords = data.pagination.totalRecords;
+        
+        updatePaginationControls();
+        paginationContainer.style.display = 'block';
+      }
     }
 
     function filterByStatus() {
+      currentPage = 1; // Resetear a página 1
       const statusId = document.getElementById('statusFilter').value;
       const ownerId = document.getElementById('ownerFilter').value;
       const animalId = document.getElementById('animalFilter').value;
       
-      if (!statusId) {
-        // Sin filtro de estado, usar filtros existentes
-        if (animalId) {
-          loadAnalysesByAnimal();
-        } else if (ownerId) {
-          loadAnalysesByOwner(ownerId);
-        } else {
-          loadAllAnalyses();
-        }
+      // Actualizar filtros actuales
+      currentFilters = { 
+        owner: ownerId, 
+        animal: animalId, 
+        status: statusId 
+      };
+      
+      if (animalId) {
+        loadAnalysesByAnimal();
+      } else if (ownerId) {
+        loadAnalysesByOwner(ownerId);
       } else {
-        // Aplicar filtro de estado a los análisis actuales
-        const filtered = allAnalyses.filter(analysis => analysis.id_estado == statusId);
-        displayAnalyses(filtered);
+        loadAllAnalyses();
       }
     }
 
@@ -403,10 +579,50 @@
         categorico.style.display = 'block';
         libre.style.display = 'none';
         libre.querySelector('input').value = '';
-      } else {
+      } else if (select.value === 'libre') {
         categorico.style.display = 'none';
         libre.style.display = 'block';
         categorico.querySelector('select').value = '';
+      } else {
+        categorico.style.display = 'none';
+        libre.style.display = 'none';
+        categorico.querySelector('select').value = '';
+        libre.querySelector('input').value = '';
+      }
+    }
+
+    function toggleResultadoFields(estadoSelect) {
+      const form = estadoSelect.closest('.analysis-form');
+      const tipoResultado = form.querySelector('.tipo-resultado');
+      const categorico = form.querySelector('.resultado-categorico');
+      const libre = form.querySelector('.resultado-libre');
+      const categoricoSelect = form.querySelector('.resultado-categorico-select');
+      const libreInput = form.querySelector('.resultado-libre-input');
+      
+      // Obtener el estado seleccionado
+      const estado = estadoSelect.value;
+      const estadoText = estadoSelect.options[estadoSelect.selectedIndex].text;
+      
+      if (estadoText === 'Finalizado') {
+        // Habilitar campos de resultado
+        tipoResultado.disabled = false;
+        categoricoSelect.disabled = false;
+        libreInput.disabled = false;
+        
+        // Si ya hay un tipo seleccionado, mostrar el campo correspondiente
+        if (tipoResultado.value) {
+          toggleResultadoType(tipoResultado);
+        }
+      } else {
+        // Deshabilitar campos de resultado
+        tipoResultado.disabled = true;
+        tipoResultado.value = '';
+        categoricoSelect.disabled = true;
+        libreInput.disabled = true;
+        categorico.style.display = 'none';
+        libre.style.display = 'none';
+        categoricoSelect.value = '';
+        libreInput.value = '';
       }
     }
 
@@ -434,8 +650,11 @@
         alert('Por favor seleccione una fecha de emisión');
         return;
       }
-      if (!resultado.trim()) {
-        alert('Por favor ingrese un resultado');
+      
+      // Solo validar resultado si el estado es "Finalizado"
+      const estadoText = document.querySelector(`option[value="${estado}"]`).textContent;
+      if (estadoText === 'Finalizado' && !resultado.trim()) {
+        alert('Por favor ingrese un resultado para análisis finalizados');
         return;
       }
 
@@ -460,10 +679,93 @@
       }
     }
 
+    // Funciones de paginación
+    function updatePaginationControls() {
+      const prevPage = document.getElementById('prevPage');
+      const nextPage = document.getElementById('nextPage');
+      const currentPageText = document.getElementById('currentPageText');
+      const paginationInfo = document.getElementById('paginationInfo');
+      
+      // Actualizar texto de página actual
+      currentPageText.textContent = currentPage;
+      
+      // Actualizar botones anterior/siguiente
+      if (currentPage <= 1) {
+        prevPage.classList.add('disabled');
+      } else {
+        prevPage.classList.remove('disabled');
+      }
+      
+      if (currentPage >= totalPages) {
+        nextPage.classList.add('disabled');
+      } else {
+        nextPage.classList.remove('disabled');
+      }
+      
+      // Actualizar información de registros
+      const startRecord = ((currentPage - 1) * 10) + 1;
+      const endRecord = Math.min(currentPage * 10, totalRecords);
+      paginationInfo.textContent = `Mostrando ${startRecord}-${endRecord} de ${totalRecords} análisis`;
+    }
+
+    function changePage(direction) {
+      if (direction === 'prev' && currentPage > 1) {
+        currentPage--;
+        loadAnalysesWithPagination();
+      } else if (direction === 'next' && currentPage < totalPages) {
+        currentPage++;
+        loadAnalysesWithPagination();
+      }
+    }
+
+    function loadAnalysesWithPagination() {
+      const ownerId = document.getElementById('ownerFilter').value;
+      const animalId = document.getElementById('animalFilter').value;
+      const statusId = document.getElementById('statusFilter').value;
+      
+      // Actualizar filtros actuales
+      currentFilters = { owner: ownerId, animal: animalId, status: statusId };
+      
+      if (animalId) {
+        loadAnalysesByAnimal(animalId);
+      } else if (ownerId) {
+        loadAnalysesByOwner(ownerId);
+      } else {
+        loadAllAnalyses();
+      }
+    }
+
+    // Función para eliminar análisis
+    async function deleteAnalysis(analysisId, animalName) {
+      if (!confirm(`¿Está seguro de que desea eliminar el análisis de ${animalName}? Esta acción no se puede deshacer.`)) {
+        return;
+      }
+
+      try {
+        const res = await api(`/api/admin/analyses/${analysisId}`, {
+          method: 'DELETE'
+        });
+        
+        if (!res) return;
+        
+        alert('Análisis eliminado exitosamente');
+        loadAnalysesWithPagination(); // Recargar análisis
+        
+      } catch (e) {
+        alert('Error al eliminar el análisis');
+      }
+    }
+
     function formatDate(dateString) {
       if (!dateString) return 'N/A';
       const date = new Date(dateString);
       return date.toLocaleDateString('es-ES');
+    }
+
+    function formatDateForInput(dateString) {
+      if (!dateString) return '';
+      const date = new Date(dateString);
+      return date.toISOString().split('T')[0]; // Formato YYYY-MM-DD
     }
 
     function logout() {
@@ -475,6 +777,7 @@
     // Inicializar
     loadOwners();
     loadStatuses();
+    loadAllAnimals();
     loadAllAnalyses();
   </script>
 </body>

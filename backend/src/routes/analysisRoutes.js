@@ -5,7 +5,8 @@ const { authenticateToken } = require('../middleware/auth');
 const {
   createAnalysis,
   getUserAnalyses,
-  getAnalysisTypes
+  getAnalysisTypes,
+  getStatuses
 } = require('../controllers/analysisController');
 const { generatePDF } = require('../controllers/pdfController');
 
@@ -17,6 +18,9 @@ router.get('/', authenticateToken, getUserAnalyses);
 
 // Ruta para obtener tipos de análisis disponibles (protegida)
 router.get('/tipos', authenticateToken, getAnalysisTypes);
+
+// Ruta para obtener estados disponibles (protegida)
+router.get('/estados', authenticateToken, getStatuses);
 
 // Ruta para generar y devolver el PDF (protegida)
 router.get('/:id/pdf', authenticateToken, generatePDF);

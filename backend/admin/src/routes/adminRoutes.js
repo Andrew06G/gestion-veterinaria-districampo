@@ -11,7 +11,7 @@ const {
 const { authenticateAdmin, requireSuperAdmin, requireAdmin } = require('../middleware/authAdmin');
 const { listOwners, getOwner, updateOwner, deleteOwner } = require('../controllers/ownerAdminController');
 const { listAnimals, getAnimal, updateAnimal, deleteAnimal } = require('../controllers/animalAdminController');
-const { listAnalyses, getAnalysis, updateAnalysis, getStatuses } = require('../controllers/analysisAdminController');
+const { listAnalyses, getAnalysis, updateAnalysis, deleteAnalysis, getStatuses } = require('../controllers/analysisAdminController');
 
 // Rutas públicas
 router.post('/login', loginAdmin);
@@ -39,6 +39,7 @@ router.delete('/animals/:id', requireSuperAdmin, deleteAnimal);
 router.get('/analyses', requireAdmin, listAnalyses);
 router.get('/analyses/:id', requireAdmin, getAnalysis);
 router.put('/analyses/:id', requireAdmin, updateAnalysis);
+router.delete('/analyses/:id', requireAdmin, deleteAnalysis);
 router.get('/statuses', requireAdmin, getStatuses);
 
 // Rutas que requieren rol de super_admin
