@@ -35,22 +35,26 @@
 
     <!-- Filtros -->
     <div class="row mb-4">
-      <div class="col-md-4">
+      <div class="col-md-3">
         <label for="filterAnimal">Filtrar por Animal:</label>
         <select id="filterAnimal" class="form-control">
           <option value="">Todos los animales</option>
         </select>
       </div>
-      <div class="col-md-4">
-        <label for="filterEstado">Filtrar por Estado:</label>
-        <select id="filterEstado" class="form-control">
-          <option value="">Todos los estados</option>
-          <!-- Los estados se cargarán dinámicamente -->
+      <div class="col-md-3">
+        <label for="filterTipoAnalisis">Filtrar por Tipo de Análisis:</label>
+        <select id="filterTipoAnalisis" class="form-control">
+          <option value="">Todos los tipos</option>
+          <!-- Los tipos se cargarán dinámicamente -->
         </select>
       </div>
-      <div class="col-md-4">
-        <label for="filterFecha">Filtrar por Fecha:</label>
-        <input type="date" id="filterFecha" class="form-control">
+      <div class="col-md-3">
+        <label for="filterFechaDesde">Fecha Desde:</label>
+        <input type="date" id="filterFechaDesde" class="form-control">
+      </div>
+      <div class="col-md-3">
+        <label for="filterFechaHasta">Fecha Hasta:</label>
+        <input type="date" id="filterFechaHasta" class="form-control">
       </div>
     </div>
 
@@ -96,7 +100,6 @@
       cargarAnalisis();
       
       // Cargar estados desde la base de datos
-      cargarEstados();
       
       // Configurar filtros
       configurarFiltros();
@@ -157,72 +160,39 @@
       `).join('');
     }
 
-    // Función para cargar estados desde la base de datos
-    async function cargarEstados() {
-      try {
-        const response = await sessionManager.authenticatedFetch('/api/analyses/estados');
-        
-        if (response && response.ok) {
-          const data = await response.json();
-          const filterEstado = document.getElementById('filterEstado');
-          
-          // Limpiar opciones existentes
-          filterEstado.innerHTML = '<option value="">Todos los estados</option>';
-          
-          // Agregar estados desde la base de datos
-          if (data.estados && data.estados.length > 0) {
-            data.estados.forEach(estado => {
-              const option = document.createElement('option');
-              option.value = estado.nombre_estado;
-              option.textContent = estado.nombre_estado;
-              filterEstado.appendChild(option);
-            });
-          }
-        } else {
-          // Si falla la carga, usar estados por defecto
-          const filterEstado = document.getElementById('filterEstado');
-          const estadosDefault = ['Pendiente', 'En Proceso', 'Finalizado', 'Cancelado'];
-          estadosDefault.forEach(estado => {
-            const option = document.createElement('option');
-            option.value = estado;
-            option.textContent = estado;
-            filterEstado.appendChild(option);
-          });
-        }
-      } catch (error) {
-        // Error cargando estados, usar estados por defecto
-        const filterEstado = document.getElementById('filterEstado');
-        const estadosDefault = ['Pendiente', 'En Proceso', 'Finalizado', 'Cancelado'];
-        estadosDefault.forEach(estado => {
-          const option = document.createElement('option');
-          option.value = estado;
-          option.textContent = estado;
-          filterEstado.appendChild(option);
-        });
-      }
-    }
 
     // Función para llenar los filtros con datos únicos
     function llenarFiltros(analisis) {
       const filterAnimal = document.getElementById('filterAnimal');
-      const animales = [...new Set(analisis.map(a => a.nombre_animal))];
+      const filterTipoAnalisis = document.getElementById('filterTipoAnalisis');
       
       // Llenar filtro de animales
+      const animales = [...new Set(analisis.map(a => a.nombre_animal))];
       animales.forEach(animal => {
         const option = document.createElement('option');
         option.value = animal;
         option.textContent = animal;
         filterAnimal.appendChild(option);
       });
+      
+      // Llenar filtro de tipos de análisis
+      const tiposAnalisis = [...new Set(analisis.map(a => a.nombre_analisis))];
+      tiposAnalisis.forEach(tipo => {
+        const option = document.createElement('option');
+        option.value = tipo;
+        option.textContent = tipo;
+        filterTipoAnalisis.appendChild(option);
+      });
     }
 
     // Función para configurar los filtros
     function configurarFiltros() {
       const filterAnimal = document.getElementById('filterAnimal');
-      const filterEstado = document.getElementById('filterEstado');
-      const filterFecha = document.getElementById('filterFecha');
+      const filterTipoAnalisis = document.getElementById('filterTipoAnalisis');
+      const filterFechaDesde = document.getElementById('filterFechaDesde');
+      const filterFechaHasta = document.getElementById('filterFechaHasta');
 
-      [filterAnimal, filterEstado, filterFecha].forEach(filter => {
+      [filterAnimal, filterTipoAnalisis, filterFechaDesde, filterFechaHasta].forEach(filter => {
         filter.addEventListener('change', aplicarFiltros);
       });
     }
@@ -230,17 +200,18 @@
     // Función para aplicar filtros
     async function aplicarFiltros() {
       const filterAnimal = document.getElementById('filterAnimal').value;
-      const filterEstado = document.getElementById('filterEstado').value;
-      const filterFecha = document.getElementById('filterFecha').value;
+      const filterTipoAnalisis = document.getElementById('filterTipoAnalisis').value;
+      const filterFechaDesde = document.getElementById('filterFechaDesde').value;
+      const filterFechaHasta = document.getElementById('filterFechaHasta').value;
 
-      console.log('Aplicando filtros:', { filterAnimal, filterEstado, filterFecha });
+      console.log('Aplicando filtros:', { filterAnimal, filterTipoAnalisis, filterFechaDesde, filterFechaHasta });
 
       try {
         const response = await sessionManager.authenticatedFetch('/api/analyses');
         
         if (response && response.ok) {
           let analisis = await response.json();
-          console.log('📊 Total de análisis antes de filtrar:', analisis.length);
+          console.log('Total de análisis antes de filtrar:', analisis.length);
           
           // Aplicar filtros
           if (filterAnimal) {
@@ -248,14 +219,28 @@
             console.log('Filtrado por animal:', filterAnimal, 'Resultado:', analisis.length);
           }
           
-          if (filterEstado) {
-            analisis = analisis.filter(a => a.nombre_estado === filterEstado);
-            console.log('Filtrado por estado:', filterEstado, 'Resultado:', analisis.length);
+          if (filterTipoAnalisis) {
+            analisis = analisis.filter(a => a.nombre_analisis === filterTipoAnalisis);
+            console.log('Filtrado por tipo de análisis:', filterTipoAnalisis, 'Resultado:', analisis.length);
           }
           
-          if (filterFecha) {
-            analisis = analisis.filter(a => a.fecha_emision.startsWith(filterFecha));
-            console.log('Filtrado por fecha:', filterFecha, 'Resultado:', analisis.length);
+          // Filtro de rango de fechas
+          if (filterFechaDesde || filterFechaHasta) {
+            analisis = analisis.filter(a => {
+              const fechaAnalisis = new Date(a.fecha_emision);
+              const fechaDesde = filterFechaDesde ? new Date(filterFechaDesde) : null;
+              const fechaHasta = filterFechaHasta ? new Date(filterFechaHasta) : null;
+              
+              if (fechaDesde && fechaHasta) {
+                return fechaAnalisis >= fechaDesde && fechaAnalisis <= fechaHasta;
+              } else if (fechaDesde) {
+                return fechaAnalisis >= fechaDesde;
+              } else if (fechaHasta) {
+                return fechaAnalisis <= fechaHasta;
+              }
+              return true;
+            });
+            console.log('Filtrado por rango de fechas:', filterFechaDesde, 'a', filterFechaHasta, 'Resultado:', analisis.length);
           }
           
           console.log('Análisis después de aplicar filtros:', analisis.length);
