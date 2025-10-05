@@ -5,9 +5,16 @@ const { decryptObject } = require('../utils/crypto');
 const SENSITIVE_FIELDS = ['nombre_animal', 'propietario_nombres', 'propietario_apellidos', 'propietario_telefono', 'propietario_direccion', 'propietario_email'];
 
 class Analysis {
+  // Utilidades en crudo para controladores puntuales
+  static async _rawQuery(query, params) {
+    return db.query(query, params);
+  }
+  static async _rawExec(query, params) {
+    return db.query(query, params);
+  }
   static async create(analysisData) {
     try {
-      const { id_animal, id_tipo_analisis, fecha_solicitud, id_propietario } = analysisData;
+      const { id_animal, id_tipo_analisis, fecha_solicitud, hora_toma, id_propietario } = analysisData;
       
       // Obtener el tipo de muestra correspondiente al análisis
       const [tipoAnalisis] = await db.query(
@@ -23,16 +30,16 @@ class Analysis {
       
       // Crear la muestra con el tipo de muestra correcto
       const [muestraResult] = await db.query(
-        'INSERT INTO muestra (id_animal, id_estado, fecha_toma, id_tipo_muestra) VALUES (?, 1, ?, ?)',
-        [id_animal, fecha_solicitud, id_tipo_muestra]
+        'INSERT INTO muestra (id_animal, id_estado, fecha_toma, hora_toma, id_tipo_muestra) VALUES (?, 1, ?, ?, ?)',
+        [id_animal, fecha_solicitud, hora_toma, id_tipo_muestra]
       );
       
       const id_muestra = muestraResult.insertId;
       
       // Crear el resultado (incluyendo id_animal que es requerido)
       await db.query(
-        'INSERT INTO resultado (id_muestra, id_tipo_analisis, resultado, fecha_emision, id_animal, id_estado) VALUES (?, ?, "Pendiente", ?, ?, 1)',
-        [id_muestra, id_tipo_analisis, fecha_solicitud, id_animal]
+        'INSERT INTO resultado (id_muestra, id_tipo_analisis, resultado, fecha_emision, hora_emision, id_animal, id_estado) VALUES (?, ?, "Pendiente", ?, ?, ?, 1)',
+        [id_muestra, id_tipo_analisis, fecha_solicitud, null, id_animal]
       );
       
       return id_muestra;
@@ -52,10 +59,12 @@ class Analysis {
           ta.nombre_analisis,
           tm.nombre_tipo_muestra,
           r.resultado,
-          r.fecha_emision,
+        r.fecha_emision,
+        r.hora_emision,
           r.observaciones,
           te.nombre_estado,
-          m.fecha_toma
+        m.fecha_toma,
+        m.hora_toma
         FROM muestra m
         JOIN animal a ON m.id_animal = a.id_animal
         JOIN resultado r ON m.id_muestra = r.id_muestra

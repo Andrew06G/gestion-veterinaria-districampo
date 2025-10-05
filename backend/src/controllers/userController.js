@@ -113,7 +113,7 @@ const loginUser = async (req, res) => {
         correo_electronico: user.correo_electronico
       },
       JWT_SECRET,
-      { expiresIn: '24h' }
+      { expiresIn: '6h' }
     );
 
     // Enviar respuesta

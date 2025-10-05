@@ -144,10 +144,26 @@
           ...(options.headers || {})
         }
       });
-      if (res.status === 401) {
+    if (res.status === 401) {
         window.location.href = '/admin/login';
         return;
       }
+  // Cierre de sesión por inactividad para admin (10 minutos)
+  (function bindAdminIdleTimer() {
+    let idleTimer;
+    const TIMEOUT = 10 * 60 * 1000;
+    const reset = () => {
+      clearTimeout(idleTimer);
+      idleTimer = setTimeout(() => {
+        alert('Tu sesión se ha cerrado automáticamente por inactividad.');
+        localStorage.removeItem('adminToken');
+        localStorage.removeItem('adminUser');
+        window.location.href = '/admin/login';
+      }, TIMEOUT);
+    };
+    ['click','mousemove','keydown','scroll','touchstart'].forEach(evt => window.addEventListener(evt, reset, { passive: true }));
+    reset();
+  })();
       if (!res.ok) {
         const text = await res.text();
         throw new Error(text || ('Error ' + res.status));

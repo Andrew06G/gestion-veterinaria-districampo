@@ -6,7 +6,8 @@ const {
   createAnalysis,
   getUserAnalyses,
   getAnalysisTypes,
-  getStatuses
+  getStatuses,
+  cancelAnalysis
 } = require('../controllers/analysisController');
 const { generatePDF } = require('../controllers/pdfController');
 
@@ -24,5 +25,8 @@ router.get('/estados', authenticateToken, getStatuses);
 
 // Ruta para generar y devolver el PDF (protegida)
 router.get('/:id/pdf', authenticateToken, generatePDF);
+
+// Cancelar análisis (protegida)
+router.delete('/:id', authenticateToken, cancelAnalysis);
 
 module.exports = router;

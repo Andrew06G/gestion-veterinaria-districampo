@@ -51,9 +51,15 @@
         <label for="tipo_muestra_info">Tipo de Muestra (asignado automáticamente):</label>
         <input type="text" class="form-control" id="tipo_muestra_info" readonly style="background-color: #f8f9fa;">
       </div>
-      <div class="form-group">
-        <label for="fecha_solicitud">Fecha de Solicitud:</label>
-        <input type="date" class="form-control" id="fecha_solicitud" name="fecha_solicitud" required>
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label for="fecha_solicitud">Fecha de Solicitud:</label>
+          <input type="date" class="form-control" id="fecha_solicitud" name="fecha_solicitud" required>
+        </div>
+        <div class="form-group col-md-6">
+          <label for="hora_toma">Hora de toma:</label>
+          <input type="time" class="form-control" id="hora_toma" name="hora_toma" min="08:00" max="18:00">
+        </div>
       </div>
       <button type="submit" class="btn btn-primary btn-block">Solicitar Análisis</button>
     </form>
@@ -163,7 +169,17 @@
       }
     }
 
-    // Manejar envío de formularios para solicitar un análisis
+      // Establecer fecha mínima hoy
+      (function setMinDateTomorrow() {
+        const today = new Date();
+        const tomorrow = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+        const y = tomorrow.getFullYear();
+        const m = String(tomorrow.getMonth() + 1).padStart(2, '0');
+        const d = String(tomorrow.getDate()).padStart(2, '0');
+        document.getElementById('fecha_solicitud').setAttribute('min', `${y}-${m}-${d}`);
+      })();
+
+      // Manejar envío de formularios para solicitar un análisis
     document.getElementById('requestAnalysisForm').addEventListener('submit', async function (e) {
       e.preventDefault();
 
@@ -171,10 +187,34 @@
       const id_animal = document.getElementById('id_animal').value.trim();
       const id_tipo_analisis = document.getElementById('tipo_analisis').value;
       const fecha_solicitud = document.getElementById('fecha_solicitud').value;
+      let hora_toma = (document.getElementById('hora_toma').value || '').trim();
 
       // Validar campos
       if (!id_animal || !id_tipo_analisis || !fecha_solicitud) {
         alert('Por favor, complete todos los campos.');
+        return;
+      }
+      if (!hora_toma) {
+        alert('La hora de toma es obligatoria (entre 08:00 y 18:00).');
+        return;
+      }
+
+      // Validar hora si se proporcionó
+      // Asegurar formato HH:MM
+      if (hora_toma.length === 5) hora_toma = `${hora_toma}:00`;
+      const [hh, mm] = hora_toma.split(':').map(Number);
+      if (hh < 8 || (hh > 18 || (hh === 18 && mm > 0))) {
+        alert('La hora de toma debe estar entre 08:00 y 18:00.');
+        return;
+      }
+
+      // Validar fecha mínima mañana (evitar problemas de zona horaria)
+      const today = new Date();
+      const tomorrow = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+      const [sy, sm, sd] = fecha_solicitud.split('-').map(Number);
+      const sel = new Date(sy, sm - 1, sd);
+      if (sel < tomorrow) {
+        alert('No se pueden programar citas para el mismo día. Selecciona una fecha a partir de mañana.');
         return;
       }
 
@@ -185,7 +225,8 @@
           body: JSON.stringify({
             id_animal: id_animal,
             id_tipo_analisis: id_tipo_analisis,
-            fecha_solicitud: fecha_solicitud
+            fecha_solicitud: fecha_solicitud,
+            hora_toma: hora_toma || null
           })
         });
 

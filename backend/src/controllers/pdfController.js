@@ -19,6 +19,11 @@ const generatePDF = async (req, res) => {
       return res.status(403).json({ message: 'No tienes permisos para acceder a este análisis' });
     }
 
+    // Bloquear generación de PDF si el resultado no está finalizado
+    if (analysis.nombre_estado && analysis.nombre_estado !== 'Finalizado') {
+      return res.status(403).json({ message: 'El resultado aún no está disponible.' });
+    }
+
     // Crear documento PDF
     const doc = new PDFDocument({ margin: 50 });
     
@@ -125,12 +130,15 @@ function generatePDFContent(doc, analysis) {
   
   yPosition += 30;
   
+  const horaToma = analysis.hora_toma ? String(analysis.hora_toma).slice(0,5) : null;
+  const horaEmision = analysis.hora_emision ? String(analysis.hora_emision).slice(0,5) : null;
+
   const analisisData = [
     ['ID Muestra:', analysis.id_muestra],
     ['Tipo de Muestra:', analysis.nombre_tipo_muestra],
     ['Análisis Solicitado:', analysis.nombre_analisis],
-    ['Fecha de Toma:', new Date(analysis.fecha_toma).toLocaleDateString('es-ES')],
-    ['Fecha de Emisión:', new Date(analysis.fecha_emision).toLocaleDateString('es-ES')],
+    ['Fecha de Toma:', `${new Date(analysis.fecha_toma).toLocaleDateString('es-ES')}${horaToma ? ' - ' + horaToma : ''}`],
+    ['Fecha de Emisión:', `${new Date(analysis.fecha_emision).toLocaleDateString('es-ES')}${horaEmision ? ' - ' + horaEmision : ''}`],
     ['Estado:', analysis.nombre_estado],
     ['Precio:', `$${parseFloat(analysis.precio).toLocaleString('es-ES')}`]
   ];

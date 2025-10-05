@@ -51,7 +51,7 @@ const loginAdmin = async (req, res) => {
         tipo: 'admin'
       },
       jwtSecret,
-      { expiresIn: '24h' }
+      { expiresIn: '30m' }
     );
 
     res.json({

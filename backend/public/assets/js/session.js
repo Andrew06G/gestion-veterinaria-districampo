@@ -3,6 +3,9 @@ class SessionManager {
   constructor() {
     this.token = localStorage.getItem('token');
     this.user = JSON.parse(localStorage.getItem('user') || 'null');
+    this._idleTimer = null;
+    this._idleTimeoutMs = 10 * 60 * 1000; // 10 minutos
+    this._bindIdleDetection();
   }
 
   // Verificar si el usuario está autenticado
@@ -26,6 +29,7 @@ class SessionManager {
     this.user = user;
     localStorage.setItem('token', token);
     localStorage.setItem('user', JSON.stringify(user));
+    this._resetIdleTimer();
   }
 
   // Cerrar sesión
@@ -58,7 +62,7 @@ class SessionManager {
     }
 
     if (this.isTokenExpired()) {
-      alert('Su sesión ha expirado. Por favor, inicie sesión nuevamente.');
+      alert('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
       this.logout();
       return null;
     }
@@ -81,7 +85,7 @@ class SessionManager {
       const response = await fetch(requestUrl, finalOptions);
       
       if (response.status === 401) {
-        alert('Sesión expirada. Por favor, inicie sesión nuevamente.');
+        alert('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
         this.logout();
         return null;
       }
@@ -102,12 +106,31 @@ class SessionManager {
     }
 
     if (this.isTokenExpired()) {
-      alert('Su sesión ha expirado. Por favor, inicie sesión nuevamente.');
+      alert('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
       this.logout();
       return false;
     }
 
     return true;
+  }
+
+  // Detección de inactividad (solo aplica para propietarios en frontend público)
+  _bindIdleDetection() {
+    const reset = () => this._resetIdleTimer();
+    ['click', 'mousemove', 'keydown', 'scroll', 'touchstart'].forEach(evt => {
+      window.addEventListener(evt, reset, { passive: true });
+    });
+    this._resetIdleTimer();
+  }
+
+  _resetIdleTimer() {
+    if (this._idleTimer) clearTimeout(this._idleTimer);
+    if (this.isAuthenticated()) {
+      this._idleTimer = setTimeout(() => {
+        alert('Tu sesión se ha cerrado por inactividad.');
+        this.logout();
+      }, this._idleTimeoutMs);
+    }
   }
 }
 

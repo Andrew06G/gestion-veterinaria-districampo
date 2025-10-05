@@ -3,7 +3,7 @@ const Analysis = require('../models/Analysis');
 // Crear un nuevo análisis
 const createAnalysis = async (req, res) => {
   try {
-    const { id_animal, id_tipo_analisis, fecha_solicitud } = req.body;
+    const { id_animal, id_tipo_analisis, fecha_solicitud, hora_toma } = req.body;
     const id_propietario = req.user.id;
 
     // Validar campos requeridos
@@ -11,11 +11,27 @@ const createAnalysis = async (req, res) => {
       return res.status(400).json({ message: 'Todos los campos son requeridos' });
     }
 
+    // Validaciones de fecha/hora: fecha_solicitud no puede ser pasada y hora dentro de 08:00-18:00 si se envía
+    const hoy = new Date();
+    const fechaSel = new Date(fecha_solicitud);
+    hoy.setHours(0,0,0,0);
+    fechaSel.setHours(0,0,0,0);
+    if (fechaSel < hoy) {
+      return res.status(400).json({ message: 'La fecha de toma no puede ser anterior a hoy' });
+    }
+    if (hora_toma) {
+      const [hh, mm] = String(hora_toma).slice(0,5).split(':').map(Number);
+      if (hh < 8 || (hh > 18 || (hh === 18 && mm > 0))) {
+        return res.status(400).json({ message: 'La hora de toma debe estar entre 08:00 y 18:00' });
+      }
+    }
+
     // Crear el análisis usando el modelo
     const id_muestra = await Analysis.create({
       id_animal,
       id_tipo_analisis,
       fecha_solicitud,
+      hora_toma: hora_toma || null,
       id_propietario
     });
 
@@ -76,10 +92,55 @@ const getStatuses = async (req, res) => {
   }
 };
 
+// Cancelar análisis (propietario): solo si Pendiente y antes del límite (<= 1 día antes de toma)
+const cancelAnalysis = async (req, res) => {
+  try {
+    const { id } = req.params; // id_muestra
+    const ownerId = req.user.id;
+
+    const [rows] = await Analysis._rawQuery?.(
+      `SELECT r.id_resultado, te.nombre_estado, m.fecha_toma, m.hora_toma, a.id_propietario
+       FROM muestra m
+       JOIN resultado r ON m.id_muestra = r.id_muestra
+       JOIN animal a ON m.id_animal = a.id_animal
+       JOIN tipo_estado te ON r.id_estado = te.id_tipo_estado
+       WHERE m.id_muestra = ?`,
+      [id]
+    ) || [];
+
+    if (!rows || !rows[0]) {
+      return res.status(404).json({ message: 'Análisis no encontrado' });
+    }
+    const row = rows[0];
+    if (row.id_propietario !== ownerId) {
+      return res.status(403).json({ message: 'No autorizado' });
+    }
+    if (row.nombre_estado !== 'Pendiente') {
+      return res.status(400).json({ message: 'Este análisis ya no puede ser cancelado.' });
+    }
+    const tomaDT = new Date(`${row.fecha_toma}T${(row.hora_toma || '00:00:00')}`);
+    const limite = new Date(tomaDT.getTime() - 24 * 60 * 60 * 1000);
+    if (new Date() > limite) {
+      return res.status(400).json({ message: 'Este análisis ya no puede ser cancelado.' });
+    }
+
+    // Cambiar estado a Cancelado
+    await Analysis._rawExec?.(
+      `UPDATE resultado SET id_estado = (SELECT id_tipo_estado FROM tipo_estado WHERE nombre_estado = 'Cancelado' LIMIT 1)
+       WHERE id_muestra = ?`,
+      [id]
+    );
+    return res.json({ message: 'Análisis cancelado correctamente' });
+  } catch (e) {
+    return res.status(500).json({ message: 'Error interno del servidor' });
+  }
+};
+
 module.exports = {
   createAnalysis,
   getUserAnalyses,
   getAnalysisTypes,
   getAnalysisForPDF,
   getStatuses
+  , cancelAnalysis
 };
