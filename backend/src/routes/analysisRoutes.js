@@ -7,6 +7,7 @@ const {
   getUserAnalyses,
   getAnalysisTypes,
   getStatuses,
+  getAnalysesByAnimal,
   cancelAnalysis
 } = require('../controllers/analysisController');
 const { generatePDF } = require('../controllers/pdfController');
@@ -25,6 +26,9 @@ router.get('/estados', authenticateToken, getStatuses);
 
 // Ruta para generar y devolver el PDF (protegida)
 router.get('/:id/pdf', authenticateToken, generatePDF);
+
+// Ruta para obtener análisis de un animal específico (protegida)
+router.get('/byAnimal/:animalId', authenticateToken, getAnalysesByAnimal);
 
 // Cancelar análisis (protegida)
 router.delete('/:id', authenticateToken, cancelAnalysis);

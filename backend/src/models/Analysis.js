@@ -151,6 +151,30 @@ class Analysis {
       throw new Error(`Error al obtener análisis para PDF: ${error.message}`);
     }
   }
+
+  // Obtener análisis de un animal específico para validaciones
+  static async findByAnimal(animalId) {
+    try {
+      const [rows] = await db.query(`
+        SELECT 
+          r.id_resultado,
+          r.id_estado,
+          te.nombre_estado,
+          m.fecha_toma,
+          ta.nombre_analisis
+        FROM resultado r
+        JOIN muestra m ON r.id_muestra = m.id_muestra
+        JOIN tipo_estado te ON r.id_estado = te.id_tipo_estado
+        JOIN tipo_analisis ta ON r.id_tipo_analisis = ta.id_tipo_analisis
+        WHERE m.id_animal = ?
+        ORDER BY m.fecha_toma DESC
+      `, [animalId]);
+      
+      return rows;
+    } catch (error) {
+      throw new Error(`Error al buscar análisis del animal: ${error.message}`);
+    }
+  }
 }
 
 module.exports = Analysis;

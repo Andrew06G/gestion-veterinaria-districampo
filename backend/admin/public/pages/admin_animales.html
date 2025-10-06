@@ -81,6 +81,10 @@
             </div>
           </div>
           
+          <div id="edit-info-message" class="mb-3">
+            <!-- Mensajes informativos se mostrarán aquí -->
+          </div>
+          
           <div class="d-flex justify-content-between">
             <button type="button" class="btn btn-danger" onclick="deleteSelectedAnimal()">
               <i class="fas fa-trash"></i> Eliminar Animal
@@ -341,6 +345,9 @@
           document.getElementById('animal_raza').value = animal.id_raza || '';
         }
         
+        // Verificar restricciones de edición
+        await verificarRestriccionesEdicion(id);
+        
         // Scroll al formulario
         setTimeout(() => {
           const formCard = document.querySelector('#editAnimalForm').closest('.card');
@@ -357,6 +364,69 @@
       }
     }
 
+    async function verificarRestriccionesEdicion(animalId) {
+      try {
+        const analysesResponse = await api(`/api/analyses/byAnimal/${animalId}`);
+        if (analysesResponse) {
+          const analyses = analysesResponse;
+          const saveButton = document.querySelector('button[type="submit"]');
+          
+          // Verificar si hay análisis en proceso o finalizados
+          const hasProcessOrFinalized = analyses.some(analysis => 
+            analysis.nombre_estado === 'En proceso' || analysis.nombre_estado === 'Finalizado'
+          );
+          
+          if (hasProcessOrFinalized) {
+            // Deshabilitar todos los campos y botón
+            document.getElementById('animal_nombre').disabled = true;
+            document.getElementById('animal_edad').disabled = true;
+            document.getElementById('animal_especie').disabled = true;
+            document.getElementById('animal_raza').disabled = true;
+            if (saveButton) saveButton.disabled = true;
+            
+            // Mostrar mensaje informativo
+            const infoDiv = document.getElementById('edit-info-message');
+            if (infoDiv) {
+              infoDiv.innerHTML = '<div class="alert alert-warning">Este animal no puede ser editado porque tiene análisis en proceso o finalizados.</div>';
+            }
+            return;
+          }
+
+          // Verificar si hay análisis pendientes
+          const hasPending = analyses.some(analysis => analysis.nombre_estado === 'Pendiente');
+          
+          if (hasPending) {
+            // Deshabilitar solo especie y raza
+            document.getElementById('animal_especie').disabled = true;
+            document.getElementById('animal_raza').disabled = true;
+            if (saveButton) saveButton.disabled = false;
+            
+            // Mostrar mensaje informativo
+            const infoDiv = document.getElementById('edit-info-message');
+            if (infoDiv) {
+              infoDiv.innerHTML = '<div class="alert alert-info">Solo puedes editar el nombre y la edad. No puedes cambiar la especie ni la raza porque este animal tiene análisis pendientes.</div>';
+            }
+            return;
+          }
+
+          // Sin restricciones - habilitar todo
+          document.getElementById('animal_nombre').disabled = false;
+          document.getElementById('animal_edad').disabled = false;
+          document.getElementById('animal_especie').disabled = false;
+          document.getElementById('animal_raza').disabled = false;
+          if (saveButton) saveButton.disabled = false;
+          
+          // Limpiar mensaje informativo
+          const infoDiv = document.getElementById('edit-info-message');
+          if (infoDiv) {
+            infoDiv.innerHTML = '';
+          }
+        }
+      } catch (error) {
+        console.error('Error al verificar restricciones:', error);
+      }
+    }
+
     function clearForm() {
       currentAnimalId = null;
       document.getElementById('animal_select').value = '';
@@ -364,6 +434,20 @@
       document.getElementById('animal_edad').value = '';
       document.getElementById('animal_especie').value = '';
       document.getElementById('animal_raza').value = '';
+
+      // Limpiar restricciones y mensajes
+      document.getElementById('animal_nombre').disabled = false;
+      document.getElementById('animal_edad').disabled = false;
+      document.getElementById('animal_especie').disabled = false;
+      document.getElementById('animal_raza').disabled = false;
+      
+      const saveButton = document.querySelector('button[type="submit"]');
+      if (saveButton) saveButton.disabled = false;
+      
+      const infoDiv = document.getElementById('edit-info-message');
+      if (infoDiv) {
+        infoDiv.innerHTML = '';
+      }
     }
 
     async function deleteAnimal(id, nombre) {
@@ -434,6 +518,45 @@
           id_especie: parseInt(document.getElementById('animal_especie').value),
           id_raza: parseInt(document.getElementById('animal_raza').value)
         };
+
+        // Verificar análisis del animal
+        const analysesResponse = await api(`/api/analyses/byAnimal/${currentAnimalId}`);
+        if (analysesResponse) {
+          // Verificar si hay análisis en proceso o finalizados
+          const hasProcessOrFinalized = analysesResponse.some(analysis => 
+            analysis.nombre_estado === 'En proceso' || analysis.nombre_estado === 'Finalizado'
+          );
+          
+          if (hasProcessOrFinalized) {
+            alert('Este animal no puede ser editado porque tiene análisis en proceso o finalizados.');
+            return;
+          }
+
+          // Verificar si hay análisis pendientes
+          const hasPending = analysesResponse.some(analysis => analysis.nombre_estado === 'Pendiente');
+          
+          if (hasPending) {
+            // Solo permitir cambios de nombre y edad
+            const currentAnimal = allAnimals.find(a => a.id_animal === currentAnimalId);
+            if (!currentAnimal) {
+              alert('No se encontraron los datos originales del animal');
+              return;
+            }
+
+            const originalEspecie = currentAnimal.id_especie;
+            const originalRaza = currentAnimal.id_raza;
+            const newEspecie = body.id_especie;
+            const newRaza = body.id_raza;
+
+            const especieChanged = originalEspecie !== newEspecie;
+            const razaChanged = originalRaza !== newRaza;
+
+            if (especieChanged || razaChanged) {
+              alert('No puedes cambiar la especie ni la raza porque este animal tiene análisis pendientes.');
+              return;
+            }
+          }
+        }
         
         const res = await api('/api/admin/animals/' + currentAnimalId, { 
           method: 'PUT', 

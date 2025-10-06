@@ -92,6 +92,17 @@ const getStatuses = async (req, res) => {
   }
 };
 
+// Obtener análisis de un animal específico
+const getAnalysesByAnimal = async (req, res) => {
+  try {
+    const { animalId } = req.params;
+    const analyses = await Analysis.findByAnimal(animalId);
+    res.json(analyses);
+  } catch (error) {
+    res.status(500).json({ message: 'Error interno del servidor' });
+  }
+};
+
 // Cancelar análisis (propietario): solo si Pendiente y antes del límite (<= 1 día antes de toma)
 const cancelAnalysis = async (req, res) => {
   try {
@@ -141,6 +152,7 @@ module.exports = {
   getUserAnalyses,
   getAnalysisTypes,
   getAnalysisForPDF,
-  getStatuses
-  , cancelAnalysis
+  getStatuses,
+  getAnalysesByAnimal,
+  cancelAnalysis
 };
