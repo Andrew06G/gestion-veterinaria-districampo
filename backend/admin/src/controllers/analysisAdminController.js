@@ -154,7 +154,7 @@ async function getAnalysis(req, res) {
 async function updateAnalysis(req, res) {
   try {
     const { id } = req.params;
-    const { id_estado, fecha_emision, resultado, observaciones } = req.body;
+    const { id_estado, fecha_emision, resultado, observaciones, tipo_resultado } = req.body;
 
     // Verificar que el análisis existe
     const [exists] = await db.query('SELECT r.id_resultado, m.fecha_toma FROM resultado r JOIN muestra m ON r.id_muestra = m.id_muestra WHERE r.id_resultado = ?', [id]);
@@ -176,14 +176,32 @@ async function updateAnalysis(req, res) {
       }
     }
 
+    // Validación: si el estado es "Finalizado", el resultado es obligatorio
+    const estadoNombre = await getEstadoNombre(id_estado);
+    const resultadoTrim = (resultado || '').trim();
+    if (estadoNombre === 'Finalizado') {
+      // Debe existir un tipo de resultado elegido
+      if (!tipo_resultado) {
+        return res.status(400).json({ success: false, error: 'Seleccione un tipo de resultado.' });
+      }
+      // Si es categórico, resultado obligatorio
+      if (tipo_resultado === 'categorico' && !resultadoTrim) {
+        return res.status(400).json({ success: false, error: 'Seleccione una categoría para el resultado.' });
+      }
+      // Si es texto libre (acepta 'texto' o 'libre'), requiere contenido no vacío
+      if ((tipo_resultado === 'texto' || tipo_resultado === 'libre') && !resultadoTrim) {
+        return res.status(400).json({ success: false, error: 'Ingrese un texto para el resultado.' });
+      }
+    }
+
     // Actualizar el análisis
     // Siempre usar la hora actual del sistema
     const now = new Date();
     const horaEmisionToSave = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
 
     // Si el estado es "En proceso" y no hay resultado, establecer como "Pendiente"
-    let resultadoFinal = resultado;
-    if (id_estado === 2 && !resultado.trim()) { // Estado "En proceso" = 2
+    let resultadoFinal = resultadoTrim;
+    if (id_estado === 2 && !resultadoTrim) { // Estado "En proceso" = 2
       resultadoFinal = 'Pendiente';
     }
 

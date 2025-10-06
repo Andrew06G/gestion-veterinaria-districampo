@@ -676,11 +676,31 @@
         }
       }
       
-      // Solo validar resultado si el estado es "Finalizado"
+      // Validaciones específicas cuando estado es "Finalizado"
       const estadoText = document.querySelector(`option[value="${estado}"]`).textContent;
-      if (estadoText === 'Finalizado' && !resultado.trim()) {
-        alert('Por favor ingrese un resultado para análisis finalizados');
-        return;
+      if (estadoText === 'Finalizado') {
+        // Debe haberse elegido un tipo de resultado
+        if (!tipoResultado) {
+          alert('Seleccione un tipo de resultado (Texto libre o Categórico).');
+          return;
+        }
+        // Si es categórico, debe seleccionar una categoría válida
+        if (tipoResultado === 'categorico') {
+          const select = form.querySelector('.resultado-categorico-select');
+          const val = (select?.value || '').trim();
+          if (!val) {
+            alert('Seleccione una categoría para el resultado categórico.');
+            return;
+          }
+        }
+        // Si es texto libre, requiere contenido no vacío
+        if (tipoResultado === 'libre') {
+          const libreVal = (form.querySelector('.resultado-libre-input')?.value || '').trim();
+          if (!libreVal) {
+            alert('Ingrese un texto para el resultado.');
+            return;
+          }
+        }
       }
 
       try {
@@ -690,6 +710,7 @@
             id_estado: parseInt(estado),
             fecha_emision: fechaEmision,
             resultado: resultado.trim(),
+            tipo_resultado: tipoResultado || '',
             observaciones: observaciones.trim()
           })
         });

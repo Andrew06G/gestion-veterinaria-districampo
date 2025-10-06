@@ -41,7 +41,7 @@ class NotificationSystem {
         // ID del usuario obtenido del token JWT
         }
       } catch (error) {
-        console.error("❌ Error al obtener ID del usuario:", error);
+        console.error("Error al obtener ID del usuario:", error);
       }
     }
   
@@ -240,7 +240,7 @@ class NotificationSystem {
     }
   
     async loadNotifications() {
-      if (!this.userId) return console.warn("⚠️ No se pudo obtener el ID del usuario");
+      if (!this.userId) return console.warn("No se pudo obtener el ID del usuario");
   
       try {
         const res = await fetch(`/api/notifications/${this.userId}`, {
