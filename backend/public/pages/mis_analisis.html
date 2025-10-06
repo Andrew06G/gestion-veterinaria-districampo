@@ -7,12 +7,13 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../assets/css/style.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 </head>
 <body style="background-color: #b3b3b3;">
   <!-- Barra de navegación -->
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <a class="navbar-brand" href="#">
-      
+      <strong>DistriCampo</strong>
     </a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
@@ -246,24 +247,24 @@
       const filterFechaDesde = document.getElementById('filterFechaDesde').value;
       const filterFechaHasta = document.getElementById('filterFechaHasta').value;
 
-      console.log('Aplicando filtros:', { filterAnimal, filterTipoAnalisis, filterFechaDesde, filterFechaHasta });
+      // Aplicando filtros
 
       try {
         const response = await sessionManager.authenticatedFetch('/api/analyses');
         
         if (response && response.ok) {
           let analisis = await response.json();
-          console.log('Total de análisis antes de filtrar:', analisis.length);
+          // Total de análisis antes de filtrar
           
           // Aplicar filtros
           if (filterAnimal) {
             analisis = analisis.filter(a => a.nombre_animal === filterAnimal);
-            console.log('Filtrado por animal:', filterAnimal, 'Resultado:', analisis.length);
+            // Filtrado por animal
           }
           
           if (filterTipoAnalisis) {
             analisis = analisis.filter(a => a.nombre_analisis === filterTipoAnalisis);
-            console.log('Filtrado por tipo de análisis:', filterTipoAnalisis, 'Resultado:', analisis.length);
+            // Filtrado por tipo de análisis
           }
           
           // Filtro de rango de fechas
@@ -282,10 +283,10 @@
               }
               return true;
             });
-            console.log('Filtrado por rango de fechas:', filterFechaDesde, 'a', filterFechaHasta, 'Resultado:', analisis.length);
+            // Filtrado por rango de fechas
           }
           
-          console.log('Análisis después de aplicar filtros:', analisis.length);
+          // Análisis después de aplicar filtros
           mostrarAnalisis(analisis);
         }
       } catch (error) {
@@ -336,7 +337,7 @@
           
           // Si no se pudo abrir (popup bloqueado), crear enlace de descarga
           if (!newWindow) {
-            console.log('Popup bloqueado, creando enlace de descarga...');
+            // Popup bloqueado, creando enlace de descarga
             const a = document.createElement('a');
             a.href = url;
             a.download = `analisis_${idMuestra}.pdf`;
@@ -354,7 +355,7 @@
           // Mostrar mensaje de éxito
           showNotification('PDF generado y descargado exitosamente', 'success');
         } else if (!response) {
-          console.log('No se recibió respuesta del servidor');
+          // No se recibió respuesta del servidor
           return;
         } else {
           console.error('Error al generar PDF:', {
@@ -412,7 +413,10 @@
     }
   </script>
 
+  <!-- Sistema de notificaciones -->
+  <script src="../assets/js/notifications.js"></script>
+  
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-</html> 
+</html>

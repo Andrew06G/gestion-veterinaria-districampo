@@ -7,6 +7,9 @@ Esta carpeta contiene scripts de utilidades para el mantenimiento y administraci
 ### 📁 `password/`
 Scripts relacionados con la gestión de contraseñas y seguridad de autenticación.
 
+### 📁 `notifications/`
+Scripts relacionados con el sistema de notificaciones y persistencia de datos.
+
 
 ## Scripts Disponibles
 
@@ -26,6 +29,30 @@ node scripts/password/validate-passwords.js test "MiContraseña123!"
 
 **Descripción**: Analiza la fortaleza de las contraseñas según criterios de seguridad (longitud, complejidad, contraseñas comunes).
 
+### 🔔 Notifications System
+
+#### `setup-notifications.js`
+**Propósito**: Configurar el sistema de notificaciones en la base de datos.
+
+**Uso**:
+```bash
+# Configurar tabla de notificaciones
+node scripts/setup-notifications.js
+```
+
+**Descripción**: Crea la tabla `notifications` con índices optimizados y datos de prueba para el sistema de notificaciones por usuario.
+
+#### `create_notifications_table.sql`
+**Propósito**: Script SQL para crear la tabla de notificaciones manualmente.
+
+**Uso**:
+```sql
+-- Ejecutar en MySQL
+SOURCE scripts/create_notifications_table.sql;
+```
+
+**Descripción**: Script SQL directo para crear la tabla de notificaciones con todas las restricciones y índices necesarios.
+
 
 ## Estado de Seguridad Actual
 
@@ -44,6 +71,12 @@ node scripts/password/validate-passwords.js test "MiContraseña123!"
 - JWT con clave segura configurada
 - Tokens con expiración de 24 horas
 - Middleware de autenticación implementado
+
+### ✅ Notificaciones
+- Sistema de notificaciones por usuario implementado
+- Persistencia en base de datos MySQL
+- API REST completa para gestión de notificaciones
+- Interfaz de usuario responsive y funcional
 
 ## Requisitos
 

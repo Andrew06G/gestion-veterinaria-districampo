@@ -28,6 +28,7 @@ const userRoutes = require('./src/routes/userRoutes');
 const animalRoutes = require('./src/routes/animalRoutes');
 const analysisRoutes = require('./src/routes/analysisRoutes');
 const pdfRoutes = require('./src/routes/pdfRoutes');
+const notificationRoutes = require('./src/routes/notificationRoutes');
 
 // Importar rutas del módulo admin
 const adminRoutes = require('./admin/src/routes/adminRoutes');
@@ -37,6 +38,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/animals', animalRoutes);
 app.use('/api/analyses', analysisRoutes);
 app.use('/api/pdf', pdfRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 // Usar las rutas del admin
 app.use('/api/admin', adminRoutes);

@@ -254,7 +254,7 @@
                   <div class="analysis-details">
                     <div class="analysis-detail"><strong>Tipo de Muestra:</strong> ${analysis.nombre_tipo_muestra}</div>
                     <div class="analysis-detail"><strong>Propietario:</strong> ${analysis.propietario_nombre}</div>
-                    <div class="analysis-detail"><strong>Fecha de Toma:</strong> ${formatDate(analysis.fecha_toma)}</div>
+                    <div class="analysis-detail"><strong>Fecha de Toma:</strong> ${formatDate(analysis.fecha_toma)} ${analysis.hora_toma ? `(${String(analysis.hora_toma).slice(0,5)})` : ''}</div>
                   </div>
                 </div>
 
@@ -276,16 +276,14 @@
                     <div class="col-lg-3 col-md-6">
                       <div class="form-group">
                         <label><strong>Fecha de Emisión:</strong></label>
-                        <input type="date" class="form-control fecha-emision" value="${formatDateForInput(analysis.fecha_emision)}" required>
+                        <input type="date" class="form-control fecha-emision" value="${formatDateForInput(analysis.fecha_emision)}" min="${formatDateForInput(analysis.fecha_toma)}" required>
                       </div>
                     </div>
                     <div class="col-lg-3 col-md-6">
                       <div class="form-group">
                         <label><strong>Hora de Emisión:</strong></label>
-                        <input type="time" class="form-control hora-emision" value="${analysis.hora_emision ? String(analysis.hora_emision).slice(0,5) : ''}" required>
-                        <div class="form-check mt-2">
-                          <input class="form-check-input usar-hora-actual" type="checkbox" id="horaActual_${analysis.id_resultado}" onchange="toggleHoraActual(this)">
-                          <label class="form-check-label" for="horaActual_${analysis.id_resultado}">Elegir hora actual</label>
+                        <div class="form-control-plaintext">
+                          <small class="text-muted">Se utilizará la hora actual del sistema</small>
                         </div>
                       </div>
                     </div>
@@ -639,23 +637,11 @@
       }
     }
 
-    function toggleHoraActual(checkbox) {
-      const form = checkbox.closest('.analysis-form');
-      const horaInput = form.querySelector('.hora-emision');
-      if (checkbox.checked) {
-        horaInput.value = '';
-        horaInput.disabled = true;
-      } else {
-        horaInput.disabled = false;
-      }
-    }
 
     async function saveAnalysis(resultadoId) {
       const form = document.querySelector(`form[data-id="${resultadoId}"]`);
       const estado = form.querySelector('.estado-select').value;
       const fechaEmision = form.querySelector('.fecha-emision').value;
-      let horaEmision = form.querySelector('.hora-emision').value;
-      const usarHoraActual = form.querySelector('.usar-hora-actual').checked;
       const fechaToma = form.querySelector('.fecha-toma')?.value || '';
       const horaToma = form.querySelector('.hora-toma')?.value || '';
       const tipoResultado = form.querySelector('.tipo-resultado').value;
@@ -678,28 +664,14 @@
         alert('Por favor seleccione una fecha de emisión');
         return;
       }
-      if (!horaEmision && !usarHoraActual) {
-        alert('Por favor ingrese la hora de emisión o seleccione "Elegir hora actual"');
-        return;
-      }
-      if (usarHoraActual) {
-        const now = new Date();
-        const hh = String(now.getHours()).padStart(2, '0');
-        const mm = String(now.getMinutes()).padStart(2, '0');
-        const ss = String(now.getSeconds()).padStart(2, '0');
-        horaEmision = `${hh}:${mm}:${ss}`;
-      } else if (horaEmision && horaEmision.length === 5) {
-        horaEmision = `${horaEmision}:00`;
-      }
 
-      // Validación: emisión al menos 30 minutos después de toma
+      // Validación: emisión debe ser posterior a toma (mismo día o posterior)
       if (fechaToma) {
-        const tomaDT = new Date(`${fechaToma}T${(horaToma || '00:00:00')}`);
-        const emisionDT = new Date(`${fechaEmision}T${(horaEmision || '00:00:00')}`);
-        const tomaMas30 = new Date(tomaDT.getTime() + 30 * 60000);
-        if (emisionDT <= tomaMas30) {
-          const tomaStr = `${new Date(fechaToma).toLocaleDateString('es-ES')} ${(horaToma || '00:00').slice(0,5)}`;
-          alert(`La fecha y hora de emisión no pueden ser anteriores o iguales a 30 minutos después de la hora de toma (${tomaStr}). Debe ser al menos 30 minutos después.`);
+        const tomaDate = new Date(fechaToma);
+        const emisionDate = new Date(fechaEmision);
+        if (emisionDate < tomaDate) {
+          const tomaStr = new Date(fechaToma).toLocaleDateString('es-ES');
+          alert(`La fecha de emisión no puede ser anterior a la fecha de toma (${tomaStr}).`);
           return;
         }
       }
@@ -717,7 +689,6 @@
           body: JSON.stringify({
             id_estado: parseInt(estado),
             fecha_emision: fechaEmision,
-            hora_emision: horaEmision,
             resultado: resultado.trim(),
             observaciones: observaciones.trim()
           })
@@ -725,7 +696,7 @@
         
         if (!res) return;
         
-        alert('Análisis actualizado exitosamente');
+        alert('Análisis actualizado exitosamente. Se utilizó la hora actual del sistema.');
         loadAnalysesByAnimal(); // Recargar análisis
         
       } catch (e) {

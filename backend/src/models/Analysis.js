@@ -123,9 +123,11 @@ class Analysis {
           ta.precio,
           r.resultado,
           r.fecha_emision,
+          r.hora_emision,
           r.observaciones,
           te.nombre_estado,
-          m.fecha_toma
+          m.fecha_toma,
+          m.hora_toma
         FROM muestra m
         JOIN animal a ON m.id_animal = a.id_animal
         JOIN propietario p ON a.id_propietario = p.id_propietario
