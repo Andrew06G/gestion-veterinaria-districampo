@@ -155,14 +155,20 @@
             </span>
           </td>
           <td>
-            <button class="btn btn-success btn-sm ${analisis.nombre_estado !== 'Finalizado' ? 'disabled' : ''}"
-                    ${analisis.nombre_estado !== 'Finalizado' ? 'type="button" onclick="alert(\'El resultado aún no está disponible. Espere a que el análisis sea finalizado.\')"' : `onclick="generarPDF(${analisis.id_muestra}, this)"`}>
-              ${analisis.nombre_estado === 'Finalizado' ? 'Visualizar PDF' : 'Visualizar resultado'}
-            </button>
-            <button class="btn btn-danger btn-sm mt-1" type="button"
-              onclick="cancelarAnalisis(${analisis.id_muestra}, '${analisis.nombre_estado}', '${analisis.fecha_toma}', '${analisis.hora_toma || ''}')">
-              Cancelar Análisis
-            </button>
+            <div class="d-grid">
+              <button class="btn btn-success btn-sm w-100 ${analisis.nombre_estado !== 'Finalizado' ? 'disabled' : ''}"
+                      ${analisis.nombre_estado !== 'Finalizado' ? 'type="button" onclick="alert(\'El resultado aún no está disponible. Espere a que el análisis sea finalizado.\')"' : `onclick="generarPDF(${analisis.id_muestra}, this, false)"`}>
+                ${analisis.nombre_estado === 'Finalizado' ? 'Visualizar PDF' : 'Visualizar resultado'}
+              </button>
+              <button class="btn btn-outline-primary btn-sm w-100 mt-1 ${analisis.nombre_estado !== 'Finalizado' ? 'disabled' : ''}" type="button"
+                ${analisis.nombre_estado !== 'Finalizado' ? '' : `onclick="generarPDF(${analisis.id_muestra}, this, true)"`}>
+                Descargar PDF
+              </button>
+              <button class="btn btn-danger btn-sm w-100 mt-1" type="button"
+                onclick="cancelarAnalisis(${analisis.id_muestra}, '${analisis.nombre_estado}', '${analisis.fecha_toma}', '${analisis.hora_toma || ''}')">
+                Cancelar Análisis
+              </button>
+            </div>
           </td>
         </tr>
       `).join('');
@@ -311,75 +317,63 @@
 
 
     // Función para generar PDF
-    async function generarPDF(idMuestra, buttonElement) {
+    async function generarPDF(idMuestra, buttonElement, descargar = false) {
+      const button = buttonElement || document.querySelector(`button[onclick*="${idMuestra}"]`);
+      const originalText = button.innerHTML;
+      button.innerHTML = 'Generando...';
+      button.disabled = true;
+
       try {
-        // Mostrar indicador de carga
-        const button = buttonElement || document.querySelector(`button[onclick*="${idMuestra}"]`);
-        const originalText = button.innerHTML;
-        button.innerHTML = '⏳ Generando...';
-        button.disabled = true;
-        
-        // Agregar timestamp para evitar caché
         const timestamp = new Date().getTime();
         const url = `/api/analyses/${idMuestra}/pdf?t=${timestamp}`;
-        
+
         const response = await sessionManager.authenticatedFetch(url);
-        
-        if (response && response.ok) {
-          // Obtener el blob del PDF
+        if (!response) return; // Sesión expirada u otro problema
+
+        if (response.ok) {
           const blob = await response.blob();
-          
-          // Crear URL temporal para abrir en nueva ventana
-          const url = window.URL.createObjectURL(blob);
-          
-          // Abrir PDF en nueva ventana
-          const newWindow = window.open(url, '_blank');
-          
-          // Si no se pudo abrir (popup bloqueado), crear enlace de descarga
-          if (!newWindow) {
-            // Popup bloqueado, creando enlace de descarga
+          const blobUrl = window.URL.createObjectURL(blob);
+
+          if (descargar) {
+            // Descarga directa
             const a = document.createElement('a');
-            a.href = url;
+            a.href = blobUrl;
             a.download = `analisis_${idMuestra}.pdf`;
-            a.style.display = 'none';
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
+            showNotification('PDF descargado exitosamente', 'success');
+          } else {
+            // Visualización en una nueva pestaña
+            const newWindow = window.open(blobUrl, '_blank');
+
+            if (!newWindow) {
+              // Si el navegador bloquea el popup, forzar apertura
+              const a = document.createElement('a');
+              a.href = blobUrl;
+              a.target = '_blank';
+              a.click();
+            }
+
+            showNotification('PDF generado y abierto correctamente', 'success');
           }
-          
-          // Limpiar URL después de un tiempo
+
+          // Liberar memoria del blob tras unos segundos
           setTimeout(() => {
-            window.URL.revokeObjectURL(url);
-          }, 1000);
-          
-          // Mostrar mensaje de éxito
-          showNotification('PDF generado y descargado exitosamente', 'success');
-        } else if (!response) {
-          // No se recibió respuesta del servidor
-          return;
+            window.URL.revokeObjectURL(blobUrl);
+          }, 3000);
         } else {
-          console.error('Error al generar PDF:', {
-            status: response.status,
-            statusText: response.statusText,
-            url: url
-          });
-          
-          try {
-            const errorData = await response.json();
-            console.error('Detalles del error:', errorData);
-            showNotification(`Error: ${errorData.message || response.statusText}`, 'error');
-          } catch (e) {
-            console.error('No se pudo parsear el error:', e);
-            showNotification(`Error ${response.status}: ${response.statusText}`, 'error');
-          }
+          // Error HTTP
+          const errorText = await response.text();
+          console.error('Error al generar PDF:', errorText);
+          showNotification('No se pudo generar el PDF', 'error');
         }
       } catch (error) {
-        console.error('Error al generar PDF:', error);
+        console.error('Error general al generar PDF:', error);
         showNotification('Error al generar el PDF', 'error');
       } finally {
-        // Restaurar botón
-        const button = buttonElement || document.querySelector(`button[onclick*="${idMuestra}"]`);
-        button.innerHTML = 'Descargar PDF';
+        // Restaurar el botón siempre
+        button.innerHTML = originalText || 'Visualizar PDF';
         button.disabled = false;
       }
     }
