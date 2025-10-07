@@ -47,6 +47,7 @@
         <select class="form-control" id="tipo_analisis" name="id_tipo_analisis" required onchange="showSampleType()">
           <!-- Opciones dinámicas -->
         </select>
+        <small id="precio_analisis_info" class="form-text text-muted" style="margin-top:6px;"></small>
       </div>
       <div class="form-group">
         <label for="tipo_muestra_info">Tipo de Muestra (asignado automáticamente):</label>
@@ -95,17 +96,30 @@
           analysisSelectIds.forEach(id => {
             const select = document.getElementById(id);
             if (select) {
-              select.innerHTML = ''; // Vaciar opciones previas
+              // Opción inicial obligatoria: sin selección por defecto
+              select.innerHTML = '<option value="">Seleccionar un análisis</option>';
 
               analyses.forEach(analysis => {
                 const option = document.createElement('option');
                 option.value = analysis.id_tipo_analisis;
-                option.textContent = analysis.nombre_analisis;
+                const precioReal = (Number(analysis.precio) || 0) * 1000;
+                const texto = `${analysis.nombre_analisis} - $${precioReal.toLocaleString('es-CO')} COP`;
+                option.textContent = texto;
                 option.dataset.tipoMuestra = analysis.tipo_muestra || '';
+                option.dataset.precio = String(precioReal);
                 select.appendChild(option);
               });
+
+              // Asegurar que quede la opción inicial seleccionada
+              select.selectedIndex = 0;
             }
           });
+
+          // Limpiar info inicial (solo select principal)
+          const infoField = document.getElementById('tipo_muestra_info');
+          const priceInfo = document.getElementById('precio_analisis_info');
+          if (infoField) infoField.value = '';
+          if (priceInfo) priceInfo.textContent = '';
         } else if (!response) {
           // La función authenticatedFetch ya maneja la redirección
           return;
@@ -121,13 +135,22 @@
     function showSampleType() {
       const select = document.getElementById('tipo_analisis');
       const infoField = document.getElementById('tipo_muestra_info');
+      const priceInfo = document.getElementById('precio_analisis_info');
       
       if (select.value) {
         const selectedOption = select.options[select.selectedIndex];
         const tipoMuestra = selectedOption.dataset.tipoMuestra;
         infoField.value = tipoMuestra || 'Se asignará automáticamente';
+
+        const precio = Number(selectedOption.dataset.precio || '0');
+        if (priceInfo) {
+          priceInfo.textContent = precio > 0
+            ? `Precio del análisis seleccionado: $${precio.toLocaleString('es-CO')} COP`
+            : '';
+        }
       } else {
         infoField.value = '';
+        if (priceInfo) priceInfo.textContent = '';
       }
     }
 
@@ -190,8 +213,14 @@
       const fecha_solicitud = document.getElementById('fecha_solicitud').value;
       let hora_toma = (document.getElementById('hora_toma').value || '').trim();
 
-      // Validar campos
-      if (!id_animal || !id_tipo_analisis || !fecha_solicitud) {
+      // Validación específica: exigir tipo de análisis seleccionado
+      if (!id_tipo_analisis) {
+        alert('Por favor, seleccione un tipo de análisis antes de continuar.');
+        return;
+      }
+
+      // Validar campos generales
+      if (!id_animal || !fecha_solicitud) {
         alert('Por favor, complete todos los campos.');
         return;
       }

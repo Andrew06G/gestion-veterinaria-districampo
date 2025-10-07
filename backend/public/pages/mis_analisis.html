@@ -138,10 +138,14 @@
 
       noAnalisisMessage.style.display = 'none';
       
-      tableBody.innerHTML = analisis.map(analisis => `
+      tableBody.innerHTML = analisis.map(analisis => {
+        const precioReal = analisis.precio ? (Number(analisis.precio) * 1000) : 0;
+        const precioFormateado = precioReal ? precioReal.toLocaleString('es-CO') : '';
+        const tipoAnalisisTexto = `${analisis.nombre_analisis} (${precioReal ? '$' + precioFormateado + ' COP' : 'Sin precio'})`;
+        return `
         <tr>
           <td>${analisis.nombre_animal}</td>
-          <td>${analisis.nombre_analisis}</td>
+          <td>${tipoAnalisisTexto}</td>
           <td>${analisis.nombre_tipo_muestra || 'N/A'}</td>
           <td>${analisis.resultado}</td>
           <td>
@@ -171,7 +175,8 @@
             </div>
           </td>
         </tr>
-      `).join('');
+        `;
+      }).join('');
     }
 
 

@@ -57,6 +57,7 @@ class Analysis {
           m.id_muestra,
           a.nombre_animal,
           ta.nombre_analisis,
+          ta.precio,
           tm.nombre_tipo_muestra,
           r.resultado,
         r.fecha_emision,

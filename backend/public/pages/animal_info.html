@@ -251,8 +251,13 @@
           // Llenar formulario
           document.getElementById('edit_nombre_animal').value = animal.nombre_animal;
           document.getElementById('edit_edad').value = animal.edad;
+          // Seleccionar especie correctamente antes de cargar razas
+          const especieSelect = document.getElementById('edit_id_especie');
+          if (especieSelect) {
+            especieSelect.value = String(animal.id_especie || '');
+          }
           
-          // Cargar razas de la especie del animal
+          // Cargar razas de la especie del animal y preseleccionar la raza
           await cargarRazas(animal.id_especie, animal.id_raza);
           
           // Mostrar botón de eliminar
