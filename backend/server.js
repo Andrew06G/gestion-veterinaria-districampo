@@ -33,6 +33,9 @@ const notificationRoutes = require('./src/routes/notificationRoutes');
 // Importar rutas del módulo admin
 const adminRoutes = require('./admin/src/routes/adminRoutes');
 
+// Importar scheduler de notificaciones
+const { startNotificationScheduler } = require('./src/jobs/notificationScheduler');
+
 // Usar las rutas
 app.use('/api/users', userRoutes);
 app.use('/api/animals', animalRoutes);
@@ -121,4 +124,7 @@ app.listen(PORT, () => {
   console.log('- /admin/login - Admin Login (beta)');
   console.log('- /api/admin/login - API Login Admin');
   console.log('- /api/admin/profile - API Perfil Admin');
+  
+  // Iniciar scheduler de notificaciones
+  startNotificationScheduler();
 });

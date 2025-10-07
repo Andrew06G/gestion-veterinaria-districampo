@@ -1,5 +1,6 @@
 const db = require('../../../src/config/db');
 const { decrypt, decryptObject } = require('../../../src/utils/crypto');
+const Notification = require('../../../src/models/Notification');
 
 // Listar todos los análisis con información completa y paginación
 async function listAnalyses(req, res) {
@@ -205,10 +206,56 @@ async function updateAnalysis(req, res) {
       resultadoFinal = 'Pendiente';
     }
 
+    // Obtener el estado anterior para comparar
+    const [oldStateRow] = await db.query('SELECT id_estado FROM resultado WHERE id_resultado = ?', [id]);
+    const oldState = oldStateRow[0]?.id_estado;
+
     await db.query(
       'UPDATE resultado SET id_estado = ?, fecha_emision = ?, hora_emision = ?, resultado = ?, observaciones = ? WHERE id_resultado = ?',
       [id_estado, fecha_emision, horaEmisionToSave, resultadoFinal, observaciones, id]
     );
+
+    // Crear notificación si el estado cambió a "En proceso" o "Finalizado"
+    if (oldState !== id_estado) {
+      const estadoNombre = await getEstadoNombre(id_estado);
+      if (estadoNombre === 'En proceso' || estadoNombre === 'Finalizado') {
+        try {
+          // Obtener información del propietario y análisis
+          const [analysisInfo] = await db.query(`
+            SELECT a.id_propietario, ta.nombre_analisis
+            FROM resultado r
+            JOIN muestra m ON r.id_muestra = m.id_muestra
+            JOIN animal a ON m.id_animal = a.id_animal
+            JOIN tipo_analisis ta ON r.id_tipo_analisis = ta.id_tipo_analisis
+            WHERE r.id_resultado = ?
+          `, [id]);
+
+          if (analysisInfo[0]) {
+            const { id_propietario, nombre_analisis } = analysisInfo[0];
+            
+            let titulo, mensaje, tipo;
+            if (estadoNombre === 'En proceso') {
+              titulo = 'Análisis en proceso';
+              mensaje = `Tu análisis de ${nombre_analisis} ha comenzado a procesarse.`;
+              tipo = 'info';
+            } else if (estadoNombre === 'Finalizado') {
+              titulo = 'Análisis finalizado';
+              mensaje = `Tu análisis de ${nombre_analisis} ya tiene resultados disponibles.`;
+              tipo = 'success';
+            }
+
+            await Notification.create({
+              user_id: id_propietario,
+              titulo,
+              mensaje,
+              tipo
+            });
+          }
+        } catch (notificationError) {
+          console.error('Error al crear notificación:', notificationError);
+        }
+      }
+    }
 
     // Obtener el análisis actualizado
     const [rows] = await db.query(`
