@@ -14,6 +14,13 @@ class NotificationSystem {
         this.createNotificationContainer();
         this.loadNotifications();
       });
+
+    // Sincronizar entre pestañas/ventanas
+    window.addEventListener('storage', (event) => {
+      if (event.key === 'notifications_last_read') {
+        this.loadNotifications();
+      }
+    });
     }
   
     // Espera hasta que el navbar esté disponible en el DOM
@@ -284,6 +291,9 @@ class NotificationSystem {
           this.notifications.forEach((n) => (n.leida = true));
           this.updateBadge();
           this.renderNotifications();
+
+        // Guardar sincronización global entre pestañas
+        localStorage.setItem('notifications_last_read', String(Date.now()));
         }
       } catch (err) {
         console.error("Error al marcar todas como leídas:", err);

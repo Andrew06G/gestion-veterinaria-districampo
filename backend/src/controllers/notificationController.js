@@ -46,7 +46,7 @@ async function createNotification(req, res) {
 async function markAsRead(req, res) {
   try {
     const { id } = req.params;
-    const userId = req.user.id_propietario; // Asumiendo que viene del middleware de auth
+    const userId = req.user?.id || req.user?.id_propietario || req.user?.id_admin;
 
     const success = await Notification.markAsRead(id, userId);
     
@@ -64,7 +64,10 @@ async function markAsRead(req, res) {
 // Marcar todas las notificaciones como leídas
 async function markAllAsRead(req, res) {
   try {
-    const userId = req.user.id_propietario; // Asumiendo que viene del middleware de auth
+    const userId = req.user?.id || req.user?.id_propietario || req.user?.id_admin;
+    if (!userId) {
+      return res.status(401).json({ success: false, message: 'No autorizado' });
+    }
     const count = await Notification.markAllAsRead(userId);
     
     res.json({ 
@@ -81,7 +84,7 @@ async function markAllAsRead(req, res) {
 async function deleteNotification(req, res) {
   try {
     const { id } = req.params;
-    const userId = req.user.id_propietario; // Asumiendo que viene del middleware de auth
+    const userId = req.user?.id || req.user?.id_propietario || req.user?.id_admin;
 
     const success = await Notification.delete(id, userId);
     
@@ -99,7 +102,7 @@ async function deleteNotification(req, res) {
 // Obtener contador de notificaciones no leídas
 async function getUnreadCount(req, res) {
   try {
-    const userId = req.user.id_propietario; // Asumiendo que viene del middleware de auth
+    const userId = req.user?.id || req.user?.id_propietario || req.user?.id_admin;
     const count = await Notification.getUnreadCount(userId);
     
     res.json({ success: true, count });
