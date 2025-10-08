@@ -1,6 +1,7 @@
 const cron = require('node-cron');
 const db = require('../config/db');
 const Notification = require('../models/Notification');
+const { decrypt } = require('../utils/crypto');
 
 // Función para crear notificaciones de recordatorio de 24 horas
 async function createReminderNotifications() {
@@ -37,10 +38,11 @@ async function createReminderNotifications() {
     // Crear notificaciones para cada muestra
     for (const sample of samples) {
       try {
+        const nombreAnimalDesencriptado = decrypt(sample.nombre_animal);
         await Notification.create({
           user_id: sample.id_propietario,
           titulo: 'Próxima toma de muestra',
-          mensaje: `Recuerda que mañana se realizará la toma de muestra de ${sample.nombre_animal}.`,
+          mensaje: `Recuerda que mañana se realizará la toma de muestra de ${nombreAnimalDesencriptado}.`,
           tipo: 'warning'
         });
       } catch (error) {

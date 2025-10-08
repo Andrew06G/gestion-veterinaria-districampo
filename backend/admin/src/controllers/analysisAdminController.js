@@ -220,9 +220,9 @@ async function updateAnalysis(req, res) {
       const estadoNombre = await getEstadoNombre(id_estado);
       if (estadoNombre === 'En proceso' || estadoNombre === 'Finalizado') {
         try {
-          // Obtener información del propietario y análisis
+          // Obtener información del propietario, análisis y animal
           const [analysisInfo] = await db.query(`
-            SELECT a.id_propietario, ta.nombre_analisis
+            SELECT a.id_propietario, ta.nombre_analisis, a.nombre_animal
             FROM resultado r
             JOIN muestra m ON r.id_muestra = m.id_muestra
             JOIN animal a ON m.id_animal = a.id_animal
@@ -231,16 +231,17 @@ async function updateAnalysis(req, res) {
           `, [id]);
 
           if (analysisInfo[0]) {
-            const { id_propietario, nombre_analisis } = analysisInfo[0];
+            const { id_propietario, nombre_analisis, nombre_animal } = analysisInfo[0];
+            const nombreAnimalDesencriptado = decrypt(nombre_animal);
             
             let titulo, mensaje, tipo;
             if (estadoNombre === 'En proceso') {
               titulo = 'Análisis en proceso';
-              mensaje = `Tu análisis de ${nombre_analisis} ha comenzado a procesarse.`;
+              mensaje = `Tu análisis de ${nombre_analisis} para ${nombreAnimalDesencriptado} ha comenzado a procesarse.`;
               tipo = 'info';
             } else if (estadoNombre === 'Finalizado') {
               titulo = 'Análisis finalizado';
-              mensaje = `Tu análisis de ${nombre_analisis} ya tiene resultados disponibles.`;
+              mensaje = `Tu análisis de ${nombre_analisis} para ${nombreAnimalDesencriptado} ya tiene resultados disponibles.`;
               tipo = 'success';
             }
 

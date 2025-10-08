@@ -140,9 +140,9 @@ class NotificationSystem {
           position: absolute;
           top: calc(100% + 8px);
           right: 0;
-          width: 320px;
-          max-height: 350px;
-          overflow-y: auto;
+          width: 512px;
+          max-height: 455px;
+          overflow: hidden;
           background: rgba(255, 255, 255, 0.96);
           backdrop-filter: blur(10px);
           border-radius: 10px;
@@ -170,7 +170,7 @@ class NotificationSystem {
           transition: background-color 0.2s;
         }
         .close-btn:hover { background-color: rgba(255,255,255,0.2); }
-        .notification-content { max-height: 250px; overflow-y: auto; }
+        .notification-content { max-height: 370px; overflow-y: auto; }
         .no-notifications {
           text-align: center; padding: 30px 20px; color: #6c757d;
         }
@@ -197,9 +197,23 @@ class NotificationSystem {
         .notification-type-icon.error { background-color: #e17055; }
         .notification-text { flex: 1; }
         .notification-title { font-weight: 600; font-size: 14px; margin-bottom: 4px; color: #2d3436; }
-        .notification-message { font-size: 13px; color: #636e72; margin-bottom: 4px; }
+        .notification-message { 
+          font-size: 13px; 
+          color: #636e72; 
+          margin-bottom: 4px;
+          word-wrap: break-word;
+          white-space: normal;
+        }
         .notification-time { font-size: 11px; color: #b2bec3; }
-        .notification-footer { padding: 12px; background-color: #f8f9fa; border-top: 1px solid #e9ecef; text-align: center; }
+        .notification-footer { 
+          position: sticky;
+          bottom: 0;
+          background-color: #f8f9fa;
+          border-top: 1px solid #e9ecef;
+          padding: 12px;
+          text-align: center;
+          z-index: 1;
+        }
         @media (max-width: 768px) {
           .notifications-panel { width: 280px; }
           .notification-icon { font-size: 18px; }
