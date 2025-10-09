@@ -249,7 +249,8 @@ async function updateAnalysis(req, res) {
               user_id: id_propietario,
               titulo,
               mensaje,
-              tipo
+              tipo,
+              id_resultado: id
             });
           }
         } catch (notificationError) {

@@ -4,10 +4,113 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin - Dashboard</title>
-  <link rel="stylesheet" href="/assets/css/bootstrap-local.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <link rel="stylesheet" href="/assets/css/style.css">
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <style>
+    body {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    .dashboard-container {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      margin: 2rem auto;
+      padding: 2rem;
+    }
+
+    .dashboard-card {
+      transition: all 0.3s ease-in-out;
+      border-radius: 16px;
+      border: none;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+      height: 100%;
+      background: white;
+      margin-bottom: 1.5rem;
+    }
+
+    .dashboard-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+    }
+
+    .dashboard-card .card-body {
+      padding: 2rem 1.5rem;
+      text-align: center;
+    }
+
+    .dashboard-card .fa-3x {
+      margin-bottom: 1rem;
+      transition: transform 0.3s ease;
+    }
+
+    .dashboard-card:hover .fa-3x {
+      transform: scale(1.1);
+    }
+
+    .btn-orange {
+      background-color: #fd7e14;
+      border-color: #fd7e14;
+      color: white;
+      border-radius: 25px;
+      padding: 0.5rem 1.5rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .btn-orange:hover {
+      background-color: #e8650e;
+      border-color: #e8650e;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(253, 126, 20, 0.3);
+    }
+
+    .text-orange {
+      color: #fd7e14;
+    }
+
+    .welcome-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #2d3436;
+      margin-bottom: 0.5rem;
+    }
+
+    .welcome-subtitle {
+      color: #636e72;
+      font-size: 1.1rem;
+      margin-bottom: 2rem;
+    }
+
+    .module-description {
+      color: #636e72;
+      font-size: 0.9rem;
+      margin-bottom: 1.5rem;
+      line-height: 1.4;
+    }
+
+    .navbar {
+      background: rgba(0, 0, 0, 0.8) !important;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    @media (max-width: 768px) {
+      .dashboard-container {
+        margin: 1rem;
+        padding: 1.5rem;
+      }
+      
+      .welcome-title {
+        font-size: 2rem;
+      }
+    }
+  </style>
 </head>
 <body>
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -26,31 +129,63 @@
     </div>
   </nav>
 
-  <div class="container mt-5">
-    <h2 class="text-center">Panel Administrativo</h2>
-    <div id="adminInfo" class="text-center mb-4">
-      <p class="text-muted">Cargando información...</p>
-    </div>
-    <div class="row mt-4">
-      <div class="col-md-3 text-center">
-        <a href="/admin/propietarios" class="btn btn-info btn-lg mb-3 w-100">
-          <i class="fas fa-users"></i><br>Propietarios
-        </a>
+  <div class="container">
+    <div class="dashboard-container">
+      <div class="text-center mb-5">
+        <h1 class="welcome-title">Panel Administrativo</h1>
+        <div id="adminInfo">
+          <p class="welcome-subtitle">Cargando información...</p>
+        </div>
       </div>
-      <div class="col-md-3 text-center">
-        <a href="/admin/animales" class="btn btn-warning btn-lg mb-3 w-100">
-          <i class="fas fa-paw"></i><br>Animales
-        </a>
-      </div>
-      <div class="col-md-3 text-center">
-        <a href="/admin/analisis" class="btn btn-primary btn-lg mb-3 w-100">
-          <i class="fas fa-flask"></i><br>Análisis
-        </a>
-      </div>
-      <div class="col-md-3 text-center">
-        <a href="/admin/registro" class="btn btn-success btn-lg mb-3 w-100">
-          <i class="fas fa-user-plus"></i><br>Registro Admin
-        </a>
+
+      <div class="row g-4 justify-content-center" style="gap: 2rem 0;">
+        <!-- Tarjeta 1: Propietarios -->
+        <div class="col-md-5 col-lg-4">
+          <div class="card dashboard-card">
+            <div class="card-body">
+              <i class="fa-solid fa-users fa-3x mb-3 text-primary"></i>
+              <h5 class="card-title font-weight-bold">Propietarios</h5>
+              <p class="module-description">Gestiona la información de los propietarios registrados en el sistema.</p>
+              <a href="/admin/propietarios" class="btn btn-primary">Entrar</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tarjeta 2: Animales -->
+        <div class="col-md-5 col-lg-4">
+          <div class="card dashboard-card">
+            <div class="card-body">
+              <i class="fa-solid fa-paw fa-3x mb-3 text-success"></i>
+              <h5 class="card-title font-weight-bold">Animales</h5>
+              <p class="module-description">Administra el registro y fichas médicas de todos los animales.</p>
+              <a href="/admin/animales" class="btn btn-success">Entrar</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tarjeta 3: Análisis -->
+        <div class="col-md-5 col-lg-4">
+          <div class="card dashboard-card">
+            <div class="card-body">
+              <i class="fa-solid fa-flask fa-3x mb-3" style="color: #6f42c1;"></i>
+              <h5 class="card-title font-weight-bold">Análisis</h5>
+              <p class="module-description">Supervisa y gestiona todos los análisis clínicos y resultados.</p>
+              <a href="/admin/analisis" class="btn" style="background-color: #6f42c1; color: white; border-color: #6f42c1;">Entrar</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tarjeta 4: Registro de Admins -->
+        <div class="col-md-5 col-lg-4">
+          <div class="card dashboard-card">
+            <div class="card-body">
+              <i class="fa-solid fa-user-plus fa-3x mb-3 text-orange"></i>
+              <h5 class="card-title font-weight-bold">Registro de Admins</h5>
+              <p class="module-description">Crea nuevas cuentas de administradores para el sistema.</p>
+              <a href="/admin/registro" class="btn btn-orange">Entrar</a>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>

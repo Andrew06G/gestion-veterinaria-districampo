@@ -8,8 +8,15 @@
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../assets/css/style.css">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <style>
+    .highlighted-analysis {
+      background-color: #e6f7ff !important;
+      box-shadow: 0 0 12px rgba(24, 144, 255, 0.6);
+      transition: all 0.6s ease;
+    }
+  </style>
 </head>
-<body style="background-color: #b3b3b3;">
+<body>
   <!-- Barra de navegación -->
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <a class="navbar-brand" href="#">
@@ -90,19 +97,37 @@
   <script src="../assets/js/session.js"></script>
 
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', async () => {
       // Verificar autenticación usando el sistema de sesión
       if (!sessionManager.requireAuth()) {
         return;
       }
 
       // Cargar análisis del usuario
-      cargarAnalisis();
+      await cargarAnalisis();
       
       // Cargar estados desde la base de datos
       
       // Configurar filtros
       configurarFiltros();
+
+      // Verificar si hay un análisis para resaltar
+      const highlightId = localStorage.getItem('highlight_analysis_id');
+      if (highlightId) {
+        // Esperar un poco para que la tabla se renderice completamente
+        setTimeout(() => {
+          const targetRow = document.querySelector(`[data-id-resultado='${highlightId}']`);
+          if (targetRow) {
+            targetRow.classList.add('highlighted-analysis');
+            // Scroll suave hacia el análisis resaltado
+            targetRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            setTimeout(() => targetRow.classList.remove('highlighted-analysis'), 3000);
+          }
+        }, 500);
+        
+        // Limpiar almacenamiento para no repetir
+        localStorage.removeItem('highlight_analysis_id');
+      }
     });
 
     // Función para cargar todos los análisis del usuario
@@ -143,7 +168,7 @@
         const precioFormateado = precioReal ? precioReal.toLocaleString('es-CO') : '';
         const tipoAnalisisTexto = `${analisis.nombre_analisis} (${precioReal ? '$' + precioFormateado + ' COP' : 'Sin precio'})`;
         return `
-        <tr>
+        <tr data-id-resultado="${analisis.id_resultado}">
           <td>${analisis.nombre_animal}</td>
           <td>${tipoAnalisisTexto}</td>
           <td>${analisis.nombre_tipo_muestra || 'N/A'}</td>

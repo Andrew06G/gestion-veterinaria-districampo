@@ -5,7 +5,7 @@ class Notification {
   static async getByUserId(userId) {
     try {
       const [rows] = await db.query(`
-        SELECT id, titulo, mensaje, tipo, leida, fecha_creacion
+        SELECT id, titulo, mensaje, tipo, leida, fecha_creacion, id_resultado
         FROM notifications 
         WHERE user_id = ? 
         ORDER BY fecha_creacion DESC
@@ -20,11 +20,11 @@ class Notification {
   // Crear una nueva notificación
   static async create(notificationData) {
     try {
-      const { user_id, titulo, mensaje, tipo = 'info' } = notificationData;
+      const { user_id, titulo, mensaje, tipo = 'info', id_resultado = null } = notificationData;
       const [result] = await db.query(`
-        INSERT INTO notifications (user_id, titulo, mensaje, tipo)
-        VALUES (?, ?, ?, ?)
-      `, [user_id, titulo, mensaje, tipo]);
+        INSERT INTO notifications (user_id, titulo, mensaje, tipo, id_resultado)
+        VALUES (?, ?, ?, ?, ?)
+      `, [user_id, titulo, mensaje, tipo, id_resultado]);
       return result.insertId;
     } catch (error) {
       console.error('Error al crear notificación:', error);

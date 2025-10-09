@@ -9,6 +9,92 @@
   <link rel="stylesheet" href="../assets/css/style.css">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
   <style>
+    body {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    .dashboard-container {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      margin: 2rem auto;
+      padding: 2rem;
+    }
+
+    .dashboard-card {
+      transition: all 0.3s ease-in-out;
+      border-radius: 16px;
+      border: none;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+      height: 100%;
+      background: white;
+      margin-bottom: 1.5rem;
+    }
+
+    .dashboard-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+    }
+
+    .dashboard-card .card-body {
+      padding: 2rem 1.5rem;
+      text-align: center;
+    }
+
+    .dashboard-card .fa-3x {
+      margin-bottom: 1rem;
+      transition: transform 0.3s ease;
+    }
+
+    .dashboard-card:hover .fa-3x {
+      transform: scale(1.1);
+    }
+
+    .btn-purple {
+      background-color: #6c5ce7;
+      border-color: #6c5ce7;
+      color: white;
+      border-radius: 25px;
+      padding: 0.5rem 1.5rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .btn-purple:hover {
+      background-color: #5b4bd1;
+      border-color: #5b4bd1;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(108, 92, 231, 0.3);
+    }
+
+    .text-purple {
+      color: #6c5ce7;
+    }
+
+    .welcome-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #2d3436;
+      margin-bottom: 0.5rem;
+    }
+
+    .welcome-subtitle {
+      color: #636e72;
+      font-size: 1.1rem;
+      margin-bottom: 2rem;
+    }
+
+    .module-description {
+      color: #636e72;
+      font-size: 0.9rem;
+      margin-bottom: 1.5rem;
+      line-height: 1.4;
+    }
+
+
     /* Botón flotante para generar PDF */
     .generate-pdf-btn {
       position: fixed;
@@ -28,9 +114,20 @@
     .generate-pdf-btn:hover {
       background-color: #0056b3;
     }
+
+    @media (max-width: 768px) {
+      .dashboard-container {
+        margin: 1rem;
+        padding: 1.5rem;
+      }
+      
+      .welcome-title {
+        font-size: 2rem;
+      }
+    }
   </style>
 </head>
-<body style="background-color: #b3b3b3;">
+<body>
   <!-- Barra de navegación -->
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <a class="navbar-brand" href="#">
@@ -51,30 +148,63 @@
     </div>
   </nav>
 
-  <div class="container mt-5">
-    <div class="text-center mb-4">
-      
-    </div>
-    <h2 class="text-center">Bienvenido al Dashboard</h2>
-    <p class="text-center">Seleccione una de las opciones del menú para continuar.</p>
-    <hr>
-    <!-- Panel de Opciones del Dashboard -->
-    <div class="row justify-content-center">
-      <div class="col-md-4 text-center">
-        <a href="/animals" class="btn btn-info btn-lg mb-4">Registro de Animales</a>
+  <div class="container">
+    <div class="dashboard-container">
+      <div class="text-center mb-5">
+        <h1 class="welcome-title">Bienvenido al Dashboard</h1>
+        <p class="welcome-subtitle">Selecciona un módulo para comenzar</p>
       </div>
-      <div class="col-md-4 text-center">
-        <a href="/animal-info" class="btn btn-success btn-lg mb-4">Información de Animales</a>
+
+      <div class="row g-4 justify-content-center" style="gap: 2rem 0;">
+        <!-- Tarjeta 1: Registro de Animales -->
+        <div class="col-md-5 col-lg-4">
+          <div class="card dashboard-card">
+            <div class="card-body">
+              <i class="fa-solid fa-paw fa-3x mb-3 text-success"></i>
+              <h5 class="card-title font-weight-bold">Registro de Animales</h5>
+              <p class="module-description">Agrega nuevos animales al sistema con toda su información médica y personal.</p>
+              <a href="/animals" class="btn btn-success">Entrar</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tarjeta 2: Información de Animales -->
+        <div class="col-md-5 col-lg-4">
+          <div class="card dashboard-card">
+            <div class="card-body">
+              <i class="fa-solid fa-info-circle fa-3x mb-3 text-primary"></i>
+              <h5 class="card-title font-weight-bold">Información de Animales</h5>
+              <p class="module-description">Consulta y edita las fichas médicas de tus animales registrados.</p>
+              <a href="/animal-info" class="btn btn-primary">Entrar</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tarjeta 3: Solicitar Análisis -->
+        <div class="col-md-5 col-lg-4">
+          <div class="card dashboard-card">
+            <div class="card-body">
+              <i class="fa-solid fa-vial fa-3x mb-3 text-warning"></i>
+              <h5 class="card-title font-weight-bold">Solicitar Análisis</h5>
+              <p class="module-description">Agenda nuevas pruebas clínicas y análisis para tus animales.</p>
+              <a href="/solicitar-analisis" class="btn btn-warning">Entrar</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tarjeta 4: Mis Análisis -->
+        <div class="col-md-5 col-lg-4">
+          <div class="card dashboard-card">
+            <div class="card-body">
+              <i class="fa-solid fa-chart-bar fa-3x mb-3 text-purple"></i>
+              <h5 class="card-title font-weight-bold">Mis Análisis</h5>
+              <p class="module-description">Visualiza resultados, descarga reportes y realiza seguimiento de análisis.</p>
+              <a href="/mis-analisis" class="btn btn-purple">Entrar</a>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="col-md-4 text-center">
-        <a href="/solicitar-analisis" class="btn btn-warning btn-lg mb-4">Solicitar Análisis</a>
-      </div>
-      <div class="col-md-4 text-center">
-        <a href="/mis-analisis" class="btn btn-primary btn-lg mb-4">Mis Análisis</a>
-      </div>
-      <div class="col-md-4 text-center">
-        <button class="btn btn-secondary btn-lg mb-4" onclick="notificationSystem.addTestNotification()">Probar Notificación</button>
-      </div>
+
     </div>
   </div>
 

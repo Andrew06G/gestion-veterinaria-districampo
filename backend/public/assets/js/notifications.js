@@ -330,6 +330,22 @@ class NotificationSystem {
         console.error("Error al marcar como leída:", err);
       }
     }
+
+    async openRelatedAnalysis(notificationId, id_resultado) {
+      // Marcar como leída
+      await this.markAsRead(notificationId);
+
+      if (id_resultado && id_resultado !== 'null') {
+        // Guardamos el ID del análisis que queremos resaltar
+        localStorage.setItem('highlight_analysis_id', id_resultado);
+      }
+
+      // Cerrar el panel de notificaciones
+      this.closePanel();
+
+      // Redirigir a la vista "Mis análisis"
+      window.location.href = "/mis-analisis";
+    }
   
     updateBadge() {
       const badge = document.getElementById("notificationBadge");
@@ -355,7 +371,8 @@ class NotificationSystem {
       list.innerHTML = this.notifications
         .map(
           (n) => `
-        <div class="notification-item ${!n.leida ? "unread" : ""}" onclick="notificationSystem.markAsRead(${n.id})">
+        <div class="notification-item ${!n.leida ? "unread" : ""}" 
+          onclick="notificationSystem.openRelatedAnalysis(${n.id}, ${n.id_resultado || 'null'})">
           <div class="notification-content-item">
             <div class="notification-type-icon ${n.tipo}">
               <i class="fas ${this.getIconForType(n.tipo)}"></i>
