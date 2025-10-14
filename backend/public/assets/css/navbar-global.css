@@ -1,0 +1,93 @@
+/* Estilos globales para navbar - DistriCampo */
+
+/* Navbar base */
+.navbar {
+  background-color: #2f2f4f !important;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+  font-family: 'Roboto', sans-serif;
+}
+
+/* Brand/Título */
+.navbar-brand {
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: #ffffff !important;
+  text-decoration: none;
+}
+
+.navbar-brand:hover {
+  color: #f0f0f0 !important;
+}
+
+/* Enlaces de navegación */
+.navbar-nav .nav-link {
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9) !important;
+  transition: all 0.3s ease;
+  padding: 0.5rem 1rem;
+  position: relative;
+}
+
+.navbar-nav .nav-link:hover {
+  color: #f0f0f0 !important;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+.navbar-nav .nav-link.active {
+  color: #ffffff !important;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.5);
+}
+
+/* Toggler para móviles */
+.navbar-toggler {
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+}
+
+.navbar-toggler:focus {
+  box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.25);
+}
+
+.navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.8%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+/* Responsive */
+@media (max-width: 991.98px) {
+  .navbar-collapse {
+    background-color: rgba(47, 47, 79, 0.95);
+    border-radius: 8px;
+    margin-top: 8px;
+    padding: 1rem;
+  }
+  
+  .navbar-nav .nav-link {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .navbar-nav .nav-link:last-child {
+    border-bottom: none;
+  }
+}
+
+/* Eliminar elementos sueltos o guiones */
+.navbar::after,
+.navbar::before {
+  content: none;
+}
+
+.navbar *::after,
+.navbar *::before {
+  content: none;
+}
+
+/* Asegurar que no hay caracteres sueltos */
+.navbar-brand::after,
+.navbar-brand::before {
+  display: none;
+}
+
