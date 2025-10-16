@@ -48,36 +48,24 @@ const generatePDF = async (req, res) => {
   }
 };
 
-// Función para generar contenido del PDF
+// Función para generar contenido del PDF (versión compacta)
 function generatePDFContent(doc, analysis) {
   const fechaActual = new Date().toLocaleDateString('es-ES');
 
-  // Header
-  doc.fontSize(24)
-    .fillColor('#007bff')
-    .text('DistriCampo', 50, 50, { align: 'center' });
-
-  doc.fontSize(16)
-    .fillColor('#333')
-    .text('Reporte de Análisis Clínico', 50, 80, { align: 'center' });
-
-  doc.fontSize(12)
-    .fillColor('#666')
-    .text(`Fecha de emisión: ${fechaActual}`, 50, 110, { align: 'center' });
+  // --- ENCABEZADO ---
+  doc.fontSize(24).fillColor('#007bff').text('DistriCampo', { align: 'center' });
+  doc.moveDown(0.3);
+  doc.fontSize(16).fillColor('#333').text('Reporte de Análisis Clínico', { align: 'center' });
+  doc.fontSize(11).fillColor('#666').text(`Fecha de emisión: ${fechaActual}`, { align: 'center' });
+  doc.moveDown(0.5);
 
   // Línea separadora
-  doc.moveTo(50, 140)
-    .lineTo(550, 140)
-    .stroke('#007bff', 2);
+  doc.moveTo(50, doc.y + 5).lineTo(550, doc.y + 5).stroke('#007bff');
+  doc.moveDown(1);
 
-  let yPosition = 170;
-
-  // Información del Propietario
-  doc.fontSize(16)
-    .fillColor('#007bff')
-    .text('Información del Propietario', 50, yPosition);
-
-  yPosition += 30;
+  // --- INFORMACIÓN DEL PROPIETARIO ---
+  doc.fontSize(14).fillColor('#007bff').text('Información del Propietario');
+  doc.moveDown(0.5);
 
   const propietarioData = [
     ['ID Propietario:', analysis.id_propietario],
@@ -89,21 +77,19 @@ function generatePDFContent(doc, analysis) {
   ];
 
   propietarioData.forEach(([label, value]) => {
-    doc.fontSize(12)
+    doc
+      .fontSize(11)
       .fillColor('#333')
-      .text(label, 70, yPosition)
-      .text(value || 'No especificado', 200, yPosition);
-    yPosition += 20;
+      .text(`${label} `, { continued: true, width: 160 })
+      .fillColor('#000')
+      .text(value || 'No especificado');
   });
 
-  yPosition += 20;
+  doc.moveDown(1);
 
-  // Información del Animal
-  doc.fontSize(16)
-    .fillColor('#007bff')
-    .text('Información del Animal', 50, yPosition);
-
-  yPosition += 30;
+  // --- INFORMACIÓN DEL ANIMAL ---
+  doc.fontSize(14).fillColor('#007bff').text('Información del Animal');
+  doc.moveDown(0.5);
 
   const animalData = [
     ['ID Animal:', analysis.id_animal],
@@ -114,87 +100,68 @@ function generatePDFContent(doc, analysis) {
   ];
 
   animalData.forEach(([label, value]) => {
-    doc.fontSize(12)
+    doc
+      .fontSize(11)
       .fillColor('#333')
-      .text(label, 70, yPosition)
-      .text(value || 'No especificado', 200, yPosition);
-    yPosition += 20;
+      .text(`${label} `, { continued: true })
+      .fillColor('#000')
+      .text(value || 'No especificado');
   });
 
-  yPosition += 20;
+  doc.moveDown(1);
 
-  // Información del Análisis
-  doc.fontSize(16)
-    .fillColor('#007bff')
-    .text('Información del Análisis', 50, yPosition);
+  // --- INFORMACIÓN DEL ANÁLISIS ---
+  doc.fontSize(14).fillColor('#007bff').text('Información del Análisis');
+  doc.moveDown(0.5);
 
-  yPosition += 30;
+  const horaToma = analysis.hora_toma ? String(analysis.hora_toma).slice(0, 5) : '';
+  const horaEmision = analysis.hora_emision ? String(analysis.hora_emision).slice(0, 5) : '';
 
-  const horaToma = analysis.hora_toma ? String(analysis.hora_toma).slice(0, 5) : null;
-  const horaEmision = analysis.hora_emision ? String(analysis.hora_emision).slice(0, 5) : null;
-
-  // ✅ CORRECCIÓN: formatear correctamente el precio en COP
-  let precioFormateado = 'No disponible';
-  if (analysis.precio) {
-    const valor = parseFloat(analysis.precio) * 1000; // Multiplicar por 1000
-    precioFormateado = `$${valor.toLocaleString('es-CO')} COP`;
-  }
+  // Calcular precio en pesos colombianos
+  const precioCOP = analysis.precio
+    ? `$${(parseFloat(analysis.precio) * 1000).toLocaleString('es-CO')} COP`
+    : 'No disponible';
 
   const analisisData = [
     ['ID Muestra:', analysis.id_muestra],
     ['Tipo de Muestra:', analysis.nombre_tipo_muestra],
     ['Análisis Solicitado:', analysis.nombre_analisis],
-    ['Fecha de Toma:', `${new Date(analysis.fecha_toma).toLocaleDateString('es-ES')}${horaToma ? ' - ' + horaToma : ''}`],
-    ['Fecha de Emisión:', `${new Date(analysis.fecha_emision).toLocaleDateString('es-ES')}${horaEmision ? ' - ' + horaEmision : ''}`],
+    ['Fecha de Toma:', `${new Date(analysis.fecha_toma).toLocaleDateString('es-ES')} ${horaToma ? '- ' + horaToma : ''}`],
+    ['Fecha de Emisión:', `${new Date(analysis.fecha_emision).toLocaleDateString('es-ES')} ${horaEmision ? '- ' + horaEmision : ''}`],
     ['Estado:', analysis.nombre_estado],
-    ['Precio:', precioFormateado]
+    ['Precio:', precioCOP]
   ];
 
   analisisData.forEach(([label, value]) => {
-    doc.fontSize(12)
+    doc
+      .fontSize(11)
       .fillColor('#333')
-      .text(label, 70, yPosition)
-      .text(value || 'No especificado', 200, yPosition);
-    yPosition += 20;
+      .text(`${label} `, { continued: true })
+      .fillColor('#000')
+      .text(value || 'No especificado');
   });
 
-  yPosition += 30;
+  doc.moveDown(1);
 
-  // Resultado del Análisis
-  doc.fontSize(16)
-    .fillColor('#007bff')
-    .text('Resultado del Análisis', 50, yPosition);
+  // --- RESULTADO ---
+  doc.fontSize(14).fillColor('#007bff').text('Resultado del Análisis');
+  doc.moveDown(0.5);
+  doc.fontSize(12).fillColor('#000').text(analysis.resultado || 'Pendiente', { width: 480 });
 
-  yPosition += 30;
-
-  doc.fontSize(14)
-    .fillColor('#333')
-    .text(analysis.resultado || 'Pendiente', 70, yPosition);
-
-  yPosition += 30;
-
-  // Observaciones del veterinario
+  // --- OBSERVACIONES ---
   if (analysis.observaciones) {
-    doc.fontSize(16)
-      .fillColor('#007bff')
-      .text('Observaciones del veterinario:', 50, yPosition);
-
-    yPosition += 25;
-
-    doc.fontSize(12)
-      .fillColor('#333')
-      .text(analysis.observaciones, 70, yPosition, {
-        width: 480,
-        align: 'left'
-      });
-
-    yPosition += 40;
+    doc.moveDown(1);
+    doc.fontSize(14).fillColor('#007bff').text('Observaciones del veterinario');
+    doc.moveDown(0.5);
+    doc.fontSize(11).fillColor('#000').text(analysis.observaciones, { width: 480, align: 'left' });
   }
 
-  // Footer breve
-  doc.fontSize(10)
+  // --- FOOTER ---
+  doc.moveDown(1.5);
+  doc
+    .fontSize(10)
     .fillColor('#666')
-    .text('Informe generado por DistriCampo', 50, yPosition, { align: 'center' });
+    .text('Informe generado por DistriCampo', { align: 'center' });
 }
 
 // (Función de prueba eliminada para la versión oficial)
