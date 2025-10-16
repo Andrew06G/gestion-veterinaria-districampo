@@ -147,6 +147,43 @@ const cancelAnalysis = async (req, res) => {
   }
 };
 
+// Eliminar definitivamente un análisis (solo si está Cancelado y pertenece al propietario)
+const deleteAnalysisPermanent = async (req, res) => {
+  try {
+    const { id } = req.params; // id_muestra
+    const ownerId = req.user.id;
+
+    const [rows] = await Analysis._rawQuery?.(
+      `SELECT r.id_resultado, te.nombre_estado, m.id_muestra, a.id_propietario
+       FROM muestra m
+       JOIN resultado r ON m.id_muestra = r.id_muestra
+       JOIN animal a ON m.id_animal = a.id_animal
+       JOIN tipo_estado te ON r.id_estado = te.id_tipo_estado
+       WHERE m.id_muestra = ?`,
+      [id]
+    ) || [];
+
+    if (!rows || !rows[0]) {
+      return res.status(404).json({ message: 'Análisis no encontrado' });
+    }
+    const row = rows[0];
+    if (row.id_propietario !== ownerId) {
+      return res.status(403).json({ message: 'No autorizado' });
+    }
+    if (row.nombre_estado !== 'Cancelado') {
+      return res.status(400).json({ message: 'Solo se pueden eliminar análisis con estado Cancelado.' });
+    }
+
+    // Eliminar primero dependencias (resultado) y luego la muestra
+    await Analysis._rawExec?.(`DELETE FROM resultado WHERE id_muestra = ?`, [id]);
+    await Analysis._rawExec?.(`DELETE FROM muestra WHERE id_muestra = ?`, [id]);
+
+    return res.json({ message: 'Registro eliminado correctamente' });
+  } catch (e) {
+    return res.status(500).json({ message: 'Error interno del servidor' });
+  }
+};
+
 module.exports = {
   createAnalysis,
   getUserAnalyses,
@@ -154,5 +191,6 @@ module.exports = {
   getAnalysisForPDF,
   getStatuses,
   getAnalysesByAnimal,
-  cancelAnalysis
+  cancelAnalysis,
+  deleteAnalysisPermanent
 };

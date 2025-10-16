@@ -194,10 +194,17 @@
                 ${analisis.nombre_estado !== 'Finalizado' ? '' : `onclick="generarPDF(${analisis.id_muestra}, this, true)"`}>
                 Descargar PDF
               </button>
+              ${analisis.nombre_estado === 'Pendiente' ? `
               <button class="btn btn-danger btn-sm w-100 mt-1" type="button"
                 onclick="cancelarAnalisis(${analisis.id_muestra}, '${analisis.nombre_estado}', '${analisis.fecha_toma}', '${analisis.hora_toma || ''}')">
                 Cancelar Análisis
               </button>
+              ` : analisis.nombre_estado === 'Cancelado' ? `
+              <button class="btn btn-secondary btn-sm w-100 mt-1" type="button"
+                onclick="eliminarAnalisis(${analisis.id_muestra})">
+                Eliminar Registro
+              </button>
+              ` : ''}
             </div>
           </td>
         </tr>
@@ -232,6 +239,11 @@
 
     // Cancelar análisis (solo pendiente y antes del límite)
     async function cancelarAnalisis(idMuestra, estado, fechaToma, horaToma) {
+      // Si ya está cancelado, redirigir a eliminación definitiva del registro
+      if (estado === 'Cancelado') {
+        await eliminarAnalisis(idMuestra);
+        return;
+      }
       if (estado !== 'Pendiente') {
         alert('Este análisis ya no puede ser cancelado.');
         return;
@@ -262,6 +274,34 @@
         }
       } catch (error) {
         alert('No se pudo cancelar el análisis');
+      }
+    }
+
+    // Eliminar análisis cancelado definitivamente
+    async function eliminarAnalisis(id_muestra) {
+      if (!confirm('¿Estás seguro de eliminar este registro de análisis cancelado? Esta acción no se puede deshacer.')) {
+        return;
+      }
+
+      try {
+        const token = sessionManager.getToken();
+        const response = await fetch(`/api/analyses/${id_muestra}/permanent`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (response.ok) {
+          alert('Registro eliminado correctamente');
+          cargarAnalisis();
+        } else {
+          const data = await response.json();
+          alert(data.message || 'Error al eliminar el registro');
+        }
+      } catch (error) {
+        console.error('Error al eliminar análisis:', error);
+        alert('Error al eliminar el análisis');
       }
     }
 

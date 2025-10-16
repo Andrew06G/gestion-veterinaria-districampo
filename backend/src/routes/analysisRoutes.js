@@ -8,7 +8,8 @@ const {
   getAnalysisTypes,
   getStatuses,
   getAnalysesByAnimal,
-  cancelAnalysis
+  cancelAnalysis,
+  deleteAnalysisPermanent
 } = require('../controllers/analysisController');
 const { generatePDF } = require('../controllers/pdfController');
 
@@ -32,5 +33,8 @@ router.get('/byAnimal/:animalId', authenticateToken, getAnalysesByAnimal);
 
 // Cancelar análisis (protegida)
 router.delete('/:id', authenticateToken, cancelAnalysis);
+
+// Eliminar definitivamente análisis cancelado (protegida)
+router.delete('/:id/permanent', authenticateToken, deleteAnalysisPermanent);
 
 module.exports = router;
