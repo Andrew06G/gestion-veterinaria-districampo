@@ -48,24 +48,26 @@ const generatePDF = async (req, res) => {
   }
 };
 
-// Función para generar contenido del PDF (versión compacta)
+// Función para generar contenido del PDF (versión final con divisores sutiles)
 function generatePDFContent(doc, analysis) {
   const fechaActual = new Date().toLocaleDateString('es-ES');
 
-  // --- ENCABEZADO ---
+  // === ENCABEZADO ===
   doc.fontSize(24).fillColor('#007bff').text('DistriCampo', { align: 'center' });
   doc.moveDown(0.3);
   doc.fontSize(16).fillColor('#333').text('Reporte de Análisis Clínico', { align: 'center' });
   doc.fontSize(11).fillColor('#666').text(`Fecha de emisión: ${fechaActual}`, { align: 'center' });
-  doc.moveDown(0.5);
 
-  // Línea separadora
-  doc.moveTo(50, doc.y + 5).lineTo(550, doc.y + 5).stroke('#007bff');
-  doc.moveDown(1);
+  // Línea separadora principal
+  doc.moveDown(0.8);
+  doc.moveTo(50, doc.y).lineTo(550, doc.y).strokeColor('#007bff').lineWidth(1).stroke();
 
-  // --- INFORMACIÓN DEL PROPIETARIO ---
+  doc.moveDown(0.8);
+
+  // === INFORMACIÓN DEL PROPIETARIO ===
   doc.fontSize(14).fillColor('#007bff').text('Información del Propietario');
-  doc.moveDown(0.5);
+  doc.moveDown(0.3);
+  doc.moveTo(50, doc.y).lineTo(550, doc.y).strokeColor('#ccc').lineWidth(0.5).stroke();
 
   const propietarioData = [
     ['ID Propietario:', analysis.id_propietario],
@@ -76,20 +78,21 @@ function generatePDFContent(doc, analysis) {
     ['Email:', analysis.propietario_email]
   ];
 
+  doc.moveDown(0.5);
   propietarioData.forEach(([label, value]) => {
-    doc
-      .fontSize(11)
-      .fillColor('#333')
-      .text(`${label} `, { continued: true, width: 160 })
-      .fillColor('#000')
-      .text(value || 'No especificado');
+    doc.fontSize(11).fillColor('#333').text(`${label} `, { continued: true })
+      .fillColor('#000').text(value || 'No especificado');
   });
 
-  doc.moveDown(1);
+  // Línea divisoria
+  doc.moveDown(0.8);
+  doc.moveTo(50, doc.y).lineTo(550, doc.y).strokeColor('#ddd').lineWidth(0.5).stroke();
+  doc.moveDown(0.8);
 
-  // --- INFORMACIÓN DEL ANIMAL ---
+  // === INFORMACIÓN DEL ANIMAL ===
   doc.fontSize(14).fillColor('#007bff').text('Información del Animal');
-  doc.moveDown(0.5);
+  doc.moveDown(0.3);
+  doc.moveTo(50, doc.y).lineTo(550, doc.y).strokeColor('#ccc').lineWidth(0.5).stroke();
 
   const animalData = [
     ['ID Animal:', analysis.id_animal],
@@ -99,28 +102,25 @@ function generatePDFContent(doc, analysis) {
     ['Edad:', analysis.edad || 'No especificada']
   ];
 
+  doc.moveDown(0.5);
   animalData.forEach(([label, value]) => {
-    doc
-      .fontSize(11)
-      .fillColor('#333')
-      .text(`${label} `, { continued: true })
-      .fillColor('#000')
-      .text(value || 'No especificado');
+    doc.fontSize(11).fillColor('#333').text(`${label} `, { continued: true })
+      .fillColor('#000').text(value || 'No especificado');
   });
 
-  doc.moveDown(1);
+  // Línea divisoria
+  doc.moveDown(0.8);
+  doc.moveTo(50, doc.y).lineTo(550, doc.y).strokeColor('#ddd').lineWidth(0.5).stroke();
+  doc.moveDown(0.8);
 
-  // --- INFORMACIÓN DEL ANÁLISIS ---
+  // === INFORMACIÓN DEL ANÁLISIS ===
   doc.fontSize(14).fillColor('#007bff').text('Información del Análisis');
-  doc.moveDown(0.5);
+  doc.moveDown(0.3);
+  doc.moveTo(50, doc.y).lineTo(550, doc.y).strokeColor('#ccc').lineWidth(0.5).stroke();
 
   const horaToma = analysis.hora_toma ? String(analysis.hora_toma).slice(0, 5) : '';
   const horaEmision = analysis.hora_emision ? String(analysis.hora_emision).slice(0, 5) : '';
-
-  // Calcular precio en pesos colombianos
-  const precioCOP = analysis.precio
-    ? `$${(parseFloat(analysis.precio) * 1000).toLocaleString('es-CO')} COP`
-    : 'No disponible';
+  const precioCOP = `$${(parseFloat(analysis.precio) * 1000).toLocaleString('es-CO')} COP`;
 
   const analisisData = [
     ['ID Muestra:', analysis.id_muestra],
@@ -132,36 +132,42 @@ function generatePDFContent(doc, analysis) {
     ['Precio:', precioCOP]
   ];
 
+  doc.moveDown(0.5);
   analisisData.forEach(([label, value]) => {
-    doc
-      .fontSize(11)
-      .fillColor('#333')
-      .text(`${label} `, { continued: true })
-      .fillColor('#000')
-      .text(value || 'No especificado');
+    doc.fontSize(11).fillColor('#333').text(`${label} `, { continued: true })
+      .fillColor('#000').text(value || 'No especificado');
   });
 
-  doc.moveDown(1);
+  // Línea divisoria
+  doc.moveDown(0.8);
+  doc.moveTo(50, doc.y).lineTo(550, doc.y).strokeColor('#ddd').lineWidth(0.5).stroke();
+  doc.moveDown(0.8);
 
-  // --- RESULTADO ---
+  // === RESULTADO ===
   doc.fontSize(14).fillColor('#007bff').text('Resultado del Análisis');
+  doc.moveDown(0.3);
+  doc.moveTo(50, doc.y).lineTo(550, doc.y).strokeColor('#ccc').lineWidth(0.5).stroke();
+
   doc.moveDown(0.5);
   doc.fontSize(12).fillColor('#000').text(analysis.resultado || 'Pendiente', { width: 480 });
 
-  // --- OBSERVACIONES ---
+  // === OBSERVACIONES ===
   if (analysis.observaciones) {
-    doc.moveDown(1);
-    doc.fontSize(14).fillColor('#007bff').text('Observaciones del veterinario');
+    doc.moveDown(0.8);
+    doc.fontSize(14).fillColor('#007bff').text('Observaciones del Veterinario');
+    doc.moveDown(0.3);
+    doc.moveTo(50, doc.y).lineTo(550, doc.y).strokeColor('#ccc').lineWidth(0.5).stroke();
     doc.moveDown(0.5);
-    doc.fontSize(11).fillColor('#000').text(analysis.observaciones, { width: 480, align: 'left' });
+    doc.fontSize(11).fillColor('#000').text(analysis.observaciones, {
+      width: 480,
+      align: 'left'
+    });
   }
 
-  // --- FOOTER ---
+  // === FOOTER ===
   doc.moveDown(1.5);
-  doc
-    .fontSize(10)
-    .fillColor('#666')
-    .text('Informe generado por DistriCampo', { align: 'center' });
+  doc.fontSize(10).fillColor('#666')
+    .text('Informe generado automáticamente por DistriCampo', { align: 'center' });
 }
 
 // (Función de prueba eliminada para la versión oficial)
