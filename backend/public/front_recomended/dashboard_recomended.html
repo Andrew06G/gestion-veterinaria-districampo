@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Dashboard - DistriCampo</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0,
+            'wght' 400,
+            'GRAD' 0,
+            'opsz' 24
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#0A74DA',
+                        "background-light": "#F0F4F8",
+                        "background-dark": "#0D1B2A",
+                        "card-light": "#FFFFFF",
+                        "card-dark": "#1B263B",
+                        "text-light": "#0D1B2A",
+                        "text-dark": "#E0E1DD",
+                        "text-secondary-light": "#4A5568",
+                        "text-secondary-dark": "#A0AEC0",
+                        "accent": "#415A77",
+                    },
+                    fontFamily: {
+                        display: ["Poppins", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.75rem",
+                    },
+                    boxShadow: {
+                        'custom': '0 10px 20px -5px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+                        'custom-dark': '0 10px 20px -5px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.3)',
+                    }
+                },
+            },
+        };
+    </script>
+    <link href="https://fonts.googleapis.com" rel="preconnect"/>
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-text-light dark:text-text-dark">
+    <div class="relative min-h-screen">
+        <div class="absolute inset-0 z-0 opacity-20 dark:opacity-10">
+            <img alt="Veterinario con un perro" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAlOwJnqPkA5XKQssv11KVfWntOqGLD96SOJAxVBjKwSldhOnKTotflxhfewymIbl3GEQucn_oT9iwkxekKcF9PXYo-pK92Fd5S09TlIEp-fGDdPmOkmiubJcVxy9XoR2QwHFKeyo6EtB4tF5Vld1JyvKSgDbTudTiSv-jbOqfbCzVvYe2OyGJWX6ehykxD9hHqLMOQG1pVNlMlTfEpKDvU8_QGoMvI3y9MOl9COWiLHVhUMWeJAgXibr3Sshb34Eq1oOZQTljE9X2Y"/>
+            <div class="absolute inset-0 bg-gradient-to-t from-background-light via-background-light to-transparent dark:from-background-dark dark:via-background-dark"></div>
+        </div>
+        
+        <div class="relative z-10">
+            <!-- Header -->
+            <header class="py-4 px-4 sm:px-6 lg:px-8 bg-card-light/80 dark:bg-card-dark/80 backdrop-blur-sm shadow-md">
+                <nav class="container mx-auto flex justify-between items-center">
+                    <div class="flex items-center space-x-2">
+                        <span class="material-symbols-outlined text-primary text-4xl">pets</span>
+                        <a class="text-2xl font-bold text-text-light dark:text-text-dark" href="../index.html">DistriCampo</a>
+                    </div>
+                    <div class="hidden lg:flex items-center space-x-6 text-text-light dark:text-text-dark font-medium">
+                        <a class="font-bold text-primary" href="#">Dashboard</a>
+                        <a class="hover:text-primary transition-colors" href="/recomended/register-animal">Registro de Animales</a>
+                        <a class="hover:text-primary transition-colors" href="/recomended/animal-info">Mis Animales</a>
+                        <a class="hover:text-primary transition-colors" href="/recomended/solicitar-analisis">Solicitar Análisis</a>
+                        <a class="hover:text-primary transition-colors" href="/recomended/mis-analisis">Mis Análisis</a>
+                    </div>
+                    <div class="hidden lg:flex items-center space-x-4">
+                        <div class="text-sm text-text-secondary-light dark:text-text-secondary-dark">
+                            Bienvenido, <span id="userName" class="font-medium text-text-light dark:text-text-dark"></span>
+                        </div>
+                        <!-- Notifications button will be added by notifications.js -->
+                        <button onclick="logout()" class="bg-accent/80 text-white px-5 py-2 rounded-full font-semibold hover:bg-accent transition-colors">
+                            <span class="material-symbols-outlined text-sm mr-1">logout</span>
+                            Cerrar Sesión
+                        </button>
+                    </div>
+                    <button class="lg:hidden text-text-light dark:text-text-dark" onclick="toggleMobileMenu()">
+                        <span class="material-symbols-outlined text-3xl">menu</span>
+                    </button>
+                </nav>
+                
+                <!-- Mobile Menu -->
+                <div id="mobileMenu" class="lg:hidden hidden mt-4 bg-card-light/90 dark:bg-card-dark/90 backdrop-blur-sm rounded-lg p-4">
+                    <div class="flex flex-col space-y-3">
+                        <a class="text-primary font-medium" href="#">Dashboard</a>
+                        <a class="text-text-light dark:text-text-dark hover:text-primary transition-colors" href="/recomended/register-animal">Registro de Animales</a>
+                        <a class="text-text-light dark:text-text-dark hover:text-primary transition-colors" href="/recomended/animal-info">Mis Animales</a>
+                        <a class="text-text-light dark:text-text-dark hover:text-primary transition-colors" href="/recomended/solicitar-analisis">Solicitar Análisis</a>
+                        <a class="text-text-light dark:text-text-dark hover:text-primary transition-colors" href="/recomended/mis-analisis">Mis Análisis</a>
+                        <div class="border-t border-gray-300 dark:border-gray-600 pt-3 mt-3">
+                            <div class="text-sm text-text-secondary-light dark:text-text-secondary-dark mb-2">
+                                Bienvenido, <span id="userNameMobile" class="font-medium text-text-light dark:text-text-dark"></span>
+                            </div>
+                            <button onclick="logout()" class="w-full bg-accent text-white px-4 py-2 rounded-lg font-semibold hover:bg-accent/80 transition-colors">
+                                <span class="material-symbols-outlined text-sm mr-1">logout</span>
+                                Cerrar Sesión
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Main Content -->
+            <main class="container mx-auto p-4 sm:p-6 lg:p-8">
+                <!-- Welcome Section -->
+                <div class="mb-8">
+                    <h1 class="text-4xl font-bold text-text-light dark:text-text-dark mb-2">Panel del Propietario</h1>
+                    <p class="text-text-secondary-light dark:text-text-secondary-dark">Gestiona tus mascotas y análisis desde aquí</p>
+                </div>
+
+                <!-- Quick Stats -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-card-light dark:bg-card-dark rounded-xl shadow-custom dark:shadow-custom-dark p-6 border">
+                        <div class="flex items-center">
+                            <div class="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+                                <span class="material-symbols-outlined text-primary text-2xl">pets</span>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark">Mis Animales</p>
+                                <p class="text-2xl font-bold text-text-light dark:text-text-dark" id="animalCount">-</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-card-light dark:bg-card-dark rounded-xl shadow-custom dark:shadow-custom-dark p-6 border">
+                        <div class="flex items-center">
+                            <div class="p-3 bg-green-100 dark:bg-green-900/30 rounded-lg">
+                                <span class="material-symbols-outlined text-green-600 text-2xl">science</span>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark">Análisis Totales</p>
+                                <p class="text-2xl font-bold text-text-light dark:text-text-dark" id="analysisCount">-</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-card-light dark:bg-card-dark rounded-xl shadow-custom dark:shadow-custom-dark p-6 border">
+                        <div class="flex items-center">
+                            <div class="p-3 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg">
+                                <span class="material-symbols-outlined text-yellow-600 text-2xl">schedule</span>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark">Pendientes</p>
+                                <p class="text-2xl font-bold text-text-light dark:text-text-dark" id="pendingCount">-</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- Register Animal -->
+                    <div class="bg-card-light dark:bg-card-dark rounded-xl shadow-custom dark:shadow-custom-dark p-6 border hover:shadow-lg transition-shadow">
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <span class="material-symbols-outlined text-primary text-3xl">add</span>
+                            </div>
+                            <h3 class="text-lg font-semibold text-text-light dark:text-text-dark mb-2">Registrar Animal</h3>
+                            <p class="text-text-secondary-light dark:text-text-secondary-dark text-sm mb-4">Agrega una nueva mascota al sistema</p>
+                            <a href="/recomended/register-animal" class="w-full bg-primary text-white py-2 px-4 rounded-lg font-medium hover:bg-opacity-90 transition-colors inline-block text-center">
+                                Registrar
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Animal Info -->
+                    <div class="bg-card-light dark:bg-card-dark rounded-xl shadow-custom dark:shadow-custom-dark p-6 border hover:shadow-lg transition-shadow">
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <span class="material-symbols-outlined text-green-600 text-3xl">info</span>
+                            </div>
+                            <h3 class="text-lg font-semibold text-text-light dark:text-text-dark mb-2">Información de Animales</h3>
+                            <p class="text-text-secondary-light dark:text-text-secondary-dark text-sm mb-4">Consulta y edita datos de tus mascotas</p>
+                            <a href="/recomended/animal-info" class="w-full bg-green-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-opacity-90 transition-colors inline-block text-center">
+                                Ver Info
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Request Analysis -->
+                    <div class="bg-card-light dark:bg-card-dark rounded-xl shadow-custom dark:shadow-custom-dark p-6 border hover:shadow-lg transition-shadow">
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-yellow-100 dark:bg-yellow-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <span class="material-symbols-outlined text-yellow-600 text-3xl">science</span>
+                            </div>
+                            <h3 class="text-lg font-semibold text-text-light dark:text-text-dark mb-2">Solicitar Análisis</h3>
+                            <p class="text-text-secondary-light dark:text-text-secondary-dark text-sm mb-4">Programa nuevos análisis clínicos</p>
+                            <a href="/recomended/solicitar-analisis" class="w-full bg-yellow-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-opacity-90 transition-colors inline-block text-center">
+                                Solicitar
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- My Analyses -->
+                    <div class="bg-card-light dark:bg-card-dark rounded-xl shadow-custom dark:shadow-custom-dark p-6 border hover:shadow-lg transition-shadow">
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <span class="material-symbols-outlined text-purple-600 text-3xl">description</span>
+                            </div>
+                            <h3 class="text-lg font-semibold text-text-light dark:text-text-dark mb-2">Mis Análisis</h3>
+                            <p class="text-text-secondary-light dark:text-text-secondary-dark text-sm mb-4">Revisa resultados y descarga reportes</p>
+                            <a href="/recomended/mis-analisis" class="w-full bg-purple-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-opacity-90 transition-colors inline-block text-center">
+                                Ver Análisis
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Include session management -->
+    <script src="../assets/js/session.js"></script>
+    <!-- Include notifications system (adapted for recommended frontend) -->
+    <script src="../assets/js/notifications.js"></script>
+    
+    <script>
+        // Check authentication on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!sessionManager.isAuthenticated()) {
+                window.location.href = '../pages/login.html';
+                return;
+            }
+
+            // Set user name
+            const user = sessionManager.getUser();
+            if (user) {
+                document.getElementById('userName').textContent = user.nombres + ' ' + user.apellidos;
+                document.getElementById('userNameMobile').textContent = user.nombres + ' ' + user.apellidos;
+            }
+
+            // Load dashboard data
+            loadDashboardData();
+        });
+
+        // Load dashboard statistics
+        async function loadDashboardData() {
+            try {
+                const token = sessionManager.getToken();
+                
+                // Load animals count
+                const animalsResponse = await fetch('/api/animals/', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (animalsResponse.ok) {
+                    const animals = await animalsResponse.json();
+                    document.getElementById('animalCount').textContent = animals.length;
+                }
+
+                // Load analyses count
+                const analysesResponse = await fetch('/api/analyses/', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (analysesResponse.ok) {
+                    const analyses = await analysesResponse.json();
+                    document.getElementById('analysisCount').textContent = analyses.length;
+                    
+                    // Count pending analyses
+                    const pending = analyses.filter(a => a.nombre_estado === 'Pendiente').length;
+                    document.getElementById('pendingCount').textContent = pending;
+                }
+
+            } catch (error) {
+                console.error('Error loading dashboard data:', error);
+            }
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        function logout() {
+            if (confirm('¿Estás seguro de que quieres cerrar sesión?')) {
+                sessionManager.token = null;
+                sessionManager.user = null;
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                window.location.href = '/recomended/login';
+            }
+        }
+    </script>
+</body>
+</html>

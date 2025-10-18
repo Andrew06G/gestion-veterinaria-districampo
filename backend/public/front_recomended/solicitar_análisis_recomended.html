@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Solicitud de Análisis - DistriCampo</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0,
+            'wght' 400,
+            'GRAD' 0,
+            'opsz' 24
+        }
+        
+        .loading {
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#0A74DA',
+                        "background-light": "#F0F4F8",
+                        "background-dark": "#0D1B2A",
+                        "card-light": "#FFFFFF",
+                        "card-dark": "#1B263B",
+                        "text-light": "#0D1B2A",
+                        "text-dark": "#E0E1DD",
+                        "text-secondary-light": "#4A5568",
+                        "text-secondary-dark": "#A0AEC0",
+                        "accent": "#415A77",
+                    },
+                    fontFamily: {
+                        display: ["Poppins", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.75rem",
+                    },
+                    boxShadow: {
+                        'custom': '0 10px 20px -5px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+                        'custom-dark': '0 10px 20px -5px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.3)',
+                    }
+                },
+            },
+        };
+    </script>
+    <link href="https://fonts.googleapis.com" rel="preconnect"/>
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-text-light dark:text-text-dark">
+    <div class="relative min-h-screen">
+        <div class="absolute inset-0 z-0 opacity-20 dark:opacity-10">
+            <img alt="Fondo de laboratorio veterinario" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAlOwJnqPkA5XKQssv11KVfWntOqGLD96SOJAxVBjKwSldhOnKTotflxhfewymIbl3GEQucn_oT9iwkxekKcF9PXYo-pK92Fd5S09TlIEp-fGDdPmOkmiubJcVxy9XoR2QwHFKeyo6EtB4tF5Vld1JyvKSgDbTudTiSv-jbOqfbCzVvYe2OyGJWX6ehykxD9hHqLMOQG1pVNlMlTfEpKDvU8_QGoMvI3y9MOl9COWiLHVhUMWeJAgXibr3Sshb34Eq1oOZQTljE9X2Y"/>
+            <div class="absolute inset-0 bg-gradient-to-t from-background-light via-background-light to-transparent dark:from-background-dark dark:via-background-dark"></div>
+        </div>
+        
+        <div class="relative z-10">
+            <!-- Header -->
+            <header class="py-4 px-4 sm:px-6 lg:px-8 bg-card-light/80 dark:bg-card-dark/80 backdrop-blur-sm shadow-md">
+                <nav class="container mx-auto flex justify-between items-center">
+                    <div class="flex items-center space-x-2">
+                        <span class="material-symbols-outlined text-primary text-4xl">science</span>
+                        <a class="text-2xl font-bold text-text-light dark:text-text-dark" href="../index.html">DistriCampo</a>
+                    </div>
+                    <div class="hidden lg:flex items-center space-x-6 text-text-light dark:text-text-dark font-medium">
+                        <a class="hover:text-primary transition-colors" href="/recomended/dashboard">Dashboard</a>
+                        <a class="hover:text-primary transition-colors" href="/recomended/register-animal">Registro de Animales</a>
+                        <a class="hover:text-primary transition-colors" href="/recomended/animal-info">Mis Animales</a>
+                        <a class="font-bold text-primary" href="#">Solicitar Análisis</a>
+                        <a class="hover:text-primary transition-colors" href="/recomended/mis-analisis">Mis Análisis</a>
+                    </div>
+                    <div class="hidden lg:flex items-center space-x-4">
+                        <div class="text-sm text-text-secondary-light dark:text-text-secondary-dark">
+                            Bienvenido, <span id="userName" class="font-medium text-text-light dark:text-text-dark"></span>
+                        </div>
+                        <button onclick="logout()" class="bg-accent/80 text-white px-5 py-2 rounded-full font-semibold hover:bg-accent transition-colors">
+                            <span class="material-symbols-outlined text-sm mr-1">logout</span>
+                            Cerrar Sesión
+                        </button>
+                    </div>
+                    <button class="lg:hidden text-text-light dark:text-text-dark" onclick="toggleMobileMenu()">
+                        <span class="material-symbols-outlined text-3xl">menu</span>
+                    </button>
+                </nav>
+                
+                <!-- Mobile Menu -->
+                <div id="mobileMenu" class="lg:hidden hidden mt-4 bg-card-light/90 dark:bg-card-dark/90 backdrop-blur-sm rounded-lg p-4">
+                    <div class="flex flex-col space-y-3">
+                        <a class="text-text-light dark:text-text-dark hover:text-primary transition-colors" href="/recomended/dashboard">Dashboard</a>
+                        <a class="text-text-light dark:text-text-dark hover:text-primary transition-colors" href="/recomended/register-animal">Registro de Animales</a>
+                        <a class="text-text-light dark:text-text-dark hover:text-primary transition-colors" href="/recomended/animal-info">Mis Animales</a>
+                        <a class="text-primary font-medium" href="#">Solicitar Análisis</a>
+                        <a class="text-text-light dark:text-text-dark hover:text-primary transition-colors" href="/recomended/mis-analisis">Mis Análisis</a>
+                        <div class="border-t border-gray-300 dark:border-gray-600 pt-3 mt-3">
+                            <div class="text-sm text-text-secondary-light dark:text-text-secondary-dark mb-2">
+                                Bienvenido, <span id="userNameMobile" class="font-medium text-text-light dark:text-text-dark"></span>
+                            </div>
+                            <button onclick="logout()" class="w-full bg-accent text-white px-4 py-2 rounded-lg font-semibold hover:bg-accent/80 transition-colors">
+                                <span class="material-symbols-outlined text-sm mr-1">logout</span>
+                                Cerrar Sesión
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Main Content -->
+            <main class="container mx-auto p-4 sm:p-6 lg:p-8 flex justify-center items-center min-h-[calc(100vh-80px)]">
+                <div class="w-full max-w-2xl">
+                    <!-- Success Message -->
+                    <div id="successMessage" class="hidden mb-6 p-4 bg-green-100 dark:bg-green-900/30 border border-green-300 dark:border-green-700 rounded-lg">
+                        <div class="flex items-center">
+                            <span class="material-symbols-outlined text-green-600 dark:text-green-400 mr-2">check_circle</span>
+                            <span class="text-green-800 dark:text-green-200 font-medium" id="successText">Análisis solicitado exitosamente</span>
+                        </div>
+                    </div>
+
+                    <!-- Error Message -->
+                    <div id="errorMessage" class="hidden mb-6 p-4 bg-red-100 dark:bg-red-900/30 border border-red-300 dark:border-red-700 rounded-lg">
+                        <div class="flex items-center">
+                            <span class="material-symbols-outlined text-red-600 dark:text-red-400 mr-2">error</span>
+                            <span class="text-red-800 dark:text-red-200 font-medium" id="errorText">Error al solicitar el análisis</span>
+                        </div>
+                    </div>
+
+                    <!-- Loading Message -->
+                    <div id="loadingMessage" class="hidden mb-6 p-4 bg-blue-100 dark:bg-blue-900/30 border border-blue-300 dark:border-blue-700 rounded-lg">
+                        <div class="flex items-center">
+                            <span class="loading material-symbols-outlined text-blue-600 dark:text-blue-400 mr-2">refresh</span>
+                            <span class="text-blue-800 dark:text-blue-200 font-medium">Cargando información...</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-card-light dark:bg-card-dark p-8 rounded-lg shadow-custom dark:shadow-custom-dark">
+                        <div class="flex items-center justify-center mb-6">
+                            <span class="material-symbols-outlined text-primary text-6xl">biotech</span>
+                        </div>
+                        <h1 class="text-3xl font-bold text-center mb-6 text-text-light dark:text-text-dark">Solicitud de Análisis</h1>
+                        
+                        <form class="space-y-6" id="analysis-form">
+                            <div>
+                                <label class="block text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark mb-2" for="id_animal">Seleccione un Animal *</label>
+                                <select class="w-full bg-background-light dark:bg-accent/30 border-gray-300 dark:border-accent rounded-lg p-3 focus:ring-primary focus:border-primary transition" id="id_animal" name="id_animal" required>
+                                    <option value="">Seleccione un animal registrado</option>
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark mb-2" for="tipo_analisis">Tipo de Análisis *</label>
+                                <select class="w-full bg-background-light dark:bg-accent/30 border-gray-300 dark:border-accent rounded-lg p-3 focus:ring-primary focus:border-primary transition" id="tipo_analisis" name="id_tipo_analisis" required>
+                                    <option value="">Seleccione un tipo de análisis</option>
+                                </select>
+                                <small id="precio_analisis_info" class="text-text-secondary-light dark:text-text-secondary-dark text-sm mt-1"></small>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark mb-2" for="tipo_muestra_info">Tipo de Muestra (asignado automáticamente)</label>
+                                <input class="w-full bg-gray-200 dark:bg-accent/20 border-gray-300 dark:border-accent rounded-lg p-3 cursor-not-allowed" disabled id="tipo_muestra_info" placeholder="Se autocompletará al seleccionar el análisis" readonly type="text"/>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark mb-2" for="fecha_solicitud">Fecha de Toma de Muestra *</label>
+                                    <input class="w-full bg-background-light dark:bg-accent/30 border-gray-300 dark:border-accent rounded-lg p-3 focus:ring-primary focus:border-primary transition" id="fecha_solicitud" name="fecha_solicitud" type="date" required/>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark mb-2" for="hora_toma">Hora de Toma de Muestra *</label>
+                                    <input class="w-full bg-background-light dark:bg-accent/30 border-gray-300 dark:border-accent rounded-lg p-3 focus:ring-primary focus:border-primary transition" id="hora_toma" name="hora_toma" type="time" min="08:00" max="18:00" required/>
+                                </div>
+                            </div>
+                            
+                            <div class="pt-4">
+                                <button class="w-full bg-primary text-white font-semibold py-3 px-6 rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors shadow-md flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed" type="submit" id="submitBtn">
+                                    <span class="material-symbols-outlined" id="submitIcon">send</span>
+                                    <span id="submitText">Solicitar Análisis</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Include session management -->
+    <script src="../assets/js/session.js"></script>
+    
+    <script>
+        // Check authentication on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!sessionManager.isAuthenticated()) {
+                window.location.href = '../pages/login.html';
+                return;
+            }
+
+            // Set user name
+            const user = sessionManager.getUser();
+            if (user) {
+                document.getElementById('userName').textContent = user.nombres + ' ' + user.apellidos;
+                document.getElementById('userNameMobile').textContent = user.nombres + ' ' + user.apellidos;
+            }
+
+            // Load data
+            loadAnalysisTypes();
+            loadUserAnimals();
+            setMinDateTomorrow();
+        });
+
+        // Load analysis types from API
+        async function loadAnalysisTypes() {
+            try {
+                showLoading(true);
+                hideMessages();
+                
+                const response = await sessionManager.authenticatedFetch('/api/analyses/tipos');
+
+                if (response && response.ok) {
+                    const analyses = await response.json();
+                    const analysisSelect = document.getElementById('tipo_analisis');
+
+                    analysisSelect.innerHTML = '<option value="">Seleccionar un análisis</option>';
+
+                    analyses.forEach(analysis => {
+                        const option = document.createElement('option');
+                        option.value = analysis.id_tipo_analisis;
+                        const precioReal = (Number(analysis.precio) || 0) * 1000;
+                        const texto = `${analysis.nombre_analisis} - $${precioReal.toLocaleString('es-CO')} COP`;
+                        option.textContent = texto;
+                        option.dataset.tipoMuestra = analysis.tipo_muestra || '';
+                        option.dataset.precio = String(precioReal);
+                        analysisSelect.appendChild(option);
+                    });
+
+                    // Add event listener for analysis type change
+                    analysisSelect.addEventListener('change', showSampleType);
+                } else if (!response) {
+                    return; // authenticatedFetch handles redirect
+                } else {
+                    showError('Error al cargar los tipos de análisis');
+                }
+            } catch (error) {
+                console.error('Error loading analysis types:', error);
+                showError('Error al cargar los tipos de análisis');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Load user animals from API
+        async function loadUserAnimals() {
+            try {
+                const response = await sessionManager.authenticatedFetch('/api/animals/user/list');
+
+                if (response && response.ok) {
+                    const animals = await response.json();
+                    const animalSelect = document.getElementById('id_animal');
+
+                    animalSelect.innerHTML = '<option value="">Seleccione un animal...</option>';
+
+                    if (animals.length === 0) {
+                        const option = document.createElement('option');
+                        option.value = '';
+                        option.textContent = 'No hay animales registrados';
+                        option.disabled = true;
+                        animalSelect.appendChild(option);
+                    } else {
+                        animals.forEach(animal => {
+                            const option = document.createElement('option');
+                            option.value = animal.id_animal;
+                            option.textContent = animal.nombre_animal;
+                            animalSelect.appendChild(option);
+                        });
+                    }
+                } else if (!response) {
+                    return; // authenticatedFetch handles redirect
+                } else {
+                    showError('Error al cargar los animales');
+                }
+            } catch (error) {
+                console.error('Error loading animals:', error);
+                showError('Error al cargar los animales');
+            }
+        }
+
+        // Show sample type when analysis is selected
+        function showSampleType() {
+            const select = document.getElementById('tipo_analisis');
+            const infoField = document.getElementById('tipo_muestra_info');
+            const priceInfo = document.getElementById('precio_analisis_info');
+            
+            if (select.value) {
+                const selectedOption = select.options[select.selectedIndex];
+                const tipoMuestra = selectedOption.dataset.tipoMuestra;
+                infoField.value = tipoMuestra || 'Se asignará automáticamente';
+
+                const precio = Number(selectedOption.dataset.precio || '0');
+                if (priceInfo) {
+                    priceInfo.textContent = precio > 0
+                        ? `Precio del análisis seleccionado: $${precio.toLocaleString('es-CO')} COP`
+                        : '';
+                }
+            } else {
+                infoField.value = '';
+                if (priceInfo) priceInfo.textContent = '';
+            }
+        }
+
+        // Set minimum date to tomorrow
+        function setMinDateTomorrow() {
+            const today = new Date();
+            const tomorrow = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+            const y = tomorrow.getFullYear();
+            const m = String(tomorrow.getMonth() + 1).padStart(2, '0');
+            const d = String(tomorrow.getDate()).padStart(2, '0');
+            document.getElementById('fecha_solicitud').setAttribute('min', `${y}-${m}-${d}`);
+        }
+
+        // Handle form submission
+        document.getElementById('analysis-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            // Get form values
+            const id_animal = document.getElementById('id_animal').value.trim();
+            const id_tipo_analisis = document.getElementById('tipo_analisis').value;
+            const fecha_solicitud = document.getElementById('fecha_solicitud').value;
+            let hora_toma = (document.getElementById('hora_toma').value || '').trim();
+
+            // Validate required fields
+            if (!id_tipo_analisis) {
+                showError('Por favor, seleccione un tipo de análisis antes de continuar.');
+                return;
+            }
+
+            if (!id_animal || !fecha_solicitud) {
+                showError('Por favor, complete todos los campos.');
+                return;
+            }
+
+            if (!hora_toma) {
+                showError('La hora de toma es obligatoria (entre 08:00 y 18:00).');
+                return;
+            }
+
+            // Validate time format and range
+            if (hora_toma.length === 5) hora_toma = `${hora_toma}:00`;
+            const [hh, mm] = hora_toma.split(':').map(Number);
+            if (hh < 8 || (hh > 18 || (hh === 18 && mm > 0))) {
+                showError('La hora de toma debe estar entre 08:00 y 18:00.');
+                return;
+            }
+
+            // Validate minimum date (tomorrow)
+            const today = new Date();
+            const tomorrow = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+            const [sy, sm, sd] = fecha_solicitud.split('-').map(Number);
+            const sel = new Date(sy, sm - 1, sd);
+            if (sel < tomorrow) {
+                showError('No se pueden programar citas para el mismo día. Selecciona una fecha a partir de mañana.');
+                return;
+            }
+
+            // Submit form
+            try {
+                setSubmitLoading(true);
+                hideMessages();
+
+                const response = await sessionManager.authenticatedFetch('/api/analyses', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        id_animal: id_animal,
+                        id_tipo_analisis: id_tipo_analisis,
+                        fecha_solicitud: fecha_solicitud,
+                        hora_toma: hora_toma || null
+                    })
+                });
+
+                if (response && response.ok) {
+                    showSuccess('Análisis solicitado exitosamente');
+                    this.reset(); // Clear form
+                } else if (!response) {
+                    return; // authenticatedFetch handles redirect
+                } else {
+                    const errorData = await response.json();
+                    showError('Error al solicitar el análisis: ' + errorData.message);
+                }
+            } catch (error) {
+                console.error('Error submitting analysis:', error);
+                showError('Error al solicitar el análisis');
+            } finally {
+                setSubmitLoading(false);
+            }
+        });
+
+        // Utility functions
+        function showLoading(show) {
+            const loading = document.getElementById('loadingMessage');
+            if (show) {
+                loading.classList.remove('hidden');
+            } else {
+                loading.classList.add('hidden');
+            }
+        }
+
+        function setSubmitLoading(loading) {
+            const submitBtn = document.getElementById('submitBtn');
+            const submitIcon = document.getElementById('submitIcon');
+            const submitText = document.getElementById('submitText');
+            
+            if (loading) {
+                submitBtn.disabled = true;
+                submitIcon.textContent = 'refresh';
+                submitIcon.classList.add('loading');
+                submitText.textContent = 'Enviando...';
+            } else {
+                submitBtn.disabled = false;
+                submitIcon.textContent = 'send';
+                submitIcon.classList.remove('loading');
+                submitText.textContent = 'Solicitar Análisis';
+            }
+        }
+
+        function showSuccess(message) {
+            document.getElementById('successText').textContent = message;
+            document.getElementById('successMessage').classList.remove('hidden');
+            setTimeout(() => {
+                document.getElementById('successMessage').classList.add('hidden');
+            }, 5000);
+        }
+
+        function showError(message) {
+            document.getElementById('errorText').textContent = message;
+            document.getElementById('errorMessage').classList.remove('hidden');
+            setTimeout(() => {
+                document.getElementById('errorMessage').classList.add('hidden');
+            }, 5000);
+        }
+
+        function hideMessages() {
+            document.getElementById('successMessage').classList.add('hidden');
+            document.getElementById('errorMessage').classList.add('hidden');
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        function logout() {
+            if (confirm('¿Estás seguro de que quieres cerrar sesión?')) {
+                sessionManager.token = null;
+                sessionManager.user = null;
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                window.location.href = '/recomended/login';
+            }
+        }
+    </script>
+</body>
+</html>

@@ -18,9 +18,6 @@ router.post('/register', authenticateToken, createAnimal);
 // Ruta para obtener animales del usuario (protegida)
 router.get('/', authenticateToken, getUserAnimals);
 
-// Ruta para obtener un animal específico por ID (protegida)
-router.get('/:id', authenticateToken, getAnimalById);
-
 // Ruta para obtener lista simple de animales para dropdowns (protegida)
 router.get('/user/list', authenticateToken, getSimpleAnimalList);
 
@@ -29,6 +26,9 @@ router.get('/especies/list', authenticateToken, getSpecies);
 
 // Ruta para obtener razas por especie (protegida)
 router.get('/razas/especie/:id_especie', authenticateToken, getRacesBySpecies);
+
+// Ruta para obtener un animal específico por ID (protegida) - DEBE IR AL FINAL
+router.get('/:id', authenticateToken, getAnimalById);
 
 // Ruta para actualizar animal (protegida)
 router.put('/:id', authenticateToken, updateAnimal);

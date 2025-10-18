@@ -48,7 +48,7 @@ app.use('/api/admin', adminRoutes);
 
 // Rutas para servir las páginas HTML
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'pages', 'login.html'));
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 app.get('/login', (req, res) => {
@@ -106,6 +106,39 @@ app.get('/admin/registro', (req, res) => {
 
 app.get('/test', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'pages', 'test.html'));
+});
+
+// Rutas para el frontend recomendado (pruebas)
+app.get('/recomended', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'front_recomended', 'main.html'));
+});
+
+app.get('/recomended/login', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'front_recomended', 'login_recomended.html'));
+});
+
+app.get('/recomended/register', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'front_recomended', 'register_recomended.html'));
+});
+
+app.get('/recomended/register-animal', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'front_recomended', 'register_animal_recomended.html'));
+});
+
+app.get('/recomended/dashboard', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'front_recomended', 'dashboard_recomended.html'));
+});
+
+app.get('/recomended/animal-info', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'front_recomended', 'animal_info_recomended.html'));
+});
+
+app.get('/recomended/solicitar-analisis', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'front_recomended', 'solicitar_análisis_recomended.html'));
+});
+
+app.get('/recomended/mis-analisis', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'front_recomended', 'mis_análsis.html'));
 });
 
 // Iniciar servidor

@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Mis Análisis - DistriCampo</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0,
+            'wght' 400,
+            'GRAD' 0,
+            'opsz' 24
+        }
+        
+        .loading {
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .highlighted-analysis {
+            background-color: #e6f7ff !important;
+            box-shadow: 0 0 12px rgba(24, 144, 255, 0.6);
+            transition: all 0.6s ease;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#0A74DA',
+                        "background-light": "#F0F4F8",
+                        "background-dark": "#0D1B2A",
+                        "card-light": "#FFFFFF",
+                        "card-dark": "#1B263B",
+                        "text-light": "#0D1B2A",
+                        "text-dark": "#E0E1DD",
+                        "text-secondary-light": "#4A5568",
+                        "text-secondary-dark": "#A0AEC0",
+                        "accent": "#415A77",
+                    },
+                    fontFamily: {
+                        display: ["Poppins", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.75rem",
+                    },
+                    boxShadow: {
+                        'custom': '0 10px 20px -5px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+                        'custom-dark': '0 10px 20px -5px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.3)',
+                    }
+                },
+            },
+        };
+    </script>
+    <link href="https://fonts.googleapis.com" rel="preconnect"/>
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-text-light dark:text-text-dark">
+    <div class="relative min-h-screen">
+        <div class="absolute inset-0 z-0 opacity-20 dark:opacity-10">
+            <img alt="Laboratorio veterinario" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAlOwJnqPkA5XKQssv11KVfWntOqGLD96SOJAxVBjKwSldhOnKTotflxhfewymIbl3GEQucn_oT9iwkxekKcF9PXYo-pK92Fd5S09TlIEp-fGDdPmOkmiubJcVxy9XoR2QwHFKeyo6EtB4tF5Vld1JyvKSgDbTudTiSv-jbOqfbCzVvYe2OyGJWX6ehykxD9hHqLMOQG1pVNlMlTfEpKDvU8_QGoMvI3y9MOl9COWiLHVhUMWeJAgXibr3Sshb34Eq1oOZQTljE9X2Y"/>
+            <div class="absolute inset-0 bg-gradient-to-t from-background-light via-background-light to-transparent dark:from-background-dark dark:via-background-dark"></div>
+        </div>
+        
+        <div class="relative z-10">
+            <!-- Header -->
+            <header class="py-4 px-4 sm:px-6 lg:px-8 bg-card-light/80 dark:bg-card-dark/80 backdrop-blur-sm shadow-md">
+                <nav class="container mx-auto flex justify-between items-center">
+                    <div class="flex items-center space-x-2">
+                        <span class="material-symbols-outlined text-primary text-4xl">description</span>
+                        <a class="text-2xl font-bold text-text-light dark:text-text-dark" href="../index.html">DistriCampo</a>
+                    </div>
+                    <div class="hidden lg:flex items-center space-x-6 text-text-light dark:text-text-dark font-medium">
+                        <a class="hover:text-primary transition-colors" href="/recomended/dashboard">Dashboard</a>
+                        <a class="hover:text-primary transition-colors" href="/recomended/register-animal">Registro de Animales</a>
+                        <a class="hover:text-primary transition-colors" href="/recomended/animal-info">Mis Animales</a>
+                        <a class="hover:text-primary transition-colors" href="/recomended/solicitar-analisis">Solicitar Análisis</a>
+                        <a class="font-bold text-primary" href="#">Mis Análisis</a>
+                    </div>
+                    <div class="hidden lg:flex items-center space-x-4">
+                        <div class="text-sm text-text-secondary-light dark:text-text-secondary-dark">
+                            Bienvenido, <span id="userName" class="font-medium text-text-light dark:text-text-dark"></span>
+                        </div>
+                        <button onclick="logout()" class="bg-accent/80 text-white px-5 py-2 rounded-full font-semibold hover:bg-accent transition-colors">
+                            <span class="material-symbols-outlined text-sm mr-1">logout</span>
+                            Cerrar Sesión
+                        </button>
+                    </div>
+                    <button class="lg:hidden text-text-light dark:text-text-dark" onclick="toggleMobileMenu()">
+                        <span class="material-symbols-outlined text-3xl">menu</span>
+                    </button>
+                </nav>
+                
+                <!-- Mobile Menu -->
+                <div id="mobileMenu" class="lg:hidden hidden mt-4 bg-card-light/90 dark:bg-card-dark/90 backdrop-blur-sm rounded-lg p-4">
+                    <div class="flex flex-col space-y-3">
+                        <a class="text-text-light dark:text-text-dark hover:text-primary transition-colors" href="/recomended/dashboard">Dashboard</a>
+                        <a class="text-text-light dark:text-text-dark hover:text-primary transition-colors" href="/recomended/register-animal">Registro de Animales</a>
+                        <a class="text-text-light dark:text-text-dark hover:text-primary transition-colors" href="/recomended/animal-info">Mis Animales</a>
+                        <a class="text-text-light dark:text-text-dark hover:text-primary transition-colors" href="/recomended/solicitar-analisis">Solicitar Análisis</a>
+                        <a class="text-primary font-medium" href="#">Mis Análisis</a>
+                        <div class="border-t border-gray-300 dark:border-gray-600 pt-3 mt-3">
+                            <div class="text-sm text-text-secondary-light dark:text-text-secondary-dark mb-2">
+                                Bienvenido, <span id="userNameMobile" class="font-medium text-text-light dark:text-text-dark"></span>
+                            </div>
+                            <button onclick="logout()" class="w-full bg-accent text-white px-4 py-2 rounded-lg font-semibold hover:bg-accent/80 transition-colors">
+                                <span class="material-symbols-outlined text-sm mr-1">logout</span>
+                                Cerrar Sesión
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Main Content -->
+            <main class="container mx-auto p-4 sm:p-6 lg:p-8">
+                <div class="text-center mb-8">
+                    <h1 class="text-3xl md:text-4xl font-bold text-text-light dark:text-text-dark mb-2">Mis Análisis Clínicos</h1>
+                    <p class="text-text-secondary-light dark:text-text-secondary-dark">Aquí puedes ver todos los análisis de tus animales</p>
+                </div>
+
+                <!-- Success Message -->
+                <div id="successMessage" class="hidden mb-6 p-4 bg-green-100 dark:bg-green-900/30 border border-green-300 dark:border-green-700 rounded-lg">
+                    <div class="flex items-center">
+                        <span class="material-symbols-outlined text-green-600 dark:text-green-400 mr-2">check_circle</span>
+                        <span class="text-green-800 dark:text-green-200 font-medium" id="successText">Operación realizada exitosamente</span>
+                    </div>
+                </div>
+
+                <!-- Error Message -->
+                <div id="errorMessage" class="hidden mb-6 p-4 bg-red-100 dark:bg-red-900/30 border border-red-300 dark:border-red-700 rounded-lg">
+                    <div class="flex items-center">
+                        <span class="material-symbols-outlined text-red-600 dark:text-red-400 mr-2">error</span>
+                        <span class="text-red-800 dark:text-red-200 font-medium" id="errorText">Error al realizar la operación</span>
+                    </div>
+                </div>
+
+                <!-- Loading Message -->
+                <div id="loadingMessage" class="hidden mb-6 p-4 bg-blue-100 dark:bg-blue-900/30 border border-blue-300 dark:border-blue-700 rounded-lg">
+                    <div class="flex items-center">
+                        <span class="loading material-symbols-outlined text-blue-600 dark:text-blue-400 mr-2">refresh</span>
+                        <span class="text-blue-800 dark:text-blue-200 font-medium">Cargando análisis...</span>
+                    </div>
+                </div>
+
+                <!-- Filters -->
+                <div class="bg-card-light dark:bg-card-dark p-6 rounded-lg shadow-custom dark:shadow-custom-dark mb-6">
+                    <h3 class="text-lg font-semibold text-text-light dark:text-text-dark mb-4">Filtros</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark mb-2" for="filterAnimal">Filtrar por Animal</label>
+                            <select class="w-full bg-background-light dark:bg-accent/30 border border-gray-300 dark:border-accent text-text-light dark:text-text-dark text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5" id="filterAnimal">
+                                <option value="">Todos los animales</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark mb-2" for="filterTipoAnalisis">Filtrar por Tipo de Análisis</label>
+                            <select class="w-full bg-background-light dark:bg-accent/30 border border-gray-300 dark:border-accent text-text-light dark:text-text-dark text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5" id="filterTipoAnalisis">
+                                <option value="">Todos los tipos</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark mb-2" for="filterFechaDesde">Fecha Desde</label>
+                            <input class="w-full bg-background-light dark:bg-accent/30 border border-gray-300 dark:border-accent text-text-light dark:text-text-dark text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5" id="filterFechaDesde" type="date"/>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark mb-2" for="filterFechaHasta">Fecha Hasta</label>
+                            <input class="w-full bg-background-light dark:bg-accent/30 border border-gray-300 dark:border-accent text-text-light dark:text-text-dark text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5" id="filterFechaHasta" type="date"/>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Analysis Table -->
+                <div class="bg-card-light dark:bg-card-dark rounded-lg shadow-custom dark:shadow-custom-dark overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-accent/10 dark:bg-accent/20">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-text-secondary-light dark:text-text-secondary-dark uppercase tracking-wider">Animal</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-text-secondary-light dark:text-text-secondary-dark uppercase tracking-wider">Tipo de Análisis</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-text-secondary-light dark:text-text-secondary-dark uppercase tracking-wider">Tipo de Muestra</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-text-secondary-light dark:text-text-secondary-dark uppercase tracking-wider">Resultado</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-text-secondary-light dark:text-text-secondary-dark uppercase tracking-wider">Fecha de Emisión</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-text-secondary-light dark:text-text-secondary-dark uppercase tracking-wider">Estado</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-text-secondary-light dark:text-text-secondary-dark uppercase tracking-wider">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="analisisTableBody" class="divide-y divide-gray-200 dark:divide-gray-700">
+                                <!-- Analysis rows will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- No Analysis Message -->
+                <div id="noAnalisisMessage" class="hidden text-center py-12">
+                    <span class="material-symbols-outlined text-6xl text-text-secondary-light dark:text-text-secondary-dark mb-4 block">science</span>
+                    <h3 class="text-xl font-semibold text-text-light dark:text-text-dark mb-2">No tienes análisis registrados</h3>
+                    <p class="text-text-secondary-light dark:text-text-secondary-dark mb-4">Ve a Solicitar Análisis para crear tu primer análisis.</p>
+                    <a href="/recomended/solicitar-analisis" class="inline-flex items-center px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors">
+                        <span class="material-symbols-outlined mr-2">add</span>
+                        Solicitar Análisis
+                    </a>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Include session management -->
+    <script src="../assets/js/session.js"></script>
+    
+    <script>
+        // Global variables
+        let allAnalisis = [];
+
+        // Check authentication on page load
+        document.addEventListener('DOMContentLoaded', async function() {
+            if (!sessionManager.isAuthenticated()) {
+                window.location.href = '../pages/login.html';
+                return;
+            }
+
+            // Set user name
+            const user = sessionManager.getUser();
+            if (user) {
+                document.getElementById('userName').textContent = user.nombres + ' ' + user.apellidos;
+                document.getElementById('userNameMobile').textContent = user.nombres + ' ' + user.apellidos;
+            }
+
+            // Load analysis data
+            await cargarAnalisis();
+            configurarFiltros();
+
+            // Check if there's an analysis to highlight
+            const highlightId = localStorage.getItem('highlight_analysis_id');
+            if (highlightId) {
+                setTimeout(() => {
+                    const targetRow = document.querySelector(`[data-id-resultado='${highlightId}']`);
+                    if (targetRow) {
+                        targetRow.classList.add('highlighted-analysis');
+                        targetRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        setTimeout(() => targetRow.classList.remove('highlighted-analysis'), 3000);
+                    }
+                }, 500);
+                localStorage.removeItem('highlight_analysis_id');
+            }
+        });
+
+        // Load analysis from API
+        async function cargarAnalisis() {
+            try {
+                showLoading(true);
+                hideMessages();
+                
+                const response = await sessionManager.authenticatedFetch('/api/analyses');
+                
+                if (response && response.ok) {
+                    const analisis = await response.json();
+                    allAnalisis = analisis;
+                    mostrarAnalisis(analisis);
+                    llenarFiltros(analisis);
+                } else if (!response) {
+                    return; // authenticatedFetch handles redirect
+                } else {
+                    showError('Error al cargar los análisis');
+                }
+            } catch (error) {
+                console.error('Error loading analysis:', error);
+                showError('Error al cargar los análisis');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Display analysis in table
+        function mostrarAnalisis(analisis) {
+            const tableBody = document.getElementById('analisisTableBody');
+            const noAnalisisMessage = document.getElementById('noAnalisisMessage');
+
+            if (analisis.length === 0) {
+                tableBody.innerHTML = '';
+                noAnalisisMessage.classList.remove('hidden');
+                return;
+            }
+
+            noAnalisisMessage.classList.add('hidden');
+            
+            tableBody.innerHTML = analisis.map(analisis => {
+                const precioReal = analisis.precio ? (Number(analisis.precio) * 1000) : 0;
+                const precioFormateado = precioReal ? precioReal.toLocaleString('es-CO') : '';
+                const tipoAnalisisTexto = `${analisis.nombre_analisis} (${precioReal ? '$' + precioFormateado + ' COP' : 'Sin precio'})`;
+                
+                return `
+                <tr data-id-resultado="${analisis.id_resultado}" class="hover:bg-gray-50 dark:hover:bg-gray-800">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-text-light dark:text-text-dark">${analisis.nombre_animal}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-text-secondary-light dark:text-text-secondary-dark">${tipoAnalisisTexto}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-text-secondary-light dark:text-text-secondary-dark">${analisis.nombre_tipo_muestra || 'N/A'}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-text-light dark:text-text-dark">${analisis.resultado || 'Pendiente'}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-text-secondary-light dark:text-text-secondary-dark">
+                        ${formatearFecha(analisis.fecha_emision)}
+                        ${analisis.hora_emision ? ` (${String(analisis.hora_emision).slice(0,5)})` : ''}
+                        ${analisis.fecha_toma ? `<div class="text-xs text-text-secondary-light dark:text-text-secondary-dark mt-1">Toma: ${formatearFecha(analisis.fecha_toma)}${analisis.hora_toma ? ` (${String(analisis.hora_toma).slice(0,5)})` : ''}</div>` : ''}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getEstadoBadge(analisis.nombre_estado)}">
+                            ${analisis.nombre_estado}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <div class="flex flex-col space-y-2">
+                            <button class="inline-flex items-center px-3 py-1 text-xs font-medium rounded-md ${analisis.nombre_estado !== 'Finalizado' ? 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed' : 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 hover:bg-green-200 dark:hover:bg-green-900/50'}"
+                                    ${analisis.nombre_estado !== 'Finalizado' ? 'type="button" onclick="alert(\'El resultado aún no está disponible. Espere a que el análisis sea finalizado.\')"' : `onclick="generarPDF(${analisis.id_muestra}, this, false)"`}>
+                                <span class="material-symbols-outlined text-sm mr-1">visibility</span>
+                                ${analisis.nombre_estado === 'Finalizado' ? 'Visualizar PDF' : 'Visualizar resultado'}
+                            </button>
+                            <button class="inline-flex items-center px-3 py-1 text-xs font-medium rounded-md ${analisis.nombre_estado !== 'Finalizado' ? 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed' : 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 hover:bg-blue-200 dark:hover:bg-blue-900/50'}"
+                                    ${analisis.nombre_estado !== 'Finalizado' ? '' : `onclick="generarPDF(${analisis.id_muestra}, this, true)"`}>
+                                <span class="material-symbols-outlined text-sm mr-1">download</span>
+                                Descargar PDF
+                            </button>
+                            ${analisis.nombre_estado === 'Pendiente' ? `
+                            <button class="inline-flex items-center px-3 py-1 text-xs font-medium rounded-md bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200 hover:bg-red-200 dark:hover:bg-red-900/50"
+                                    onclick="cancelarAnalisis(${analisis.id_muestra}, '${analisis.nombre_estado}', '${analisis.fecha_toma}', '${analisis.hora_toma || ''}')">
+                                <span class="material-symbols-outlined text-sm mr-1">cancel</span>
+                                Cancelar Análisis
+                            </button>
+                            ` : analisis.nombre_estado === 'Cancelado' ? `
+                            <button class="inline-flex items-center px-3 py-1 text-xs font-medium rounded-md bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600"
+                                    onclick="eliminarAnalisis(${analisis.id_muestra})">
+                                <span class="material-symbols-outlined text-sm mr-1">delete</span>
+                                Eliminar Registro
+                            </button>
+                            ` : ''}
+                        </div>
+                    </td>
+                </tr>
+                `;
+            }).join('');
+        }
+
+        // Fill filters with unique data
+        function llenarFiltros(analisis) {
+            const filterAnimal = document.getElementById('filterAnimal');
+            const filterTipoAnalisis = document.getElementById('filterTipoAnalisis');
+            
+            // Fill animal filter
+            const animales = [...new Set(analisis.map(a => a.nombre_animal))];
+            animales.forEach(animal => {
+                const option = document.createElement('option');
+                option.value = animal;
+                option.textContent = animal;
+                filterAnimal.appendChild(option);
+            });
+            
+            // Fill analysis type filter
+            const tiposAnalisis = [...new Set(analisis.map(a => a.nombre_analisis))];
+            tiposAnalisis.forEach(tipo => {
+                const option = document.createElement('option');
+                option.value = tipo;
+                option.textContent = tipo;
+                filterTipoAnalisis.appendChild(option);
+            });
+        }
+
+        // Configure filters
+        function configurarFiltros() {
+            const filterAnimal = document.getElementById('filterAnimal');
+            const filterTipoAnalisis = document.getElementById('filterTipoAnalisis');
+            const filterFechaDesde = document.getElementById('filterFechaDesde');
+            const filterFechaHasta = document.getElementById('filterFechaHasta');
+
+            [filterAnimal, filterTipoAnalisis, filterFechaDesde, filterFechaHasta].forEach(filter => {
+                filter.addEventListener('change', aplicarFiltros);
+            });
+        }
+
+        // Apply filters
+        async function aplicarFiltros() {
+            const filterAnimal = document.getElementById('filterAnimal').value;
+            const filterTipoAnalisis = document.getElementById('filterTipoAnalisis').value;
+            const filterFechaDesde = document.getElementById('filterFechaDesde').value;
+            const filterFechaHasta = document.getElementById('filterFechaHasta').value;
+
+            try {
+                let analisis = [...allAnalisis];
+                
+                // Apply filters
+                if (filterAnimal) {
+                    analisis = analisis.filter(a => a.nombre_animal === filterAnimal);
+                }
+                
+                if (filterTipoAnalisis) {
+                    analisis = analisis.filter(a => a.nombre_analisis === filterTipoAnalisis);
+                }
+                
+                // Date range filter
+                if (filterFechaDesde || filterFechaHasta) {
+                    analisis = analisis.filter(a => {
+                        const fechaAnalisis = new Date(a.fecha_emision);
+                        const fechaDesde = filterFechaDesde ? new Date(filterFechaDesde) : null;
+                        const fechaHasta = filterFechaHasta ? new Date(filterFechaHasta) : null;
+                        
+                        if (fechaDesde && fechaHasta) {
+                            return fechaAnalisis >= fechaDesde && fechaAnalisis <= fechaHasta;
+                        } else if (fechaDesde) {
+                            return fechaAnalisis >= fechaDesde;
+                        } else if (fechaHasta) {
+                            return fechaAnalisis <= fechaHasta;
+                        }
+                        return true;
+                    });
+                }
+                
+                mostrarAnalisis(analisis);
+            } catch (error) {
+                console.error('Error applying filters:', error);
+            }
+        }
+
+        // Cancel analysis
+        async function cancelarAnalisis(idMuestra, estado, fechaToma, horaToma) {
+            if (estado === 'Cancelado') {
+                await eliminarAnalisis(idMuestra);
+                return;
+            }
+            if (estado !== 'Pendiente') {
+                showError('Este análisis ya no puede ser cancelado.');
+                return;
+            }
+            if (!confirm('¿Seguro que deseas cancelar este análisis? Esta acción no se puede deshacer.')) return;
+
+            try {
+                const tomaDT = new Date(`${fechaToma}T${(horaToma || '00:00:00')}`);
+                const limite = new Date(tomaDT.getTime() - 24 * 60 * 60 * 1000);
+                const ahora = new Date();
+                if (ahora > limite) {
+                    showError('Este análisis ya no puede ser cancelado.');
+                    return;
+                }
+
+                const response = await sessionManager.authenticatedFetch(`/api/analyses/${idMuestra}`, {
+                    method: 'DELETE'
+                });
+                if (response && response.ok) {
+                    showSuccess('Análisis cancelado correctamente.');
+                    cargarAnalisis();
+                } else if (!response) {
+                    return; // redirected by expired session
+                } else {
+                    const data = await response.json();
+                    showError(data.message || 'No se pudo cancelar el análisis');
+                }
+            } catch (error) {
+                showError('No se pudo cancelar el análisis');
+            }
+        }
+
+        // Delete analysis permanently
+        async function eliminarAnalisis(id_muestra) {
+            if (!confirm('¿Estás seguro de eliminar este registro de análisis cancelado? Esta acción no se puede deshacer.')) {
+                return;
+            }
+
+            try {
+                const token = sessionManager.getToken();
+                const response = await fetch(`/api/analyses/${id_muestra}/permanent`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    showSuccess('Registro eliminado correctamente');
+                    cargarAnalisis();
+                } else {
+                    const data = await response.json();
+                    showError(data.message || 'Error al eliminar el registro');
+                }
+            } catch (error) {
+                console.error('Error deleting analysis:', error);
+                showError('Error al eliminar el análisis');
+            }
+        }
+
+        // Generate PDF
+        async function generarPDF(idMuestra, buttonElement, descargar = false) {
+            const button = buttonElement || document.querySelector(`button[onclick*="${idMuestra}"]`);
+            const originalText = button.innerHTML;
+            button.innerHTML = '<span class="loading material-symbols-outlined text-sm mr-1">refresh</span>Generando...';
+            button.disabled = true;
+
+            try {
+                const timestamp = new Date().getTime();
+                const url = `/api/analyses/${idMuestra}/pdf?t=${timestamp}`;
+
+                const response = await sessionManager.authenticatedFetch(url);
+                if (!response) return; // Session expired or other problem
+
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const blobUrl = window.URL.createObjectURL(blob);
+
+                    if (descargar) {
+                        // Direct download
+                        const a = document.createElement('a');
+                        a.href = blobUrl;
+                        a.download = `analisis_${idMuestra}.pdf`;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        showSuccess('PDF descargado exitosamente');
+                    } else {
+                        // View in new tab
+                        const newWindow = window.open(blobUrl, '_blank');
+
+                        if (!newWindow) {
+                            // If browser blocks popup, force opening
+                            const a = document.createElement('a');
+                            a.href = blobUrl;
+                            a.target = '_blank';
+                            a.click();
+                        }
+
+                        showSuccess('PDF generado y abierto correctamente');
+                    }
+
+                    // Free memory after a few seconds
+                    setTimeout(() => {
+                        window.URL.revokeObjectURL(blobUrl);
+                    }, 3000);
+                } else {
+                    const errorText = await response.text();
+                    console.error('Error generating PDF:', errorText);
+                    showError('No se pudo generar el PDF');
+                }
+            } catch (error) {
+                console.error('Error generating PDF:', error);
+                showError('Error al generar el PDF');
+            } finally {
+                button.innerHTML = originalText || 'Visualizar PDF';
+                button.disabled = false;
+            }
+        }
+
+        // Utility functions
+        function formatearFecha(fecha) {
+            return new Date(fecha).toLocaleDateString('es-ES');
+        }
+
+        function getEstadoBadge(estado) {
+            switch (estado) {
+                case 'Pendiente': return 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200';
+                case 'En Proceso': return 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200';
+                case 'Finalizado': return 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200';
+                case 'Cancelado': return 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200';
+                default: return 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200';
+            }
+        }
+
+        function showLoading(show) {
+            const loading = document.getElementById('loadingMessage');
+            if (show) {
+                loading.classList.remove('hidden');
+            } else {
+                loading.classList.add('hidden');
+            }
+        }
+
+        function showSuccess(message) {
+            document.getElementById('successText').textContent = message;
+            document.getElementById('successMessage').classList.remove('hidden');
+            setTimeout(() => {
+                document.getElementById('successMessage').classList.add('hidden');
+            }, 5000);
+        }
+
+        function showError(message) {
+            document.getElementById('errorText').textContent = message;
+            document.getElementById('errorMessage').classList.remove('hidden');
+            setTimeout(() => {
+                document.getElementById('errorMessage').classList.add('hidden');
+            }, 5000);
+        }
+
+        function hideMessages() {
+            document.getElementById('successMessage').classList.add('hidden');
+            document.getElementById('errorMessage').classList.add('hidden');
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        function logout() {
+            if (confirm('¿Estás seguro de que quieres cerrar sesión?')) {
+                sessionManager.token = null;
+                sessionManager.user = null;
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                window.location.href = '/recomended/login';
+            }
+        }
+    </script>
+</body>
+</html>
