@@ -90,6 +90,31 @@
                         <div class="text-sm text-text-secondary-light dark:text-text-secondary-dark">
                             Bienvenido, <span id="userName" class="font-medium text-text-light dark:text-text-dark"></span>
                         </div>
+
+                        <!-- 🔔 Contenedor de notificaciones -->
+                        <div id="notificationContainer" class="relative">
+                            <button id="notificationBtn"
+                                class="relative text-text-light dark:text-text-dark hover:text-primary dark:hover:text-primary transition-colors">
+                                <span class="material-symbols-outlined text-3xl">notifications</span>
+                                <span id="notificationBadge" class="absolute top-0 right-0 h-2 w-2 bg-red-500 rounded-full hidden"></span>
+                            </button>
+
+                            <!-- Dropdown de notificaciones -->
+                            <div id="notificationPanel"
+                                class="absolute right-0 mt-2 w-80 bg-card-light dark:bg-card-dark rounded-lg shadow-custom dark:shadow-custom-dark overflow-hidden z-20 hidden">
+
+                                <div class="p-4 border-b dark:border-gray-700">
+                                    <h3 class="font-semibold text-lg">Notificaciones</h3>
+                                </div>
+                                <div id="notificationList" class="divide-y dark:divide-gray-700 max-h-96 overflow-y-auto">
+                                    <!-- Aquí el JS cargará las notificaciones -->
+                                </div>
+                                <div class="p-2 text-center bg-background-light dark:bg-background-dark/50">
+                                    <a href="#" class="text-sm text-primary font-medium hover:underline">Ver todas</a>
+                                </div>
+                            </div>
+                        </div>
+
                         <button onclick="logout()" class="bg-accent/80 text-white px-5 py-2 rounded-full font-semibold hover:bg-accent transition-colors">
                             <span class="material-symbols-outlined text-sm mr-1">logout</span>
                             Cerrar Sesión
@@ -612,5 +637,8 @@
             }
         }
     </script>
+    
+    <!-- Include notifications system -->
+    <script src="../assets/js/notifications.js"></script>
 </body>
 </html>
