@@ -60,6 +60,12 @@ class NotificationSystem {
     // Crear el contenedor flotante y panel
     createNotificationContainer() {
       if (document.getElementById("notificationFloating")) return;
+      
+      // Si estamos en el frontend recomendado y ya existe un contenedor, usar ese
+      if (this.isRecommendedFrontend && document.getElementById("notificationContainer")) {
+        this.setupRecommendedContainer();
+        return;
+      }
   
       const navSelector = this.isRecommendedFrontend ? "nav" : "nav.navbar";
       const nav = document.querySelector(navSelector);
@@ -133,6 +139,16 @@ class NotificationSystem {
       window.addEventListener("resize", updatePosition);
       window.addEventListener("scroll", updatePosition, { passive: true });
   
+      this.addStyles();
+      this.addEventListeners();
+    }
+
+    // Configurar el contenedor existente en el frontend recomendado
+    setupRecommendedContainer() {
+      const container = document.getElementById("notificationContainer");
+      if (!container) return;
+
+      // El contenedor ya tiene los IDs correctos, solo necesitamos configurar los estilos y eventos
       this.addStyles();
       this.addEventListeners();
     }
@@ -509,14 +525,30 @@ class NotificationSystem {
     togglePanel() {
       const panel = document.getElementById("notificationPanel");
       if (panel) {
-        panel.classList.toggle("active");
-        this.isOpen = panel.classList.contains("active");
+        if (this.isRecommendedFrontend) {
+          // Para el frontend recomendado, usar clases de Tailwind
+          panel.classList.toggle("hidden");
+          this.isOpen = !panel.classList.contains("hidden");
+        } else {
+          // Para el frontend oficial, usar clases CSS
+          panel.classList.toggle("active");
+          this.isOpen = panel.classList.contains("active");
+        }
       }
     }
   
     closePanel() {
       const panel = document.getElementById("notificationPanel");
-      if (panel) panel.classList.remove("active");
+      if (panel) {
+        if (this.isRecommendedFrontend) {
+          // Para el frontend recomendado, usar clases de Tailwind
+          panel.classList.add("hidden");
+          this.isOpen = false;
+        } else {
+          // Para el frontend oficial, usar clases CSS
+          panel.classList.remove("active");
+        }
+      }
     }
   
     async loadNotifications() {

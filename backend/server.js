@@ -23,6 +23,17 @@ app.use(express.static(path.join(__dirname, 'public'), {
   }
 }));
 
+// Servir archivos estáticos del frontend recomendado
+app.use('/recomended/assets', express.static(path.join(__dirname, 'public', 'front_recomended', 'assets'), {
+  setHeaders: (res, path, stat) => {
+    if (path.endsWith('.js')) {
+      res.set('Content-Type', 'application/javascript');
+    } else if (path.endsWith('.css')) {
+      res.set('Content-Type', 'text/css');
+    }
+  }
+}));
+
 // Importar rutas
 const userRoutes = require('./src/routes/userRoutes');
 const animalRoutes = require('./src/routes/animalRoutes');
