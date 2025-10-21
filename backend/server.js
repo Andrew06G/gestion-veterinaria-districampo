@@ -152,6 +152,31 @@ app.get('/recomended/mis-analisis', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'front_recomended', 'mis_análsis.html'));
 });
 
+// Rutas para Admin Recomendado
+app.get('/admin/recomended/dashboard', (req, res) => {
+  res.sendFile(path.join(__dirname, 'admin', 'public', 'admin_recomended', 'admin_dashboard_recomended.html'));
+});
+
+app.get('/admin/recomended/propietarios', (req, res) => {
+  res.sendFile(path.join(__dirname, 'admin', 'public', 'admin_recomended', 'admin_propietarios_recomended.html'));
+});
+
+app.get('/admin/recomended/animales', (req, res) => {
+  res.sendFile(path.join(__dirname, 'admin', 'public', 'admin_recomended', 'admin_animales_recomended.html'));
+});
+
+app.get('/admin/recomended/analisis', (req, res) => {
+  res.sendFile(path.join(__dirname, 'admin', 'public', 'admin_recomended', 'admin_analisis_recomended.html'));
+});
+
+app.get('/admin/recomended/registro-admin', (req, res) => {
+  res.sendFile(path.join(__dirname, 'admin', 'public', 'admin_recomended', 'admin_registro_recomended.html'));
+});
+
+app.get('/admin/recomended/login', (req, res) => {
+  res.sendFile(path.join(__dirname, 'admin', 'public', 'admin_recomended', 'admin_login_recomended.html'));
+});
+
 // Iniciar servidor
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
@@ -166,6 +191,8 @@ app.listen(PORT, () => {
   console.log('- /mis-analisis - Mis análisis');
   console.log('- /admin - Admin Dashboard (beta)');
   console.log('- /admin/login - Admin Login (beta)');
+  console.log('- /admin/recomended/dashboard - Admin Dashboard Recomendado');
+  console.log('- /admin/recomended/login - Admin Login Recomendado');
   console.log('- /api/admin/login - API Login Admin');
   console.log('- /api/admin/profile - API Perfil Admin');
   

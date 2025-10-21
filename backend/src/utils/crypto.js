@@ -47,10 +47,15 @@ function decrypt(encryptedText) {
   }
 
   try {
+    // Si el texto no tiene formato cifrado, lo devolvemos sin tocar
+    if (!encryptedText.includes(':')) {
+      return encryptedText;
+    }
+
     // Separar IV y datos cifrados
     const parts = encryptedText.split(':');
     if (parts.length !== 2) {
-      throw new Error('Formato de datos cifrados inválido');
+      return encryptedText; // Devolver texto original si no tiene formato válido
     }
 
     const iv = Buffer.from(parts[0], 'base64');
@@ -74,13 +79,13 @@ function decrypt(encryptedText) {
           // continuará abajo para manejo genérico
         }
       }
-      throw e;
+      // Si falla, devolver el texto original
+      return encryptedText;
     }
     
   } catch (error) {
-    console.error('Error al descifrar:', error);
-    // Si falla el descifrado, podría ser un dato no cifrado (para compatibilidad)
-    return encryptedText;
+    console.warn(`⚠️ decrypt() - dato no válido o sin cifrar: "${encryptedText}"`);
+    return encryptedText; // devolvemos el texto original para no romper la consulta
   }
 }
 

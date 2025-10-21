@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Análisis - DistriCampo Admin</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0,
+            'wght' 400,
+            'GRAD' 0,
+            'opsz' 24
+        }
+    </style>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#0A74DA',
+                        "background-light": "#F0F4F8",
+                        "background-dark": "#0D1B2A",
+                        "card-light": "#FFFFFF",
+                        "card-dark": "#1B263B",
+                        "text-light": "#0D1B2A",
+                        "text-dark": "#E0E1DD",
+                        "text-secondary-light": "#4A5568",
+                        "text-secondary-dark": "#A0AEC0",
+                        "accent": "#415A77",
+                    },
+                    fontFamily: {
+                        display: ["Poppins", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.75rem",
+                    },
+                    boxShadow: {
+                        'custom': '0 10px 20px -5px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+                        'custom-dark': '0 10px 20px -5px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.3)',
+                    }
+                },
+            },
+        };
+    </script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-text-light dark:text-text-dark">
+<div class="relative min-h-screen">
+<div class="absolute inset-0 z-0 opacity-20 dark:opacity-10">
+            <img alt="Administrador veterinario" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAlOwJnqPkA5XKQssv11KVfWntOqGLD96SOJAxVBjKwSldhOnKTotflxhfewymIbl3GEQucn_oT9iwkxekKcF9PXYo-pK92Fd5S09TlIEp-fGDdPmOkmiubJcVxy9XoR2QwHFKeyo6EtB4tF5Vld1JyvKSgDbTudTiSv-jbOqfbCzVvYe2OyGJWX6ehykxD9hHqLMOQG1pVNlMlTfEpKDvU8_QGoMvI3y9MOl9COWiLHVhUMWeJAgXibr3Sshb34Eq1oOZQTljE9X2Y"/>
+<div class="absolute inset-0 bg-gradient-to-t from-background-light via-background-light to-transparent dark:from-background-dark dark:via-background-dark"></div>
+</div>
+        
+<div class="relative z-10">
+            <!-- Header -->
+<header class="py-4 px-4 sm:px-6 lg:px-8 bg-card-light/80 dark:bg-card-dark/80 backdrop-blur-sm shadow-md">
+<nav class="container mx-auto flex justify-between items-center">
+<div class="flex items-center space-x-2">
+                        <span class="material-symbols-outlined text-primary text-4xl">admin_panel_settings</span>
+                        <a class="text-2xl font-bold text-text-light dark:text-text-dark" href="../../index.html">DistriCampo Admin</a>
+</div>
+<div class="hidden lg:flex items-center space-x-6 text-text-light dark:text-text-dark font-medium">
+                        <a class="hover:text-primary transition-colors" href="/admin/recomended/dashboard">Dashboard</a>
+                        <a class="hover:text-primary transition-colors" href="/admin/recomended/propietarios">Propietarios</a>
+                        <a class="hover:text-primary transition-colors" href="/admin/recomended/animales">Animales</a>
+                        <a class="font-bold text-primary" href="#">Análisis</a>
+                        <a class="hover:text-primary transition-colors" href="/admin/recomended/registro-admin">Registro Admin</a>
+</div>
+<div class="hidden lg:flex items-center space-x-4">
+                        <div class="text-sm text-text-secondary-light dark:text-text-secondary-dark">
+                            Bienvenido, <span id="adminName" class="font-medium text-text-light dark:text-text-dark"></span>
+                        </div>
+                        <button onclick="logout()" class="bg-accent/80 text-white px-5 py-2 rounded-full font-semibold hover:bg-accent transition-colors">
+                            <span class="material-symbols-outlined text-sm mr-1">logout</span>
+                            Cerrar Sesión
+                        </button>
+</div>
+                    <button class="lg:hidden text-text-light dark:text-text-dark" onclick="toggleMobileMenu()">
+                        <span class="material-symbols-outlined text-3xl">menu</span>
+</button>
+</nav>
+</header>
+
+            <!-- Main Content -->
+<main class="container mx-auto p-4 sm:p-6 lg:p-8">
+                <div class="mb-8">
+                    <h1 class="text-4xl font-bold text-text-light dark:text-text-dark mb-2">Gestión de Análisis</h1>
+                    <p class="text-text-secondary-light dark:text-text-secondary-dark">Administra todos los análisis del sistema</p>
+                </div>
+
+                <!-- Filtros -->
+                <div class="bg-card-light dark:bg-card-dark p-6 rounded-lg shadow-custom dark:shadow-custom-dark mb-8">
+                    <h3 class="text-xl font-bold mb-4 text-text-light dark:text-text-dark">Filtros</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block mb-2 text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark" for="ownerFilter">Filtrar por Propietario:</label>
+                            <select id="ownerFilter" class="w-full bg-background-light dark:bg-accent/30 border border-gray-300 dark:border-accent text-text-light dark:text-text-dark text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5">
+                                <option value="">-- Todos los propietarios --</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block mb-2 text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark" for="animalFilter">Filtrar por Animal:</label>
+                            <select id="animalFilter" class="w-full bg-background-light dark:bg-accent/30 border border-gray-300 dark:border-accent text-text-light dark:text-text-dark text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5">
+                                <option value="">-- Seleccione un animal --</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block mb-2 text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark" for="statusFilter">Filtrar por Estado:</label>
+                            <select id="statusFilter" class="w-full bg-background-light dark:bg-accent/30 border border-gray-300 dark:border-accent text-text-light dark:text-text-dark text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5">
+                                <option value="">-- Todos los estados --</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Análisis Cards -->
+                <div id="analisisContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6 mb-8">
+                    <!-- Las tarjetas se cargarán dinámicamente aquí -->
+                </div>
+
+                <!-- Mensaje cuando no hay análisis -->
+                <div id="noAnalysesMessage" class="hidden text-center py-12">
+                    <span class="material-symbols-outlined text-6xl text-text-secondary-light dark:text-text-secondary-dark mb-4">science</span>
+                    <h3 class="text-xl font-semibold text-text-light dark:text-text-dark mb-2">No hay análisis para mostrar</h3>
+                    <p class="text-text-secondary-light dark:text-text-secondary-dark">No se encontraron análisis con los filtros aplicados.</p>
+                </div>
+
+                <!-- Paginación -->
+                <div id="paginationContainer" class="hidden flex justify-center items-center space-x-4 mb-12">
+                    <button id="prevBtn" class="px-3 py-1 rounded bg-accent/80 text-white hover:bg-accent disabled:opacity-50" disabled>Anterior</button>
+                    <span id="pageInfo" class="font-semibold">Página 1 de 1</span>
+                    <button id="nextBtn" class="px-3 py-1 rounded bg-accent/80 text-white hover:bg-accent">Siguiente</button>
+                </div>
+
+                <!-- Formulario de Actualización -->
+                <div class="bg-card-light dark:bg-card-dark p-6 sm:p-8 rounded-lg shadow-custom dark:shadow-custom-dark">
+                    <h2 class="text-2xl font-bold mb-6 text-text-light dark:text-text-dark">Actualizar Análisis</h2>
+                    
+                    <!-- Success Message -->
+                    <div id="successMessage" class="hidden mb-4 p-4 bg-green-100 dark:bg-green-900/30 border border-green-300 dark:border-green-700 rounded-lg">
+                        <div class="flex items-center">
+                            <span class="material-symbols-outlined text-green-600 mr-2">check_circle</span>
+                            <p class="text-green-800 dark:text-green-200 text-sm font-medium" id="successText"></p>
+                        </div>
+                    </div>
+
+                    <!-- Error Message -->
+                    <div id="errorMessage" class="hidden mb-4 p-4 bg-red-100 dark:bg-red-900/30 border border-red-300 dark:border-red-700 rounded-lg">
+                        <div class="flex items-center">
+                            <span class="material-symbols-outlined text-red-600 mr-2">error</span>
+                            <p class="text-red-800 dark:text-red-200 text-sm font-medium" id="errorText"></p>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <label class="block mb-2 text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark" for="select-analisis">Seleccionar Análisis a Actualizar</label>
+                        <select class="w-full bg-background-light dark:bg-accent/30 border border-gray-300 dark:border-accent text-text-light dark:text-text-dark text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5" id="select-analisis">
+                            <option selected>Selecciona un análisis...</option>
+                        </select>
+                    </div>
+
+                    <form id="updateAnalisisForm">
+                        <!-- Campos ocultos para validación -->
+                        <input type="hidden" id="fecha-toma" value="">
+                        <input type="hidden" id="hora-toma" value="">
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <div>
+                                <label class="block mb-2 text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark" for="estado-analisis">Estado</label>
+                                <select class="w-full bg-background-light dark:bg-accent/30 border border-gray-300 dark:border-accent text-text-light dark:text-text-dark text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5" id="estado-analisis" required onchange="toggleResultadoFields(this)">
+                                    <option value="">Seleccionar estado</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block mb-2 text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark" for="fecha-emision">Fecha de Emisión</label>
+                                <input class="w-full bg-background-light dark:bg-accent/30 border border-gray-300 dark:border-accent text-text-light dark:text-text-dark text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5" id="fecha-emision" type="date" required/>
+                            </div>
+                            <div>
+                                <label class="block mb-2 text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark" for="hora-emision">Hora de Emisión</label>
+                                <div class="w-full bg-background-light dark:bg-accent/30 border border-gray-300 dark:border-accent text-text-light dark:text-text-dark text-sm rounded-lg p-2.5">
+                                    <small class="text-text-secondary-light dark:text-text-secondary-dark">Se utilizará la hora actual del sistema</small>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block mb-2 text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark" for="tipo-resultado">Tipo de Resultado</label>
+                                <select class="w-full bg-background-light dark:bg-accent/30 border border-gray-300 dark:border-accent text-text-light dark:text-text-dark text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5" id="tipo-resultado" onchange="toggleResultadoType(this)" disabled>
+                                    <option value="">Seleccionar tipo de resultado...</option>
+                                    <option value="categorico">Categórico</option>
+                                    <option value="libre">Texto Libre</option>
+                                </select>
+                            </div>
+                            <div id="resultado-categorico" class="hidden">
+                                <label class="block mb-2 text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark" for="resultado-categorico-select">Resultado Categórico</label>
+                                <select class="w-full bg-background-light dark:bg-accent/30 border border-gray-300 dark:border-accent text-text-light dark:text-text-dark text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5" id="resultado-categorico-select" disabled>
+                                    <option value="">Seleccionar resultado</option>
+                                    <option value="Positivo">Positivo</option>
+                                    <option value="Negativo">Negativo</option>
+                                    <option value="Reactivo">Reactivo</option>
+                                    <option value="No Reactivo">No Reactivo</option>
+                                    <option value="Normal">Normal</option>
+                                    <option value="Anormal">Anormal</option>
+                                    <option value="otro">Otro</option>
+                                </select>
+                            </div>
+                            <div id="resultado-libre" class="hidden">
+                                <label class="block mb-2 text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark" for="resultado-libre-input">Resultado (Texto Libre)</label>
+                                <input class="w-full bg-background-light dark:bg-accent/30 border border-gray-300 dark:border-accent text-text-light dark:text-text-dark text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5" id="resultado-libre-input" placeholder="Ej: Hemoglobina: 12 g/dL" disabled/>
+                            </div>
+                        </div>
+                        <div class="mt-6">
+                            <label class="block mb-2 text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark" for="observaciones">Observaciones</label>
+                            <textarea class="w-full bg-background-light dark:bg-accent/30 border border-gray-300 dark:border-accent text-text-light dark:text-text-dark text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5" id="observaciones" placeholder="Observaciones adicionales..." rows="3"></textarea>
+                        </div>
+                        <div class="mt-8 flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-4">
+                            <button class="w-full sm:w-auto px-6 py-2.5 text-center text-sm font-medium text-text-light dark:text-text-dark bg-gray-200 dark:bg-accent/50 rounded-full hover:bg-gray-300 dark:hover:bg-accent/80 transition-colors" type="button" onclick="clearForm()">Cancelar</button>
+                            <button class="w-full sm:w-auto px-6 py-2.5 text-center text-sm font-medium text-white bg-primary rounded-full hover:bg-primary/90 focus:ring-4 focus:outline-none focus:ring-primary/50" type="submit">Guardar Cambios</button>
+                        </div>
+                    </form>
+                </div>
+</main>
+</div>
+</div>
+
+    <!-- Include session management -->
+    <script src="../../assets/js/session.js"></script>
+    
+    <script>
+        let allAnalyses = [];
+        let allOwners = [];
+        let allAnimals = [];
+        let allStatuses = [];
+        let currentPage = 1;
+        let totalPages = 1;
+        let totalRecords = 0;
+        let currentFilters = {};
+        let currentAnalisisId = null;
+
+        // Check authentication on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!getAdminToken()) {
+                window.location.href = '/admin/recomended/login';
+                return;
+            }
+
+            // Set admin name
+            const admin = getAdminUser();
+            if (admin) {
+                document.getElementById('adminName').textContent = admin.nombres + ' ' + admin.apellidos;
+            }
+
+            // Load initial data
+            loadOwners();
+            loadStatuses();
+            loadAllAnimals();
+            loadAllAnalyses();
+        });
+
+        // Admin authentication functions
+        function getAdminToken() {
+            return localStorage.getItem('adminToken');
+        }
+
+        function getAdminUser() {
+            const user = localStorage.getItem('adminUser');
+            return user ? JSON.parse(user) : null;
+        }
+
+        // API helper function
+        async function api(path, options = {}) {
+            const token = getAdminToken();
+            if (!token) {
+                window.location.href = '/admin/recomended/login';
+                return;
+            }
+            
+            const response = await fetch(path, {
+                ...options,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token,
+                    ...(options.headers || {})
+                }
+            });
+            
+            if (response.status === 401) {
+                window.location.href = '/admin/recomended/login';
+                return;
+            }
+            
+            if (!response.ok) {
+                const text = await response.text();
+                throw new Error(text || ('Error ' + response.status));
+            }
+            
+            return response.json();
+        }
+
+        // Load owners
+        async function loadOwners() {
+            try {
+                const data = await api('/api/admin/owners');
+                if (!data) return;
+                
+                allOwners = data.owners;
+                populateOwnerFilter();
+            } catch (e) {
+                console.error('Error loading owners:', e);
+            }
+        }
+
+        // Load statuses
+        async function loadStatuses() {
+            try {
+                const data = await api('/api/admin/statuses');
+                if (!data) return;
+                
+                allStatuses = data.statuses;
+                populateStatusFilter();
+            } catch (e) {
+                console.error('Error loading statuses:', e);
+            }
+        }
+
+        // Populate owner filter
+        function populateOwnerFilter() {
+            const select = document.getElementById('ownerFilter');
+            select.innerHTML = '<option value="">-- Todos los propietarios --</option>';
+            
+            allOwners.forEach(owner => {
+                const option = document.createElement('option');
+                option.value = owner.id_propietario;
+                option.textContent = `${owner.nombres} ${owner.apellidos}`;
+                select.appendChild(option);
+            });
+        }
+
+        // Populate status filter
+        function populateStatusFilter() {
+            const select = document.getElementById('statusFilter');
+            select.innerHTML = '<option value="">-- Todos los estados --</option>';
+            
+            allStatuses.forEach(status => {
+                const option = document.createElement('option');
+                option.value = status.id_tipo_estado;
+                option.textContent = status.nombre_estado;
+                select.appendChild(option);
+            });
+            
+            // Also populate the form dropdown
+            populateEstadoFormDropdown();
+        }
+        
+        // Populate estado form dropdown
+        function populateEstadoFormDropdown() {
+            const select = document.getElementById('estado-analisis');
+            if (!select) return;
+            
+            select.innerHTML = '<option value="">-- Seleccione un estado --</option>';
+            
+            allStatuses.forEach(status => {
+                const option = document.createElement('option');
+                option.value = status.id_tipo_estado;
+                option.textContent = status.nombre_estado;
+                select.appendChild(option);
+            });
+        }
+
+        // Load animals by owner
+        async function loadAnimalsByOwner() {
+            currentPage = 1;
+            const ownerId = document.getElementById('ownerFilter').value;
+            const animalSelect = document.getElementById('animalFilter');
+            
+            animalSelect.innerHTML = '<option value="">-- Seleccione un animal --</option>';
+            
+            currentFilters = { 
+                owner: ownerId, 
+                animal: '', 
+                status: currentFilters.status || '' 
+            };
+            
+            if (!ownerId) {
+                allAnimals = [];
+                loadAllAnimals();
+                loadAllAnalyses();
+                return;
+            }
+
+            try {
+                const data = await api(`/api/admin/animals?owner=${ownerId}`);
+                if (!data) return;
+                
+                allAnimals = data.animals;
+                
+                allAnimals.forEach(animal => {
+                    const option = document.createElement('option');
+                    option.value = animal.id_animal;
+                    option.textContent = animal.nombre_animal;
+                    animalSelect.appendChild(option);
+                });
+
+                loadAnalysesByOwner(ownerId);
+            } catch (e) {
+                console.error('Error loading animals:', e);
+            }
+        }
+
+        // Load all animals
+        async function loadAllAnimals() {
+            try {
+                currentPage = 1;
+                
+                currentFilters = { 
+                    owner: '', 
+                    animal: '', 
+                    status: currentFilters.status || '' 
+                };
+                
+                const data = await api('/api/admin/animals');
+                if (!data) return;
+                
+                allAnimals = data.animals;
+                
+                const animalSelect = document.getElementById('animalFilter');
+                animalSelect.innerHTML = '<option value="">-- Seleccione un animal --</option>';
+                
+                allAnimals.forEach(animal => {
+                    const option = document.createElement('option');
+                    option.value = animal.id_animal;
+                    option.textContent = animal.nombre_animal;
+                    animalSelect.appendChild(option);
+                });
+            } catch (e) {
+                console.error('Error loading animals:', e);
+            }
+        }
+
+        // Load analyses by owner
+        async function loadAnalysesByOwner(ownerId) {
+            // Update current filters
+            currentFilters.owner = ownerId;
+            currentFilters.animal = ''; // Reset animal filter when owner changes
+            
+            try {
+                const params = new URLSearchParams({
+                    owner: ownerId,
+                    page: currentPage,
+                    limit: 10
+                });
+                
+                if (currentFilters.status) params.append('status', currentFilters.status);
+                
+                console.log('Loading analyses by owner:', ownerId, 'with status:', currentFilters.status);
+                
+                const data = await api(`/api/admin/analyses?${params}`);
+                if (!data) return;
+                
+                allAnalyses = data.analyses;
+                displayAnalyses(data);
+            } catch (e) {
+                console.error('Error loading analyses by owner:', e);
+            }
+        }
+
+        // Load analyses by animal
+        async function loadAnalysesByAnimal(animalId = null) {
+            const selectedAnimalId = animalId || document.getElementById('animalFilter').value;
+            
+            // Update current filters
+            currentFilters.animal = selectedAnimalId;
+            
+            if (!selectedAnimalId) {
+                const ownerId = document.getElementById('ownerFilter').value;
+                if (ownerId) {
+                    loadAnalysesByOwner(ownerId);
+                } else {
+                    loadAllAnalyses();
+                }
+                return;
+            }
+
+            try {
+                const params = new URLSearchParams({
+                    animal: selectedAnimalId,
+                    page: currentPage,
+                    limit: 10
+                });
+                
+                if (currentFilters.status) params.append('status', currentFilters.status);
+                
+                console.log('Loading analyses by animal:', selectedAnimalId, 'with status:', currentFilters.status);
+                
+                const data = await api(`/api/admin/analyses?${params}`);
+                if (!data) return;
+                
+                allAnalyses = data.analyses;
+                displayAnalyses(data);
+            } catch (e) {
+                console.error('Error loading analyses by animal:', e);
+            }
+        }
+
+        // Load all analyses
+        async function loadAllAnalyses() {
+            try {
+                const params = new URLSearchParams({
+                    page: currentPage,
+                    limit: 10
+                });
+                
+                if (currentFilters.status) params.append('status', currentFilters.status);
+                
+                const data = await api(`/api/admin/analyses?${params}`);
+                if (!data) return;
+                
+                allAnalyses = data.analyses;
+                displayAnalyses(data);
+            } catch (e) {
+                console.error('Error loading all analyses:', e);
+            }
+        }
+
+        // Display analyses
+        function displayAnalyses(data) {
+            const container = document.getElementById('analisisContainer');
+            const noMessage = document.getElementById('noAnalysesMessage');
+            const paginationContainer = document.getElementById('paginationContainer');
+            
+            container.innerHTML = '';
+            
+            if (data.analyses.length === 0) {
+                noMessage.classList.remove('hidden');
+                paginationContainer.classList.add('hidden');
+                // Clear dropdown when no analyses
+                populateAnalisisDropdown([]);
+                return;
+            }
+
+            noMessage.classList.add('hidden');
+            container.innerHTML = data.analyses.map(createAnalisisCard).join('');
+            
+            // Populate dropdown with current analyses
+            populateAnalisisDropdown(data.analyses);
+            
+            if (data.pagination) {
+                currentPage = data.pagination.currentPage;
+                totalPages = data.pagination.totalPages;
+                totalRecords = data.pagination.totalRecords;
+                
+                updatePaginationControls();
+                paginationContainer.classList.remove('hidden');
+            }
+        }
+
+        // Create analysis card
+        function createAnalisisCard(analysis) {
+            const fechaToma = formatDate(analysis.fecha_toma);
+            const estadoColor = getEstadoColor(analysis.estado);
+            
+            return `
+                <div class="bg-card-light dark:bg-card-dark p-6 rounded-lg shadow-custom dark:shadow-custom-dark flex flex-col justify-between">
+                    <div>
+                        <h2 class="text-xl font-bold text-text-light dark:text-text-dark">${analysis.nombre_animal}</h2>
+                        <p class="text-sm text-text-secondary-light dark:text-text-secondary-dark mt-2">Análisis: ${analysis.tipo_analisis}</p>
+                        <p class="text-sm text-text-secondary-light dark:text-text-secondary-dark mt-1">Propietario: ${analysis.propietario_nombre}</p>
+                        <p class="text-sm text-text-secondary-light dark:text-text-secondary-dark mt-1">Fecha de Toma: ${fechaToma} ${analysis.hora_toma ? `(${String(analysis.hora_toma).slice(0,5)})` : ''}</p>
+                        <p class="text-sm ${estadoColor} mt-1 font-medium">Estado: ${analysis.estado}</p>
+                    </div>
+                    <div class="flex justify-end space-x-2 mt-4">
+                        <button class="text-sm text-primary hover:underline" onclick="selectAnalisis(${analysis.id_resultado})">Actualizar Análisis</button>
+                        <button class="text-sm text-red-500 hover:underline" onclick="deleteAnalisis(${analysis.id_resultado}, '${analysis.nombre_animal}')">Eliminar</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Get color for estado
+        function getEstadoColor(estado) {
+            switch(estado) {
+                case 'Pendiente': return 'text-yellow-600';
+                case 'En proceso': return 'text-blue-600';
+                case 'Finalizado': return 'text-green-600';
+                case 'Cancelado': return 'text-red-600';
+                default: return 'text-gray-600';
+            }
+        }
+
+        // Filter by status
+        function filterByStatus() {
+            currentPage = 1;
+            const statusId = document.getElementById('statusFilter').value;
+            const ownerId = document.getElementById('ownerFilter').value;
+            const animalId = document.getElementById('animalFilter').value;
+            
+            currentFilters = { 
+                owner: ownerId, 
+                animal: animalId, 
+                status: statusId 
+            };
+            
+            if (animalId) {
+                loadAnalysesByAnimal();
+            } else if (ownerId) {
+                loadAnalysesByOwner(ownerId);
+            } else {
+                loadAllAnalyses();
+            }
+        }
+
+        // Toggle resultado type
+        function toggleResultadoType(select) {
+            const categorico = document.getElementById('resultado-categorico');
+            const libre = document.getElementById('resultado-libre');
+            
+            if (select.value === 'categorico') {
+                categorico.classList.remove('hidden');
+                libre.classList.add('hidden');
+                document.getElementById('resultado-libre-input').value = '';
+            } else if (select.value === 'libre') {
+                categorico.classList.add('hidden');
+                libre.classList.remove('hidden');
+                document.getElementById('resultado-categorico-select').value = '';
+            } else {
+                categorico.classList.add('hidden');
+                libre.classList.add('hidden');
+                document.getElementById('resultado-categorico-select').value = '';
+                document.getElementById('resultado-libre-input').value = '';
+            }
+        }
+
+        // Toggle resultado fields
+        function toggleResultadoFields(estadoSelect) {
+            const tipoResultado = document.getElementById('tipo-resultado');
+            const categorico = document.getElementById('resultado-categorico');
+            const libre = document.getElementById('resultado-libre');
+            const categoricoSelect = document.getElementById('resultado-categorico-select');
+            const libreInput = document.getElementById('resultado-libre-input');
+            const observaciones = document.getElementById('observaciones');
+            
+            if (!estadoSelect || !estadoSelect.options || estadoSelect.selectedIndex < 0) {
+                console.warn('Estado select no válido');
+                return;
+            }
+            
+            const estado = estadoSelect.value;
+            const estadoText = estadoSelect.options[estadoSelect.selectedIndex]?.text || '';
+            
+            if (estadoText === 'Finalizado') {
+                // Finalizado: habilita todos los campos de resultado
+                tipoResultado.disabled = false;
+                categoricoSelect.disabled = false;
+                libreInput.disabled = false;
+                observaciones.disabled = false;
+                
+                if (tipoResultado.value) {
+                    toggleResultadoType(tipoResultado);
+                }
+            } else if (estadoText === 'En proceso') {
+                // En proceso: solo permite cambiar fecha de emisión
+                tipoResultado.disabled = true;
+                categoricoSelect.disabled = true;
+                libreInput.disabled = true;
+                observaciones.disabled = true;
+                categorico.classList.add('hidden');
+                libre.classList.add('hidden');
+                tipoResultado.value = '';
+                categoricoSelect.value = '';
+                libreInput.value = '';
+                observaciones.value = '';
+            } else {
+                // Pendiente, Cancelado: bloquea todos los campos de resultado
+                tipoResultado.disabled = true;
+                categoricoSelect.disabled = true;
+                libreInput.disabled = true;
+                observaciones.disabled = true;
+                categorico.classList.add('hidden');
+                libre.classList.add('hidden');
+                tipoResultado.value = '';
+                categoricoSelect.value = '';
+                libreInput.value = '';
+                observaciones.value = '';
+            }
+        }
+
+        // Select analysis for editing
+        async function selectAnalisis(id) {
+            try {
+                console.log('Seleccionando análisis ID:', id);
+                const data = await api('/api/admin/analyses/' + id);
+                console.log('Datos recibidos:', data);
+                
+                if (!data || !data.analysis) {
+                    showError('No se encontraron datos del análisis.');
+                    return;
+                }
+                
+                const analysis = data.analysis;
+                currentAnalisisId = analysis.id_resultado;
+                
+                // Fill form with analysis data
+                const estadoSelect = document.getElementById('estado-analisis');
+                const fechaEmision = document.getElementById('fecha-emision');
+                const tipoResultado = document.getElementById('tipo-resultado');
+                const observaciones = document.getElementById('observaciones');
+                
+                // Set values
+                if (estadoSelect) estadoSelect.value = analysis.id_estado || '';
+                if (fechaEmision) fechaEmision.value = analysis.fecha_emision ? formatDateForInput(analysis.fecha_emision) : '';
+                if (tipoResultado) tipoResultado.value = analysis.tipo_resultado || '';
+                if (observaciones) observaciones.value = analysis.observaciones || '';
+                
+                // Set hidden fields for validation
+                const fechaToma = document.getElementById('fecha-toma');
+                const horaToma = document.getElementById('hora-toma');
+                if (fechaToma) fechaToma.value = formatDateForInput(analysis.fecha_toma);
+                if (horaToma) horaToma.value = analysis.hora_toma ? String(analysis.hora_toma).slice(0,5) : '';
+                
+                // Set minimum date for fecha-emision (same day as fecha_toma is allowed)
+                const fechaTomaValue = formatDateForInput(analysis.fecha_toma);
+                if (fechaEmision) fechaEmision.min = fechaTomaValue;
+                
+                // Handle resultado based on tipo_resultado
+                if (analysis.tipo_resultado === 'categorico') {
+                    const categoricoSelect = document.getElementById('resultado-categorico-select');
+                    if (categoricoSelect) categoricoSelect.value = analysis.resultado || '';
+                    toggleResultadoType(document.getElementById('tipo-resultado'));
+                } else if (analysis.tipo_resultado === 'libre') {
+                    const libreInput = document.getElementById('resultado-libre-input');
+                    if (libreInput) libreInput.value = analysis.resultado || '';
+                    toggleResultadoType(document.getElementById('tipo-resultado'));
+                }
+                
+                // Update dropdown
+                const selectAnalisis = document.getElementById('select-analisis');
+                if (selectAnalisis) selectAnalisis.value = analysis.id_resultado;
+                
+                // Trigger estado change to enable/disable fields correctly
+                if (estadoSelect) {
+                    toggleResultadoFields(estadoSelect);
+                }
+                
+                // Scroll to form
+                setTimeout(() => {
+                    const form = document.querySelector('#updateAnalisisForm');
+                    if (form) {
+                        form.scrollIntoView({ 
+                            behavior: 'smooth', 
+                            block: 'start' 
+                        });
+                    }
+                }, 100);
+                
+            } catch (error) {
+                console.error('Error selecting analysis:', error);
+                showError('No se pudo cargar la información del análisis: ' + error.message);
+            }
+        }
+
+        // Save analysis
+        async function saveAnalysis() {
+            const estado = document.getElementById('estado-analisis').value;
+            const fechaEmision = document.getElementById('fecha-emision').value;
+            const fechaToma = document.getElementById('fecha-toma').value;
+            const horaToma = document.getElementById('hora-toma').value;
+            const tipoResultado = document.getElementById('tipo-resultado').value;
+            const observaciones = document.getElementById('observaciones').value;
+            
+            let resultado = '';
+            if (tipoResultado === 'categorico') {
+                const select = document.getElementById('resultado-categorico-select');
+                resultado = select.value === 'otro' ? '' : select.value;
+            } else {
+                resultado = document.getElementById('resultado-libre-input').value;
+            }
+
+            // Validaciones
+            if (!estado) {
+                showError('Por favor seleccione un estado');
+                return;
+            }
+            if (!fechaEmision) {
+                showError('Por favor seleccione una fecha de emisión');
+                return;
+            }
+
+            // Validación: emisión debe ser igual o posterior a toma (mismo día permitido)
+            if (fechaToma) {
+                const tomaDate = new Date(fechaToma);
+                const emisionDate = new Date(fechaEmision);
+                if (emisionDate < tomaDate) {
+                    const tomaStr = new Date(fechaToma).toLocaleDateString('es-ES');
+                    showError(`La fecha de emisión no puede ser anterior a la fecha de toma (${tomaStr}).`);
+                    return;
+                }
+            }
+            
+            // Validaciones específicas cuando estado es "Finalizado"
+            const estadoText = document.querySelector(`option[value="${estado}"]`).textContent;
+            if (estadoText === 'Finalizado') {
+                if (!tipoResultado) {
+                    showError('Seleccione un tipo de resultado (Texto libre o Categórico).');
+                    return;
+                }
+                if (tipoResultado === 'categorico') {
+                    const select = document.getElementById('resultado-categorico-select');
+                    const val = (select?.value || '').trim();
+                    if (!val) {
+                        showError('Seleccione una categoría para el resultado categórico.');
+                        return;
+                    }
+                }
+                if (tipoResultado === 'libre') {
+                    const libreVal = (document.getElementById('resultado-libre-input')?.value || '').trim();
+                    if (!libreVal) {
+                        showError('Ingrese un texto para el resultado.');
+                        return;
+                    }
+                }
+            }
+
+            try {
+                const res = await api(`/api/admin/analyses/${currentAnalisisId}`, {
+                    method: 'PUT',
+                    body: JSON.stringify({
+                        id_estado: parseInt(estado),
+                        fecha_emision: fechaEmision,
+                        resultado: resultado.trim(),
+                        tipo_resultado: tipoResultado || '',
+                        observaciones: observaciones.trim()
+                    })
+                });
+                
+                if (!res) return;
+                
+                showSuccess('Análisis actualizado exitosamente. Se utilizó la hora actual del sistema.');
+                
+                // Reload analyses
+                const ownerId = document.getElementById('ownerFilter').value;
+                const animalId = document.getElementById('animalFilter').value;
+                
+                if (animalId) {
+                    loadAnalysesByAnimal();
+                } else if (ownerId) {
+                    loadAnalysesByOwner(ownerId);
+                } else {
+                    loadAllAnalyses();
+                }
+                
+                clearForm();
+                
+            } catch (e) {
+                showError('Error al actualizar el análisis');
+            }
+        }
+
+        // Delete analysis
+        async function deleteAnalisis(analysisId, animalName) {
+            if (!confirm(`¿Está seguro de que desea eliminar el análisis de ${animalName}? Esta acción no se puede deshacer.`)) {
+                return;
+            }
+
+            try {
+                const res = await api(`/api/admin/analyses/${analysisId}`, {
+                    method: 'DELETE'
+                });
+                
+                if (!res) return;
+                
+                showSuccess('Análisis eliminado exitosamente');
+                
+                // Reload analyses
+                const ownerId = document.getElementById('ownerFilter').value;
+                const animalId = document.getElementById('animalFilter').value;
+                
+                if (animalId) {
+                    loadAnalysesByAnimal();
+                } else if (ownerId) {
+                    loadAnalysesByOwner(ownerId);
+                } else {
+                    loadAllAnalyses();
+                }
+                
+            } catch (e) {
+                showError('Error al eliminar el análisis');
+            }
+        }
+
+        // Update pagination controls
+        function updatePaginationControls() {
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const pageInfo = document.getElementById('pageInfo');
+            
+            prevBtn.disabled = currentPage <= 1;
+            nextBtn.disabled = currentPage >= totalPages;
+            
+            const startRecord = ((currentPage - 1) * 10) + 1;
+            const endRecord = Math.min(currentPage * 10, totalRecords);
+            pageInfo.textContent = `Página ${currentPage} de ${totalPages} (${startRecord}-${endRecord} de ${totalRecords})`;
+        }
+
+        // Change page
+        function changePage(direction) {
+            if (direction === 'prev' && currentPage > 1) {
+                currentPage--;
+                loadAnalysesWithPagination();
+            } else if (direction === 'next' && currentPage < totalPages) {
+                currentPage++;
+                loadAnalysesWithPagination();
+            }
+        }
+
+        // Load analyses with pagination
+        function loadAnalysesWithPagination() {
+            const ownerId = document.getElementById('ownerFilter').value;
+            const animalId = document.getElementById('animalFilter').value;
+            const statusId = document.getElementById('statusFilter').value;
+            
+            currentFilters = { owner: ownerId, animal: animalId, status: statusId };
+            
+            if (animalId) {
+                loadAnalysesByAnimal(animalId);
+            } else if (ownerId) {
+                loadAnalysesByOwner(ownerId);
+            } else {
+                loadAllAnalyses();
+            }
+        }
+
+        // Clear form
+        function clearForm() {
+            currentAnalisisId = null;
+            document.getElementById('select-analisis').value = '';
+            document.getElementById('estado-analisis').value = '';
+            document.getElementById('fecha-emision').value = '';
+            document.getElementById('tipo-resultado').value = '';
+            document.getElementById('resultado-categorico-select').value = '';
+            document.getElementById('resultado-libre-input').value = '';
+            document.getElementById('observaciones').value = '';
+            
+            // Reset hidden fields
+            document.getElementById('fecha-toma').value = '';
+            document.getElementById('hora-toma').value = '';
+            
+            // Reset date constraints
+            document.getElementById('fecha-emision').min = '';
+            
+            // Hide resultado fields
+            document.getElementById('resultado-categorico').classList.add('hidden');
+            document.getElementById('resultado-libre').classList.add('hidden');
+            
+            hideMessages();
+        }
+
+        // Show success message
+        function showSuccess(message) {
+            document.getElementById('successText').textContent = message;
+            document.getElementById('successMessage').classList.remove('hidden');
+            document.getElementById('errorMessage').classList.add('hidden');
+            setTimeout(() => hideMessages(), 5000);
+        }
+
+        // Show error message
+        function showError(message) {
+            document.getElementById('errorText').textContent = message;
+            document.getElementById('errorMessage').classList.remove('hidden');
+            document.getElementById('successMessage').classList.add('hidden');
+            setTimeout(() => hideMessages(), 5000);
+        }
+
+        // Hide messages
+        function hideMessages() {
+            document.getElementById('successMessage').classList.add('hidden');
+            document.getElementById('errorMessage').classList.add('hidden');
+        }
+
+        // Format date
+        function formatDate(dateString) {
+            if (!dateString) return 'N/A';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('es-ES');
+        }
+
+        // Format date for input
+        function formatDateForInput(dateString) {
+            if (!dateString) return '';
+            const date = new Date(dateString);
+            return date.toISOString().split('T')[0];
+        }
+
+        // Select analysis from dropdown
+        function selectAnalisisFromDropdown() {
+            const select = document.getElementById('select-analisis');
+            const analisisId = select.value;
+            if (analisisId) {
+                selectAnalisis(parseInt(analisisId));
+            } else {
+                clearForm();
+            }
+        }
+
+        // Populate analysis dropdown
+        function populateAnalisisDropdown(analyses) {
+            const select = document.getElementById('select-analisis');
+            select.innerHTML = '<option value="">Selecciona un análisis...</option>';
+            
+            analyses.forEach(analysis => {
+                const option = document.createElement('option');
+                option.value = analysis.id_resultado;
+                const tipoAnalisis = analysis.tipo_analisis || analysis.nombre_analisis || 'Análisis';
+                const nombreAnimal = analysis.nombre_animal || 'Animal';
+                const estado = analysis.estado || 'Estado';
+                option.textContent = `${tipoAnalisis} - ${nombreAnimal} (${estado})`;
+                select.appendChild(option);
+            });
+        }
+
+        // Event listeners
+        document.getElementById('ownerFilter').addEventListener('change', loadAnimalsByOwner);
+        document.getElementById('animalFilter').addEventListener('change', () => loadAnalysesByAnimal());
+        document.getElementById('statusFilter').addEventListener('change', filterByStatus);
+        document.getElementById('select-analisis').addEventListener('change', selectAnalisisFromDropdown);
+        
+        document.getElementById('updateAnalisisForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!currentAnalisisId) {
+                showError('Selecciona un análisis para actualizar.');
+                return;
+            }
+            await saveAnalysis();
+        });
+
+        // Pagination event listeners
+        document.getElementById('prevBtn').addEventListener('click', () => changePage('prev'));
+        document.getElementById('nextBtn').addEventListener('click', () => changePage('next'));
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        function logout() {
+            if (confirm('¿Estás seguro de que quieres cerrar sesión?')) {
+                localStorage.removeItem('adminToken');
+                localStorage.removeItem('adminUser');
+                window.location.href = '/admin/recomended/login';
+            }
+        }
+    </script>
+</body>
+</html>

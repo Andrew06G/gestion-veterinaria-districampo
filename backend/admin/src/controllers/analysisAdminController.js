@@ -12,21 +12,25 @@ async function listAnalyses(req, res) {
     
     let whereClause = '';
     let params = [];
+    let conditions = [];
     
     if (animal) {
-      whereClause = 'WHERE a.id_animal = ?';
+      conditions.push('a.id_animal = ?');
       params.push(animal);
-    } else if (owner) {
-      whereClause = 'WHERE a.id_propietario = ?';
+    }
+    
+    if (owner) {
+      conditions.push('a.id_propietario = ?');
       params.push(owner);
     }
     
-    if (status && whereClause) {
-      whereClause += ' AND r.id_estado = ?';
+    if (status) {
+      conditions.push('r.id_estado = ?');
       params.push(status);
-    } else if (status) {
-      whereClause = 'WHERE r.id_estado = ?';
-      params.push(status);
+    }
+    
+    if (conditions.length > 0) {
+      whereClause = 'WHERE ' + conditions.join(' AND ');
     }
 
     // Consulta para obtener el total de registros
@@ -79,11 +83,26 @@ async function listAnalyses(req, res) {
     `, [...params, parseInt(limit), offset]);
     
     // Descifrar nombres de animales y datos sensibles
-    const analyses = rows.map(analysis => ({
-      ...analysis,
-      nombre_animal: decrypt(analysis.nombre_animal),
-      propietario_nombre: `${decrypt(analysis.propietario_nombres)} ${decrypt(analysis.propietario_apellidos)}`
-    }));
+    const analyses = rows.map(analysis => {
+      try {
+        return {
+          ...analysis,
+          nombre_animal: decrypt(analysis.nombre_animal) || 'Nombre no disponible',
+          propietario_nombre: `${decrypt(analysis.propietario_nombres) || 'N/A'} ${decrypt(analysis.propietario_apellidos) || 'N/A'}`,
+          estado: analysis.nombre_estado || 'Estado no disponible',
+          tipo_analisis: analysis.nombre_analisis || 'Análisis no disponible'
+        };
+      } catch (error) {
+        console.warn(`Error al descifrar análisis ID ${analysis.id_analisis}:`, error.message);
+        return {
+          ...analysis,
+          nombre_animal: 'Nombre no disponible',
+          propietario_nombre: 'Propietario no disponible',
+          estado: analysis.nombre_estado || 'Estado no disponible',
+          tipo_analisis: analysis.nombre_analisis || 'Análisis no disponible'
+        };
+      }
+    });
     
     res.json({ 
       success: true, 
@@ -139,11 +158,23 @@ async function getAnalysis(req, res) {
       return res.status(404).json({ success: false, message: 'Análisis no encontrado' });
     }
     
-    const analysis = {
-      ...rows[0],
-      nombre_animal: decrypt(rows[0].nombre_animal),
-      propietario_nombre: `${decrypt(rows[0].propietario_nombres)} ${decrypt(rows[0].propietario_apellidos)}`
-    };
+    let analysis;
+    try {
+      analysis = {
+        ...rows[0],
+        nombre_animal: decrypt(rows[0].nombre_animal) || 'Nombre no disponible',
+        propietario_nombre: `${decrypt(rows[0].propietario_nombres) || 'N/A'} ${decrypt(rows[0].propietario_apellidos) || 'N/A'}`,
+        estado: rows[0].nombre_estado || 'Estado no disponible'
+      };
+    } catch (error) {
+      console.warn(`Error al descifrar análisis ID ${id}:`, error.message);
+      analysis = {
+        ...rows[0],
+        nombre_animal: 'Nombre no disponible',
+        propietario_nombre: 'Propietario no disponible',
+        estado: rows[0].nombre_estado || 'Estado no disponible'
+      };
+    }
     
     res.json({ success: true, analysis });
   } catch (error) {
