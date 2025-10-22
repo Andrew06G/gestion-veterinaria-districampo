@@ -1,20 +1,29 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Animales - DistriCampo Admin</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
-<style>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Gestión de Animales - DistriCampo Admin</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+    <style>
         .material-symbols-outlined {
             font-variation-settings: 'FILL' 0,
             'wght' 400,
             'GRAD' 0,
             'opsz' 24
         }
+        
+        .loading {
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
     </style>
-<script>
+    <script>
         tailwind.config = {
             darkMode: "class",
             theme: {
@@ -45,33 +54,33 @@
             },
         };
     </script>
-<link href="https://fonts.googleapis.com" rel="preconnect"/>
-<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com" rel="preconnect"/>
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
 </head>
 <body class="bg-background-light dark:bg-background-dark font-display text-text-light dark:text-text-dark">
-<div class="relative min-h-screen">
-<div class="absolute inset-0 z-0 opacity-20 dark:opacity-10">
-            <img alt="Administrador veterinario" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAlOwJnqPkA5XKQssv11KVfWntOqGLD96SOJAxVBjKwSldhOnKTotflxhfewymIbl3GEQucn_oT9iwkxekKcF9PXYo-pK92Fd5S09TlIEp-fGDdPmOkmiubJcVxy9XoR2QwHFKeyo6EtB4tF5Vld1JyvKSgDbTudTiSv-jbOqfbCzVvYe2OyGJWX6ehykxD9hHqLMOQG1pVNlMlTfEpKDvU8_QGoMvI3y9MOl9COWiLHVhUMWeJAgXibr3Sshb34Eq1oOZQTljE9X2Y"/>
-<div class="absolute inset-0 bg-gradient-to-t from-background-light via-background-light to-transparent dark:from-background-dark dark:via-background-dark"></div>
-</div>
+    <div class="relative min-h-screen">
+        <div class="absolute inset-0 z-0 opacity-20 dark:opacity-10">
+            <img alt="Veterinario con un gato" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAlOwJnqPkA5XKQssv11KVfWntOqGLD96SOJAxVBjKwSldhOnKTotflxhfewymIbl3GEQucn_oT9iwkxekKcF9PXYo-pK92Fd5S09TlIEp-fGDdPmOkmiubJcVxy9XoR2QwHFKeyo6EtB4tF5Vld1JyvKSgDbTudTiSv-jbOqfbCzVvYe2OyGJWX6ehykxD9hHqLMOQG1pVNlMlTfEpKDvU8_QGoMvI3y9MOl9COWiLHVhUMWeJAgXibr3Sshb34Eq1oOZQTljE9X2Y"/>
+            <div class="absolute inset-0 bg-gradient-to-t from-background-light via-background-light to-transparent dark:from-background-dark dark:via-background-dark"></div>
+        </div>
         
-<div class="relative z-10">
+        <div class="relative z-10">
             <!-- Header -->
-<header class="py-4 px-4 sm:px-6 lg:px-8 bg-card-light/80 dark:bg-card-dark/80 backdrop-blur-sm shadow-md">
-<nav class="container mx-auto flex justify-between items-center">
-<div class="flex items-center space-x-2">
+            <header class="py-4 px-4 sm:px-6 lg:px-8 bg-card-light/80 dark:bg-card-dark/80 backdrop-blur-sm shadow-md">
+                <nav class="container mx-auto flex justify-between items-center">
+                    <div class="flex items-center space-x-2">
                         <span class="material-symbols-outlined text-primary text-4xl">admin_panel_settings</span>
-                        <a class="text-2xl font-bold text-text-light dark:text-text-dark" href="../../index.html">DistriCampo Admin</a>
-</div>
-<div class="hidden lg:flex items-center space-x-6 text-text-light dark:text-text-dark font-medium">
+                        <a class="text-2xl font-bold text-text-light dark:text-text-dark" href="/admin/recomended/dashboard">DistriCampo Admin</a>
+                    </div>
+                    <div class="hidden lg:flex items-center space-x-6 text-text-light dark:text-text-dark font-medium">
                         <a class="hover:text-primary transition-colors" href="/admin/recomended/dashboard">Dashboard</a>
                         <a class="hover:text-primary transition-colors" href="/admin/recomended/propietarios">Propietarios</a>
                         <a class="font-bold text-primary" href="#">Animales</a>
                         <a class="hover:text-primary transition-colors" href="/admin/recomended/analisis">Análisis</a>
                         <a class="hover:text-primary transition-colors" href="/admin/recomended/registro-admin">Registro Admin</a>
-</div>
-<div class="hidden lg:flex items-center space-x-4">
+                    </div>
+                    <div class="hidden lg:flex items-center space-x-4">
                         <div class="text-sm text-text-secondary-light dark:text-text-secondary-dark">
                             Bienvenido, <span id="adminName" class="font-medium text-text-light dark:text-text-dark"></span>
                         </div>
@@ -79,65 +88,630 @@
                             <span class="material-symbols-outlined text-sm mr-1">logout</span>
                             Cerrar Sesión
                         </button>
-</div>
+                    </div>
                     <button class="lg:hidden text-text-light dark:text-text-dark" onclick="toggleMobileMenu()">
                         <span class="material-symbols-outlined text-3xl">menu</span>
-</button>
-</nav>
-</header>
+                    </button>
+                </nav>
+                
+                <!-- Mobile Menu -->
+                <div id="mobileMenu" class="lg:hidden hidden mt-4 bg-card-light/90 dark:bg-card-dark/90 backdrop-blur-sm rounded-lg p-4">
+                    <div class="flex flex-col space-y-3">
+                        <a class="text-text-light dark:text-text-dark hover:text-primary transition-colors" href="/admin/recomended/dashboard">Dashboard</a>
+                        <a class="text-text-light dark:text-text-dark hover:text-primary transition-colors" href="/admin/recomended/propietarios">Propietarios</a>
+                        <a class="text-primary font-medium" href="#">Animales</a>
+                        <a class="text-text-light dark:text-text-dark hover:text-primary transition-colors" href="/admin/recomended/analisis">Análisis</a>
+                        <a class="text-text-light dark:text-text-dark hover:text-primary transition-colors" href="/admin/recomended/registro-admin">Registro Admin</a>
+                        <div class="border-t border-gray-300 dark:border-gray-600 pt-3 mt-3">
+                            <div class="text-sm text-text-secondary-light dark:text-text-secondary-dark mb-2">
+                                Bienvenido, <span id="adminNameMobile" class="font-medium text-text-light dark:text-text-dark"></span>
+                            </div>
+                            <button onclick="logout()" class="w-full bg-accent text-white px-4 py-2 rounded-lg font-semibold hover:bg-accent/80 transition-colors">
+                                <span class="material-symbols-outlined text-sm mr-1">logout</span>
+                                Cerrar Sesión
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </header>
 
             <!-- Main Content -->
-<main class="container mx-auto p-4 sm:p-6 lg:p-8">
-                <div class="mb-8">
-                    <h1 class="text-4xl font-bold text-text-light dark:text-text-dark mb-2">Gestión de Animales</h1>
-                    <p class="text-text-secondary-light dark:text-text-secondary-dark">Administra todos los animales del sistema</p>
+            <main class="container mx-auto p-4 sm:p-6 lg:p-8">
+                <h1 class="text-3xl md:text-4xl font-bold mb-8 text-text-light dark:text-text-dark">Gestión de Animales</h1>
+                
+                <!-- Success Message -->
+                <div id="successMessage" class="hidden mb-6 p-4 bg-green-100 dark:bg-green-900/30 border border-green-300 dark:border-green-700 rounded-lg">
+                    <div class="flex items-center">
+                        <span class="material-symbols-outlined text-green-600 dark:text-green-400 mr-2">check_circle</span>
+                        <span class="text-green-800 dark:text-green-200 font-medium" id="successText">Operación realizada exitosamente</span>
+                    </div>
                 </div>
 
-                <!-- Placeholder Content -->
-                <div class="bg-card-light dark:bg-card-dark rounded-xl shadow-custom dark:shadow-custom-dark p-8 border text-center">
-                    <span class="material-symbols-outlined text-6xl text-green-600 mb-4 block">pets</span>
-                    <h2 class="text-2xl font-bold text-text-light dark:text-text-dark mb-4">Módulo de Animales</h2>
-                    <p class="text-text-secondary-light dark:text-text-secondary-dark mb-6">Esta página estará disponible próximamente con todas las funcionalidades de gestión de animales.</p>
-                    <a href="/admin/recomended/dashboard" class="bg-primary text-white px-6 py-3 rounded-lg font-medium hover:bg-opacity-90 transition-colors inline-block">
-                        Volver al Dashboard
-                    </a>
+                <!-- Error Message -->
+                <div id="errorMessage" class="hidden mb-6 p-4 bg-red-100 dark:bg-red-900/30 border border-red-300 dark:border-red-700 rounded-lg">
+                    <div class="flex items-center">
+                        <span class="material-symbols-outlined text-red-600 dark:text-red-400 mr-2">error</span>
+                        <span class="text-red-800 dark:text-red-200 font-medium" id="errorText">Error al realizar la operación</span>
+                    </div>
                 </div>
-</main>
-</div>
-</div>
+
+                <!-- Loading Message -->
+                <div id="loadingMessage" class="hidden mb-6 p-4 bg-blue-100 dark:bg-blue-900/30 border border-blue-300 dark:border-blue-700 rounded-lg">
+                    <div class="flex items-center">
+                        <span class="loading material-symbols-outlined text-blue-600 dark:text-blue-400 mr-2">refresh</span>
+                        <span class="text-blue-800 dark:text-blue-200 font-medium">Cargando información...</span>
+                    </div>
+                </div>
+
+                <!-- Filter Section -->
+                <div class="bg-card-light dark:bg-card-dark p-6 rounded-lg shadow-custom dark:shadow-custom-dark mb-8">
+                    <h2 class="text-xl font-bold mb-4 text-text-light dark:text-text-dark">Filtros</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block mb-2 text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark" for="ownerFilter">Filtrar por Propietario</label>
+                            <select class="w-full bg-background-light dark:bg-accent/30 border border-gray-300 dark:border-accent text-text-light dark:text-text-dark text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5" id="ownerFilter">
+                                <option value="">-- Todos los propietarios --</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Animals Grid -->
+                <div id="animalsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6 mb-8">
+                    <!-- Animals will be loaded here dynamically -->
+                </div>
+
+                <!-- Pagination -->
+                <div class="bg-card-light dark:bg-card-dark p-4 rounded-lg shadow-custom dark:shadow-custom-dark mb-8">
+                    <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <div class="text-sm text-text-secondary-light dark:text-text-secondary-dark">
+                            <span id="pageInfo">Página 1 de 1</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button id="prevBtn" class="px-3 py-2 text-sm font-medium text-text-light dark:text-text-dark bg-background-light dark:bg-accent/30 border border-gray-300 dark:border-accent rounded-lg hover:bg-gray-50 dark:hover:bg-accent/50 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                                Anterior
+                            </button>
+                            <button id="nextBtn" class="px-3 py-2 text-sm font-medium text-text-light dark:text-text-dark bg-background-light dark:bg-accent/30 border border-gray-300 dark:border-accent rounded-lg hover:bg-gray-50 dark:hover:bg-accent/50 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                                Siguiente
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Animal Selection Dropdown -->
+                <div class="bg-card-light dark:bg-card-dark p-6 rounded-lg shadow-custom dark:shadow-custom-dark mb-8">
+                    <h2 class="text-xl font-bold mb-4 text-text-light dark:text-text-dark">Seleccionar Animal para Editar</h2>
+                    <div class="mb-6">
+                        <label class="block mb-2 text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark" for="animalSelect">Seleccionar Animal</label>
+                        <select class="w-full bg-background-light dark:bg-accent/30 border border-gray-300 dark:border-accent text-text-light dark:text-text-dark text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5" id="animalSelect">
+                            <option value="">-- Seleccione un animal --</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Edit Animal Form -->
+                <div class="bg-card-light dark:bg-card-dark p-6 sm:p-8 rounded-lg shadow-custom dark:shadow-custom-dark">
+                    <h2 class="text-2xl font-bold mb-6 text-text-light dark:text-text-dark">Editar Información del Animal</h2>
+                    
+                    <form id="editAnimalForm">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block mb-2 text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark" for="animal_nombre">Nombre *</label>
+                                <input class="w-full bg-background-light dark:bg-accent/30 border border-gray-300 dark:border-accent text-text-light dark:text-text-dark text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5" 
+                                       id="animal_nombre" name="animal_nombre" placeholder="Nombre del animal" type="text" required/>
+                            </div>
+                            <div>
+                                <label class="block mb-2 text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark" for="animal_edad">Edad (años) *</label>
+                                <input class="w-full bg-background-light dark:bg-accent/30 border border-gray-300 dark:border-accent text-text-light dark:text-text-dark text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5" 
+                                       id="animal_edad" name="animal_edad" placeholder="Ej: 5" type="number" min="0" max="50" required/>
+                            </div>
+                            <div>
+                                <label class="block mb-2 text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark" for="animal_especie">Especie *</label>
+                                <select class="w-full bg-background-light dark:bg-accent/30 border border-gray-300 dark:border-accent text-text-light dark:text-text-dark text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5" 
+                                        id="animal_especie" name="animal_especie" required>
+                                    <option value="">Seleccione una especie...</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block mb-2 text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark" for="animal_raza">Raza *</label>
+                                <select class="w-full bg-gray-200 dark:bg-accent/20 border border-gray-300 dark:border-accent text-text-light dark:text-text-dark text-sm rounded-lg block p-2.5 cursor-not-allowed" 
+                                        disabled id="animal_raza" name="animal_raza" required>
+                                    <option value="">Primero seleccione una especie...</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Analysis Status Warning -->
+                        <div id="analysisWarning" class="hidden mt-4 p-4 bg-yellow-100 dark:bg-yellow-900/30 border border-yellow-300 dark:border-yellow-700 rounded-lg">
+                            <div class="flex items-center">
+                                <span class="material-symbols-outlined text-yellow-600 dark:text-yellow-400 mr-2">warning</span>
+                                <span class="text-yellow-800 dark:text-yellow-200 font-medium" id="analysisWarningText">Este animal tiene análisis pendientes, en proceso o finalizados.</span>
+                            </div>
+                        </div>
+
+                        <div class="mt-8 flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-4">
+                            <button class="w-full sm:w-auto px-6 py-2.5 text-center text-sm font-medium text-text-light dark:text-text-dark bg-gray-200 dark:bg-accent/50 rounded-full hover:bg-gray-300 dark:hover:bg-accent/80 transition-colors" 
+                                    type="button" onclick="clearForm()">Cancelar</button>
+                            <button class="w-full sm:w-auto px-6 py-2.5 text-center text-sm font-medium text-white bg-primary rounded-full hover:bg-primary/90 focus:ring-4 focus:outline-none focus:ring-primary/50 disabled:opacity-50 disabled:cursor-not-allowed" 
+                                    type="submit" id="saveButton">Guardar Cambios</button>
+                            <button class="w-full sm:w-auto px-6 py-2.5 text-center text-sm font-medium text-white bg-red-600 rounded-full hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800" 
+                                    type="button" id="deleteButton" onclick="deleteSelectedAnimal()">Eliminar Animal</button>
+                        </div>
+                    </form>
+                </div>
+            </main>
+        </div>
+    </div>
 
     <!-- Include session management -->
     <script src="../../assets/js/session.js"></script>
     
     <script>
-        // Check authentication on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            if (!sessionManager.isAuthenticated()) {
-                window.location.href = '../admin_login.html';
+        // Global variables
+        let allAnimals = [];
+        let allOwners = [];
+        let allSpecies = [];
+        let allRaces = [];
+        let currentAnimalId = null;
+        let currentPage = 1;
+        let totalPages = 1;
+        let totalRecords = 0;
+        let itemsPerPage = 10;
+
+        // Check authentication
+        if (!sessionManager.getAdminToken()) {
+            window.location.href = '/admin/recomended/login';
+        }
+
+        // API helper
+        async function api(path, options = {}) {
+            const token = sessionManager.getAdminToken();
+            if (!token) {
+                window.location.href = '/admin/recomended/login';
                 return;
             }
 
-            // Set admin name
-            const admin = sessionManager.getUser();
-            if (admin) {
-                document.getElementById('adminName').textContent = admin.nombres + ' ' + admin.apellidos;
-            }
-        });
+            const defaultOptions = {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            };
 
+            const response = await fetch(path, { ...defaultOptions, ...options });
+            
+            if (!response.ok) {
+                const text = await response.text();
+                throw new Error(text || `Error ${response.status}`);
+            }
+            
+            return response.json();
+        }
+
+        // Create animal card
+        function createAnimalCard(animal) {
+            return `
+                <div class="bg-card-light dark:bg-card-dark p-6 rounded-lg shadow-custom dark:shadow-custom-dark flex flex-col justify-between">
+                    <div>
+                        <h2 class="text-xl font-bold text-text-light dark:text-text-dark mb-2">${animal.nombre_animal}</h2>
+                        <p class="text-sm text-text-secondary-light dark:text-text-secondary-dark mt-1">Propietario: ${animal.propietario_nombre}</p>
+                        <p class="text-sm text-text-secondary-light dark:text-text-secondary-dark">Edad: ${animal.edad} años</p>
+                        <p class="text-sm text-text-secondary-light dark:text-text-secondary-dark">Raza: ${animal.nombre_raza}</p>
+                        <p class="text-sm text-text-secondary-light dark:text-text-secondary-dark">Especie: ${animal.nombre_especie}</p>
+                    </div>
+                    <div class="flex justify-end space-x-2 mt-4">
+                        <button class="text-sm text-primary hover:underline font-medium" onclick="selectAnimal(${animal.id_animal})">
+                            <span class="material-symbols-outlined text-sm mr-1">edit</span>
+                            Editar
+                        </button>
+                        <button class="text-sm text-red-500 hover:underline font-medium" onclick="deleteAnimal(${animal.id_animal}, '${animal.nombre_animal}')">
+                            <span class="material-symbols-outlined text-sm mr-1">delete</span>
+                            Eliminar
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Display animals with pagination
+        function displayAnimals(animals) {
+            const container = document.getElementById('animalsGrid');
+            
+            if (animals.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full text-center py-12">
+                        <span class="material-symbols-outlined text-6xl text-text-secondary-light dark:text-text-secondary-dark mb-4 block">pets</span>
+                        <h3 class="text-xl font-semibold text-text-light dark:text-text-dark mb-2">No hay animales registrados</h3>
+                        <p class="text-text-secondary-light dark:text-text-secondary-dark">No se encontraron animales con los filtros aplicados.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const paginatedAnimals = animals.slice(startIndex, endIndex);
+
+            container.innerHTML = paginatedAnimals.map(createAnimalCard).join('');
+            updatePagination(animals.length);
+        }
+
+        // Update pagination controls
+        function updatePagination(totalItems) {
+            totalPages = Math.ceil(totalItems / itemsPerPage);
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const pageInfo = document.getElementById('pageInfo');
+            
+            prevBtn.disabled = currentPage <= 1;
+            nextBtn.disabled = currentPage >= totalPages;
+            
+            const startRecord = ((currentPage - 1) * itemsPerPage) + 1;
+            const endRecord = Math.min(currentPage * itemsPerPage, totalItems);
+            pageInfo.textContent = `Página ${currentPage} de ${totalPages} (${startRecord}-${endRecord} de ${totalItems})`;
+        }
+
+        // Load animals
+        async function loadAnimals() {
+            try {
+                showLoading(true);
+                hideMessages();
+                
+                const data = await api('/api/admin/animals');
+                if (!data) return;
+                
+                allAnimals = data.animals || data;
+                displayAnimals(allAnimals);
+                populateAnimalDropdown(allAnimals);
+            } catch (e) {
+                console.error('Error loading animals:', e);
+                showError('No se pudieron cargar los animales.');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Load owners
+        async function loadOwners() {
+            try {
+                const data = await api('/api/admin/owners');
+                if (!data) return;
+                
+                allOwners = data.owners || data;
+                const select = document.getElementById('ownerFilter');
+                select.innerHTML = '<option value="">-- Todos los propietarios --</option>';
+                
+                allOwners.forEach(owner => {
+                    const option = document.createElement('option');
+                    option.value = owner.id_propietario;
+                    option.textContent = owner.nombre_completo || `${owner.nombres} ${owner.apellidos}`;
+                    select.appendChild(option);
+                });
+            } catch (e) {
+                console.error('Error loading owners:', e);
+            }
+        }
+
+        // Load species
+        async function loadSpecies() {
+            try {
+                const data = await api('/api/animals/especies/list');
+                if (!data) return;
+                
+                allSpecies = data.especies || data;
+                const select = document.getElementById('animal_especie');
+                select.innerHTML = '<option value="">Seleccione una especie...</option>';
+                
+                allSpecies.forEach(species => {
+                    const option = document.createElement('option');
+                    option.value = species.id_especie;
+                    option.textContent = species.nombre_especie;
+                    select.appendChild(option);
+                });
+            } catch (e) {
+                console.error('Error loading species:', e);
+            }
+        }
+
+        // Load races by species
+        async function loadRacesBySpecies() {
+            const speciesId = document.getElementById('animal_especie').value;
+            const raceSelect = document.getElementById('animal_raza');
+            
+            raceSelect.innerHTML = '<option value="">Seleccione una raza...</option>';
+            raceSelect.disabled = true;
+            raceSelect.classList.add('bg-gray-200', 'dark:bg-accent/20', 'cursor-not-allowed');
+            raceSelect.classList.remove('bg-background-light', 'dark:bg-accent/30');
+            
+            if (!speciesId) return;
+            
+            try {
+                const data = await api(`/api/animals/razas/especie/${speciesId}`);
+                if (!data) return;
+                
+                allRaces = data.razas || data;
+                allRaces.forEach(race => {
+                    const option = document.createElement('option');
+                    option.value = race.id_raza;
+                    option.textContent = race.nombre_raza;
+                    raceSelect.appendChild(option);
+                });
+                
+                // Enable race select
+                raceSelect.disabled = false;
+                raceSelect.classList.remove('bg-gray-200', 'dark:bg-accent/20', 'cursor-not-allowed');
+                raceSelect.classList.add('bg-background-light', 'dark:bg-accent/30');
+            } catch (e) {
+                console.error('Error loading races:', e);
+            }
+        }
+
+        // Populate animal dropdown
+        function populateAnimalDropdown(animals) {
+            const select = document.getElementById('animalSelect');
+            select.innerHTML = '<option value="">-- Seleccione un animal --</option>';
+            
+            animals.forEach(animal => {
+                const option = document.createElement('option');
+                option.value = animal.id_animal;
+                option.textContent = `${animal.nombre_animal} (${animal.propietario_nombre})`;
+                select.appendChild(option);
+            });
+        }
+
+        // Filter animals by owner
+        function filterAnimals() {
+            const ownerId = document.getElementById('ownerFilter').value;
+            let filteredAnimals = allAnimals;
+            
+            if (ownerId) {
+                filteredAnimals = allAnimals.filter(animal => animal.id_propietario == ownerId);
+            }
+            
+            currentPage = 1; // Reset to first page
+            displayAnimals(filteredAnimals);
+            populateAnimalDropdown(filteredAnimals);
+        }
+
+        // Select animal from card or dropdown
+        async function selectAnimal(animalId) {
+            try {
+                const animal = allAnimals.find(a => a.id_animal == animalId);
+                if (!animal) return;
+                
+                currentAnimalId = animalId;
+                
+                // Fill form
+                document.getElementById('animal_nombre').value = animal.nombre_animal;
+                document.getElementById('animal_edad').value = animal.edad;
+                document.getElementById('animal_especie').value = animal.id_especie;
+                
+                // Load races for the species
+                await loadRacesBySpecies();
+                
+                // Set race after races are loaded
+                setTimeout(() => {
+                    document.getElementById('animal_raza').value = animal.id_raza;
+                }, 100);
+                
+                // Update dropdown
+                document.getElementById('animalSelect').value = animalId;
+                
+                // Check for analyses
+                await checkAnimalAnalyses(animalId);
+                
+                showSuccess('Animal seleccionado para editar.');
+                
+            } catch (e) {
+                console.error('Error selecting animal:', e);
+                showError('Error al seleccionar el animal.');
+            }
+        }
+
+        // Select animal from dropdown
+        function selectAnimalFromDropdown() {
+            const animalId = document.getElementById('animalSelect').value;
+            if (animalId) {
+                selectAnimal(animalId);
+            } else {
+                clearForm();
+            }
+        }
+
+        // Check animal analyses
+        async function checkAnimalAnalyses(animalId) {
+            try {
+                const data = await api(`/api/admin/analyses/byAnimal/${animalId}`);
+                if (!data) return;
+                
+                const analyses = data.analyses || data;
+                const warningDiv = document.getElementById('analysisWarning');
+                const warningText = document.getElementById('analysisWarningText');
+                
+                if (analyses.length > 0) {
+                    const statuses = analyses.map(a => a.estado || a.nombre_estado).join(', ');
+                    warningText.textContent = `Este animal tiene ${analyses.length} análisis: ${statuses}`;
+                    warningDiv.classList.remove('hidden');
+                } else {
+                    warningDiv.classList.add('hidden');
+                }
+            } catch (e) {
+                console.error('Error checking analyses:', e);
+            }
+        }
+
+        // Clear form
+        function clearForm() {
+            currentAnimalId = null;
+            document.getElementById('editAnimalForm').reset();
+            document.getElementById('animal_raza').innerHTML = '<option value="">Primero seleccione una especie...</option>';
+            document.getElementById('animal_raza').disabled = true;
+            document.getElementById('animal_raza').classList.add('bg-gray-200', 'dark:bg-accent/20', 'cursor-not-allowed');
+            document.getElementById('animal_raza').classList.remove('bg-background-light', 'dark:bg-accent/30');
+            document.getElementById('analysisWarning').classList.add('hidden');
+            hideMessages();
+        }
+
+        // Delete animal
+        async function deleteAnimal(animalId, animalName) {
+            if (!confirm(`¿Estás seguro de que quieres eliminar el animal "${animalName}"?`)) {
+                return;
+            }
+            
+            try {
+                await api(`/api/admin/animals/${animalId}`, { method: 'DELETE' });
+                showSuccess('Animal eliminado correctamente.');
+                loadAnimals();
+                clearForm();
+            } catch (e) {
+                console.error('Error deleting animal:', e);
+                showError('Error al eliminar el animal.');
+            }
+        }
+
+        // Delete selected animal
+        async function deleteSelectedAnimal() {
+            if (!currentAnimalId) {
+                showError('Selecciona un animal para eliminar.');
+                return;
+            }
+            
+            const animal = allAnimals.find(a => a.id_animal == currentAnimalId);
+            if (!animal) {
+                showError('Animal no encontrado.');
+                return;
+            }
+            
+            if (!confirm(`¿Estás seguro de que quieres eliminar el animal "${animal.nombre_animal}"?`)) {
+                return;
+            }
+            
+            try {
+                await api(`/api/admin/animals/${currentAnimalId}`, { method: 'DELETE' });
+                showSuccess('Animal eliminado correctamente.');
+                loadAnimals();
+                clearForm();
+            } catch (e) {
+                console.error('Error deleting animal:', e);
+                showError('Error al eliminar el animal.');
+            }
+        }
+
+        // Show message
+        function showMessage(message, type) {
+            const messageDiv = type === 'success' ? document.getElementById('successMessage') : document.getElementById('errorMessage');
+            const textDiv = type === 'success' ? document.getElementById('successText') : document.getElementById('errorText');
+            
+            textDiv.textContent = message;
+            messageDiv.classList.remove('hidden');
+            
+            setTimeout(() => {
+                messageDiv.classList.add('hidden');
+            }, 5000);
+        }
+
+        function showSuccess(message) {
+            showMessage(message, 'success');
+        }
+
+        function showError(message) {
+            showMessage(message, 'error');
+        }
+
+        function hideMessages() {
+            document.getElementById('successMessage').classList.add('hidden');
+            document.getElementById('errorMessage').classList.add('hidden');
+        }
+
+        function showLoading(show) {
+            const loading = document.getElementById('loadingMessage');
+            if (show) {
+                loading.classList.remove('hidden');
+            } else {
+                loading.classList.add('hidden');
+            }
+        }
+
+        // Logout
+        function logout() {
+            sessionManager.logout();
+            window.location.href = '/admin/recomended/login';
+        }
+
+        // Mobile menu toggle
         function toggleMobileMenu() {
             const menu = document.getElementById('mobileMenu');
             menu.classList.toggle('hidden');
         }
 
-        function logout() {
-            if (confirm('¿Estás seguro de que quieres cerrar sesión?')) {
-                sessionManager.token = null;
-                sessionManager.user = null;
-                localStorage.removeItem('token');
-                localStorage.removeItem('user');
-                window.location.href = '/admin/recomended/login';
+        // Change page
+        function changePage(direction) {
+            if (direction === 'prev' && currentPage > 1) {
+                currentPage--;
+            } else if (direction === 'next' && currentPage < totalPages) {
+                currentPage++;
             }
+            
+            const ownerId = document.getElementById('ownerFilter').value;
+            let filteredAnimals = allAnimals;
+            
+            if (ownerId) {
+                filteredAnimals = allAnimals.filter(animal => animal.id_propietario == ownerId);
+            }
+            
+            displayAnimals(filteredAnimals);
         }
+
+        // Event listeners
+        document.getElementById('ownerFilter').addEventListener('change', filterAnimals);
+        document.getElementById('animalSelect').addEventListener('change', selectAnimalFromDropdown);
+        document.getElementById('animal_especie').addEventListener('change', loadRacesBySpecies);
+        document.getElementById('prevBtn').addEventListener('click', () => changePage('prev'));
+        document.getElementById('nextBtn').addEventListener('click', () => changePage('next'));
+        
+        document.getElementById('editAnimalForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            if (!currentAnimalId) {
+                showError('Selecciona un animal para editar.');
+                return;
+            }
+            
+            try {
+                const formData = {
+                    nombre_animal: document.getElementById('animal_nombre').value,
+                    edad: parseInt(document.getElementById('animal_edad').value),
+                    id_especie: parseInt(document.getElementById('animal_especie').value),
+                    id_raza: parseInt(document.getElementById('animal_raza').value)
+                };
+                
+                await api(`/api/admin/animals/${currentAnimalId}`, {
+                    method: 'PUT',
+                    body: JSON.stringify(formData)
+                });
+                
+                showSuccess('Animal actualizado correctamente.');
+                loadAnimals();
+                
+            } catch (e) {
+                console.error('Error updating animal:', e);
+                showError('Error al actualizar el animal.');
+            }
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Set admin name
+            const adminName = localStorage.getItem('adminName') || 'Administrador';
+            document.getElementById('adminName').textContent = adminName;
+            document.getElementById('adminNameMobile').textContent = adminName;
+            
+            await Promise.all([
+                loadOwners(),
+                loadSpecies(),
+                loadAnimals()
+            ]);
+        });
     </script>
 </body>
 </html>

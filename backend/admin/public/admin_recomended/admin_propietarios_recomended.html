@@ -99,10 +99,20 @@
                 </div>
 
                 <!-- Paginación -->
-                <div class="flex justify-center items-center space-x-4 mb-12">
-                    <button id="prevBtn" class="px-3 py-1 rounded bg-accent/80 text-white hover:bg-accent disabled:opacity-50" disabled>Anterior</button>
-                    <span id="pageInfo" class="font-semibold">Página 1 de 1</span>
-                    <button id="nextBtn" class="px-3 py-1 rounded bg-accent/80 text-white hover:bg-accent">Siguiente</button>
+                <div class="bg-card-light dark:bg-card-dark p-4 rounded-lg shadow-custom dark:shadow-custom-dark mb-8">
+                    <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <div class="text-sm text-text-secondary-light dark:text-text-secondary-dark">
+                            <span id="pageInfo">Página 1 de 1</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button id="prevBtn" class="px-3 py-2 text-sm font-medium text-text-light dark:text-text-dark bg-background-light dark:bg-accent/30 border border-gray-300 dark:border-accent rounded-lg hover:bg-gray-50 dark:hover:bg-accent/50 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                                Anterior
+                            </button>
+                            <button id="nextBtn" class="px-3 py-2 text-sm font-medium text-text-light dark:text-text-dark bg-background-light dark:bg-accent/30 border border-gray-300 dark:border-accent rounded-lg hover:bg-gray-50 dark:hover:bg-accent/50 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                                Siguiente
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Formulario de Edición -->
@@ -171,6 +181,7 @@
     
     <script>
         let currentPropietarioId = null;
+        let allPropietarios = [];
         let currentPage = 1;
         let totalPages = 1;
         const itemsPerPage = 10;
@@ -257,13 +268,13 @@
                 if (!data) return;
                 
                 const container = document.getElementById('propietariosContainer');
-                const propietarios = data.owners || [];
+                allPropietarios = data.owners || [];
                 
                 // Calculate pagination
-                totalPages = Math.ceil(propietarios.length / itemsPerPage);
+                totalPages = Math.ceil(allPropietarios.length / itemsPerPage);
                 const startIndex = (currentPage - 1) * itemsPerPage;
                 const endIndex = startIndex + itemsPerPage;
-                const paginatedPropietarios = propietarios.slice(startIndex, endIndex);
+                const paginatedPropietarios = allPropietarios.slice(startIndex, endIndex);
                 
                 // Render cards
                 container.innerHTML = paginatedPropietarios.map(createPropietarioCard).join('');
@@ -272,7 +283,7 @@
                 updatePagination();
                 
                 // Populate dropdown
-                populatePropietarioDropdown(propietarios);
+                populatePropietarioDropdown(allPropietarios);
                 
             } catch (error) {
                 console.error('Error loading propietarios:', error);
@@ -286,9 +297,12 @@
             const nextBtn = document.getElementById('nextBtn');
             const pageInfo = document.getElementById('pageInfo');
             
-            prevBtn.disabled = currentPage === 1;
-            nextBtn.disabled = currentPage === totalPages;
-            pageInfo.textContent = `Página ${currentPage} de ${totalPages}`;
+            prevBtn.disabled = currentPage <= 1;
+            nextBtn.disabled = currentPage >= totalPages;
+            
+            const startRecord = ((currentPage - 1) * itemsPerPage) + 1;
+            const endRecord = Math.min(currentPage * itemsPerPage, allPropietarios.length);
+            pageInfo.textContent = `Página ${currentPage} de ${totalPages} (${startRecord}-${endRecord} de ${allPropietarios.length})`;
         }
 
         // Populate dropdown

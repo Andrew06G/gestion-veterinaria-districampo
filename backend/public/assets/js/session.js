@@ -18,6 +18,11 @@ class SessionManager {
     return this.token;
   }
 
+  // Obtener el token de administrador
+  getAdminToken() {
+    return localStorage.getItem('adminToken');
+  }
+
   // Obtener información del usuario
   getUser() {
     return this.user;

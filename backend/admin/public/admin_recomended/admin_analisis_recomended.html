@@ -123,6 +123,23 @@
                     <!-- Las tarjetas se cargarán dinámicamente aquí -->
                 </div>
 
+                <!-- Pagination -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 mb-8">
+                    <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <div class="text-sm text-gray-600 dark:text-gray-400">
+                            <span id="pageInfo">Página 1 de 1</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button id="prevBtn" class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                                Anterior
+                            </button>
+                            <button id="nextBtn" class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                                Siguiente
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Mensaje cuando no hay análisis -->
                 <div id="noAnalysesMessage" class="hidden text-center py-12">
                     <span class="material-symbols-outlined text-6xl text-text-secondary-light dark:text-text-secondary-dark mb-4">science</span>
@@ -130,12 +147,6 @@
                     <p class="text-text-secondary-light dark:text-text-secondary-dark">No se encontraron análisis con los filtros aplicados.</p>
                 </div>
 
-                <!-- Paginación -->
-                <div id="paginationContainer" class="hidden flex justify-center items-center space-x-4 mb-12">
-                    <button id="prevBtn" class="px-3 py-1 rounded bg-accent/80 text-white hover:bg-accent disabled:opacity-50" disabled>Anterior</button>
-                    <span id="pageInfo" class="font-semibold">Página 1 de 1</span>
-                    <button id="nextBtn" class="px-3 py-1 rounded bg-accent/80 text-white hover:bg-accent">Siguiente</button>
-                </div>
 
                 <!-- Formulario de Actualización -->
                 <div class="bg-card-light dark:bg-card-dark p-6 sm:p-8 rounded-lg shadow-custom dark:shadow-custom-dark">
