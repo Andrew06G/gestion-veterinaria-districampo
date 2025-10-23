@@ -170,7 +170,7 @@ app.get('/admin/recomended/analisis', (req, res) => {
 });
 
 app.get('/admin/recomended/registro-admin', (req, res) => {
-  res.sendFile(path.join(__dirname, 'admin', 'public', 'admin_recomended', 'admin_registro_recomended.html'));
+  res.sendFile(path.join(__dirname, 'admin', 'public', 'admin_recomended', 'admin_register_recomended.html'));
 });
 
 app.get('/admin/recomended/login', (req, res) => {

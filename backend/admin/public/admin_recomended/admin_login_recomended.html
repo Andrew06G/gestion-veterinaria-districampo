@@ -3,15 +3,16 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Login Admin - DistriCampo</title>
+<title>DistriCampo - Inicio de Sesión Administrador</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
 <style>
         .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0,
-            'wght' 400,
-            'GRAD' 0,
-            'opsz' 24
+          font-variation-settings:
+          'FILL' 0,
+          'wght' 400,
+          'GRAD' 0,
+          'opsz' 24
         }
     </style>
 <script>
@@ -20,16 +21,15 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: '#0A74DA',
-                        "background-light": "#F0F4F8",
-                        "background-dark": "#0D1B2A",
+                        primary: '#0A74DA', // A deep blue for the primary color
+                        "background-light": "#F9FAFB",
+                        "background-dark": "#1F2937",
                         "card-light": "#FFFFFF",
-                        "card-dark": "#1B263B",
-                        "text-light": "#0D1B2A",
-                        "text-dark": "#E0E1DD",
-                        "text-secondary-light": "#4A5568",
-                        "text-secondary-dark": "#A0AEC0",
-                        "accent": "#415A77",
+                        "card-dark": "#374151",
+                        "text-light": "#111827",
+                        "text-dark": "#F3F4F6",
+                        "text-secondary-light": "#6B7280",
+                        "text-secondary-dark": "#D1D5DB",
                     },
                     fontFamily: {
                         display: ["Poppins", "sans-serif"],
@@ -37,10 +37,6 @@
                     borderRadius: {
                         DEFAULT: "0.75rem",
                     },
-                    boxShadow: {
-                        'custom': '0 10px 20px -5px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
-                        'custom-dark': '0 10px 20px -5px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.3)',
-                    }
                 },
             },
         };
@@ -51,67 +47,85 @@
 </head>
 <body class="bg-background-light dark:bg-background-dark font-display text-text-light dark:text-text-dark">
 <div class="relative min-h-screen">
-<div class="absolute inset-0 z-0 opacity-20 dark:opacity-10">
-            <img alt="Administrador veterinario" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAlOwJnqPkA5XKQssv11KVfWntOqGLD96SOJAxVBjKwSldhOnKTotflxhfewymIbl3GEQucn_oT9iwkxekKcF9PXYo-pK92Fd5S09TlIEp-fGDdPmOkmiubJcVxy9XoR2QwHFKeyo6EtB4tF5Vld1JyvKSgDbTudTiSv-jbOqfbCzVvYe2OyGJWX6ehykxD9hHqLMOQG1pVNlMlTfEpKDvU8_QGoMvI3y9MOl9COWiLHVhUMWeJAgXibr3Sshb34Eq1oOZQTljE9X2Y"/>
-<div class="absolute inset-0 bg-gradient-to-t from-background-light via-background-light to-transparent dark:from-background-dark dark:via-background-dark"></div>
+<div class="absolute inset-0 z-0">
+<img alt="Veterinario examinando un perro" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAtWRSNTbeuUmLxhqrm3MzaBtJA_OMjNqomLocVz5QLAoCxaz2Hdq7uxdJ6cGm8X85wW6VdQJUPNOcpqf0vGc2Qonq2bLUhBhH_vBhQ0pbPs_TBdTU_cKD85wkV7oIUnpyDSJr4ufysol_UrrIaKpSPS0qrKY8LFSHgpGM2gjtT_VB9TuXaojQCbb3d6yvE5UpGtpsZXhJmQMBN0QWoaDX3lWZ-YTSaCUo-lvE_H4hqoQZGg_jTQVjmkLDoQ19uDB1k4OOUqiZhn2IS"/>
+<div class="absolute inset-0 bg-black bg-opacity-60"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-background-light via-transparent to-transparent dark:from-background-dark"></div>
 </div>
-        
-<div class="relative z-10 flex items-center justify-center min-h-screen p-4">
-                <div class="w-full max-w-md">
-                    <!-- Login Card -->
-                    <div class="bg-card-light dark:bg-card-dark rounded-xl shadow-custom dark:shadow-custom-dark p-8 border">
-                        <div class="text-center mb-8">
-                            <span class="material-symbols-outlined text-primary text-6xl mb-4 block">admin_panel_settings</span>
-                            <h1 class="text-3xl font-bold text-text-light dark:text-text-dark mb-2">Admin Login</h1>
-                            <p class="text-text-secondary-light dark:text-text-secondary-dark">Accede al panel administrativo</p>
-                        </div>
+<div class="relative z-10 flex flex-col min-h-screen">
+<header class="py-6 px-4 sm:px-6 lg:px-8">
+<nav class="container mx-auto flex justify-between items-center">
+<div class="flex items-center space-x-2">
+<span class="material-symbols-outlined text-white text-4xl">admin_panel_settings</span>
+<a class="text-2xl font-bold text-white" href="#">DistriCampo Admin</a>
+</div>
+<div class="hidden lg:flex items-center space-x-6 text-white font-medium">
+</div>
+<button class="lg:hidden text-white">
+<span class="material-symbols-outlined text-3xl">
+                        menu
+                    </span>
+</button>
+</nav>
+</header>
+<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center text-center">
+<div class="bg-white/10 backdrop-blur-md p-8 sm:p-12 rounded-2xl shadow-2xl max-w-md w-full">
+<h1 class="text-3xl font-bold text-white mb-8">Inicio de Sesión para Administradores</h1>
 
-                        <!-- Success Message -->
-                        <div id="successMessage" class="hidden mb-4 p-4 bg-green-100 dark:bg-green-900/30 border border-green-300 dark:border-green-700 rounded-lg">
-                            <div class="flex items-center">
-                                <span class="material-symbols-outlined text-green-600 mr-2">check_circle</span>
-                                <p class="text-green-800 dark:text-green-200 text-sm font-medium" id="successText"></p>
-                            </div>
-                        </div>
+<!-- Success Message -->
+<div id="successMessage" class="hidden mb-4 p-4 bg-green-100 dark:bg-green-900/30 border border-green-300 dark:border-green-700 rounded-lg">
+    <div class="flex items-center">
+        <span class="material-symbols-outlined text-green-600 mr-2">check_circle</span>
+        <p class="text-green-800 dark:text-green-200 text-sm font-medium" id="successText"></p>
+    </div>
+</div>
 
-                        <!-- Error Message -->
-                        <div id="errorMessage" class="hidden mb-4 p-4 bg-red-100 dark:bg-red-900/30 border border-red-300 dark:border-red-700 rounded-lg">
-                            <div class="flex items-center">
-                                <span class="material-symbols-outlined text-red-600 mr-2">error</span>
-                                <p class="text-red-800 dark:text-red-200 text-sm font-medium" id="errorText"></p>
-                            </div>
-                        </div>
+<!-- Error Message -->
+<div id="errorMessage" class="hidden mb-4 p-4 bg-red-100 dark:bg-red-900/30 border border-red-300 dark:border-red-700 rounded-lg">
+    <div class="flex items-center">
+        <span class="material-symbols-outlined text-red-600 mr-2">error</span>
+        <p class="text-red-800 dark:text-red-200 text-sm font-medium" id="errorText"></p>
+    </div>
+</div>
 
-                        <form id="adminLoginForm" class="space-y-6">
-                            <div>
-                                <label for="correo" class="block text-sm font-medium text-text-light dark:text-text-dark mb-2">Correo Electrónico</label>
-                                <input type="email" id="correo" name="correo" required
-                                    class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-800 text-text-light dark:text-text-dark"
-                                    placeholder="admin@districampo.com">
-                            </div>
+<form id="adminLoginForm" class="space-y-6">
+<div>
+<label class="block text-sm font-medium text-gray-200 text-left mb-2" for="correo">Correo Electrónico</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                                email
+                            </span>
+<input class="w-full bg-gray-700/50 border-gray-600 text-white rounded-lg pl-10 pr-4 py-3 focus:ring-primary focus:border-primary" 
+       id="correo" name="correo" placeholder="admin@districampo.com" type="email" required/>
+</div>
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-200 text-left mb-2" for="contrasena">Contraseña</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                                lock
+                            </span>
+<input class="w-full bg-gray-700/50 border-gray-600 text-white rounded-lg pl-10 pr-4 py-3 focus:ring-primary focus:border-primary" 
+       id="contrasena" name="contrasena" placeholder="••••••••" type="password" required/>
+</div>
+</div>
+<div>
+<button class="w-full bg-primary text-white py-3 px-6 rounded-full font-bold text-lg hover:bg-opacity-90 transition-transform transform hover:scale-105" 
+        type="submit" id="loginBtn">
+    <span id="loginBtnText">Iniciar Sesión</span>
+    <span id="loginBtnLoading" class="hidden">
+        <span class="material-symbols-outlined text-sm mr-2 animate-spin">refresh</span>
+        Iniciando...
+    </span>
+</button>
+</div>
+</form>
 
-                            <div>
-                                <label for="contrasena" class="block text-sm font-medium text-text-light dark:text-text-dark mb-2">Contraseña</label>
-                                <input type="password" id="contrasena" name="contrasena" required
-                                    class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-800 text-text-light dark:text-text-dark"
-                                    placeholder="••••••••">
-                            </div>
-
-                            <button type="submit" id="loginBtn"
-                                class="w-full bg-primary text-white py-3 px-4 rounded-lg font-semibold hover:bg-opacity-90 transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">
-                                <span id="loginBtnText">Iniciar Sesión</span>
-                                <span id="loginBtnLoading" class="hidden">
-                                    <span class="material-symbols-outlined text-sm mr-2 animate-spin">refresh</span>
-                                    Iniciando...
-                                </span>
-                            </button>
-                        </form>
-
-                        <div class="mt-6 text-center">
-                            <a href="/admin/login" class="text-sm text-primary hover:underline">¿Problemas para acceder? Usa el login oficial</a>
-                        </div>
-                    </div>
-                </div>
+<div class="mt-6 text-center">
+    <a href="/admin/login" class="text-sm text-gray-300 hover:text-white hover:underline">¿Problemas para acceder? Usa el login oficial</a>
+</div>
+</div>
+</main>
 </div>
 </div>
 
@@ -143,7 +157,7 @@
             try {
                 const formData = new FormData(this);
                 const data = {
-                    correo: formData.get('correo'),
+                    correo_electronico: formData.get('correo'),
                     contrasena: formData.get('contrasena')
                 };
 
@@ -157,7 +171,7 @@
 
                 const result = await response.json();
 
-                if (response.ok) {
+                if (response.ok && result.success) {
                     // Store admin token and user data
                     localStorage.setItem('adminToken', result.token);
                     localStorage.setItem('adminUser', JSON.stringify(result.admin));

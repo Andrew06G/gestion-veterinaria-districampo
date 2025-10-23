@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Registro de Administrador - DistriCampo Admin</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0,
+            'wght' 400,
+            'GRAD' 0,
+            'opsz' 24
+        }
+        
+        .loading {
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#0A74DA',
+                        "background-light": "#F0F4F8",
+                        "background-dark": "#0D1B2A",
+                        "card-light": "#FFFFFF",
+                        "card-dark": "#1B263B",
+                        "text-light": "#0D1B2A",
+                        "text-dark": "#E0E1DD",
+                        "text-secondary-light": "#4A5568",
+                        "text-secondary-dark": "#A0AEC0",
+                        "accent": "#415A77",
+                    },
+                    fontFamily: {
+                        display: ["Poppins", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.75rem",
+                    },
+                    boxShadow: {
+                        'custom': '0 10px 20px -5px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+                        'custom-dark': '0 10px 20px -5px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.3)',
+                    }
+                },
+            },
+        };
+    </script>
+    <link href="https://fonts.googleapis.com" rel="preconnect"/>
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-text-light dark:text-text-dark">
+    <div class="relative min-h-screen">
+        <div class="absolute inset-0 z-0 opacity-20 dark:opacity-10">
+            <img alt="Administrador veterinario" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAlOwJnqPkA5XKQssv11KVfWntOqGLD96SOJAxVBjKwSldhOnKTotflxhfewymIbl3GEQucn_oT9iwkxekKcF9PXYo-pK92Fd5S09TlIEp-fGDdPmOkmiubJcVxy9XoR2QwHFKeyo6EtB4tF5Vld1JyvKSgDbTudTiSv-jbOqfbCzVvYe2OyGJWX6ehykxD9hHqLMOQG1pVNlMlTfEpKDvU8_QGoMvI3y9MOl9COWiLHVhUMWeJAgXibr3Sshb34Eq1oOZQTljE9X2Y"/>
+            <div class="absolute inset-0 bg-gradient-to-t from-background-light via-background-light to-transparent dark:from-background-dark dark:via-background-dark"></div>
+        </div>
+        
+        <div class="relative z-10">
+            <!-- Header -->
+            <header class="py-4 px-4 sm:px-6 lg:px-8 bg-card-light/80 dark:bg-card-dark/80 backdrop-blur-sm shadow-md">
+                <nav class="container mx-auto flex justify-between items-center">
+                    <div class="flex items-center space-x-2">
+                        <span class="material-symbols-outlined text-primary text-4xl">admin_panel_settings</span>
+                        <a class="text-2xl font-bold text-text-light dark:text-text-dark" href="/admin/recomended/dashboard">DistriCampo Admin</a>
+                    </div>
+                    <div class="hidden lg:flex items-center space-x-6 text-text-light dark:text-text-dark font-medium">
+                        <a class="hover:text-primary transition-colors" href="/admin/recomended/dashboard">Dashboard</a>
+                        <a class="hover:text-primary transition-colors" href="/admin/recomended/propietarios">Propietarios</a>
+                        <a class="hover:text-primary transition-colors" href="/admin/recomended/animales">Animales</a>
+                        <a class="hover:text-primary transition-colors" href="/admin/recomended/analisis">Análisis</a>
+                        <a class="font-bold text-primary" href="#">Registro Admin</a>
+                    </div>
+                    <div class="hidden lg:flex items-center space-x-4">
+                        <div class="text-sm text-text-secondary-light dark:text-text-secondary-dark">
+                            Bienvenido, <span id="adminName" class="font-medium text-text-light dark:text-text-dark"></span>
+                        </div>
+                        <button onclick="logout()" class="bg-accent/80 text-white px-5 py-2 rounded-full font-semibold hover:bg-accent transition-colors">
+                            <span class="material-symbols-outlined text-sm mr-1">logout</span>
+                            Cerrar Sesión
+                        </button>
+                    </div>
+                    <button class="lg:hidden text-text-light dark:text-text-dark" onclick="toggleMobileMenu()">
+                        <span class="material-symbols-outlined text-3xl">menu</span>
+                    </button>
+                </nav>
+                
+                <!-- Mobile Menu -->
+                <div id="mobileMenu" class="lg:hidden hidden mt-4 bg-card-light/90 dark:bg-card-dark/90 backdrop-blur-sm rounded-lg p-4">
+                    <div class="flex flex-col space-y-3">
+                        <a class="text-text-light dark:text-text-dark hover:text-primary transition-colors" href="/admin/recomended/dashboard">Dashboard</a>
+                        <a class="text-text-light dark:text-text-dark hover:text-primary transition-colors" href="/admin/recomended/propietarios">Propietarios</a>
+                        <a class="text-text-light dark:text-text-dark hover:text-primary transition-colors" href="/admin/recomended/animales">Animales</a>
+                        <a class="text-text-light dark:text-text-dark hover:text-primary transition-colors" href="/admin/recomended/analisis">Análisis</a>
+                        <a class="text-primary font-medium" href="#">Registro Admin</a>
+                        <div class="border-t border-gray-300 dark:border-gray-600 pt-3 mt-3">
+                            <div class="text-sm text-text-secondary-light dark:text-text-secondary-dark mb-2">
+                                Bienvenido, <span id="adminNameMobile" class="font-medium text-text-light dark:text-text-dark"></span>
+                            </div>
+                            <button onclick="logout()" class="w-full bg-accent text-white px-4 py-2 rounded-lg font-semibold hover:bg-accent/80 transition-colors">
+                                <span class="material-symbols-outlined text-sm mr-1">logout</span>
+                                Cerrar Sesión
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Main Content -->
+            <main class="container mx-auto p-4 sm:p-6 lg:p-8">
+                <div class="mb-8">
+                    <h1 class="text-4xl font-bold text-text-light dark:text-text-dark mb-2">Registro de Administrador</h1>
+                    <p class="text-text-secondary-light dark:text-text-secondary-dark">Registra nuevos administradores en el sistema</p>
+                </div>
+
+                <!-- Success Message -->
+                <div id="successMessage" class="hidden mb-6 p-4 bg-green-100 dark:bg-green-900/30 border border-green-300 dark:border-green-700 rounded-lg">
+                    <div class="flex items-center">
+                        <span class="material-symbols-outlined text-green-600 dark:text-green-400 mr-2">check_circle</span>
+                        <span class="text-green-800 dark:text-green-200 font-medium" id="successText">Administrador registrado exitosamente</span>
+                    </div>
+                </div>
+
+                <!-- Error Message -->
+                <div id="errorMessage" class="hidden mb-6 p-4 bg-red-100 dark:bg-red-900/30 border border-red-300 dark:border-red-700 rounded-lg">
+                    <div class="flex items-center">
+                        <span class="material-symbols-outlined text-red-600 dark:text-red-400 mr-2">error</span>
+                        <span class="text-red-800 dark:text-red-200 font-medium" id="errorText">Error al registrar administrador</span>
+                    </div>
+                </div>
+
+                <!-- Loading Message -->
+                <div id="loadingMessage" class="hidden mb-6 p-4 bg-blue-100 dark:bg-blue-900/30 border border-blue-300 dark:border-blue-700 rounded-lg">
+                    <div class="flex items-center">
+                        <span class="loading material-symbols-outlined text-blue-600 dark:text-blue-400 mr-2">refresh</span>
+                        <span class="text-blue-800 dark:text-blue-200 font-medium">Registrando administrador...</span>
+                    </div>
+                </div>
+
+                <!-- Registration Form -->
+                <div class="max-w-4xl mx-auto">
+                    <div class="bg-card-light dark:bg-card-dark rounded-xl shadow-custom dark:shadow-custom-dark p-8 border">
+                        <h2 class="text-2xl font-bold mb-6 text-text-light dark:text-text-dark">Información del Administrador</h2>
+                        
+                        <form id="adminRegistrationForm">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block mb-2 text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark" for="nombres">Nombres *</label>
+                                <input class="w-full bg-background-light dark:bg-accent/30 border border-gray-300 dark:border-accent text-text-light dark:text-text-dark text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5" 
+                                       id="nombres" name="nombres" placeholder="Nombres del administrador" type="text" required/>
+                            </div>
+                            <div>
+                                <label class="block mb-2 text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark" for="apellidos">Apellidos *</label>
+                                <input class="w-full bg-background-light dark:bg-accent/30 border border-gray-300 dark:border-accent text-text-light dark:text-text-dark text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5" 
+                                       id="apellidos" name="apellidos" placeholder="Apellidos del administrador" type="text" required/>
+                            </div>
+                            <div>
+                                <label class="block mb-2 text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark" for="correo_electronico">Correo Electrónico *</label>
+                                <input class="w-full bg-background-light dark:bg-accent/30 border border-gray-300 dark:border-accent text-text-light dark:text-text-dark text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5" 
+                                       id="correo_electronico" name="correo_electronico" placeholder="correo@ejemplo.com" type="email" required/>
+                            </div>
+                            <div>
+                                <label class="block mb-2 text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark" for="telefono">Teléfono</label>
+                                <input class="w-full bg-background-light dark:bg-accent/30 border border-gray-300 dark:border-accent text-text-light dark:text-text-dark text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5" 
+                                       id="telefono" name="telefono" placeholder="Número de teléfono" type="tel"/>
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block mb-2 text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark" for="direccion">Dirección</label>
+                                <input class="w-full bg-background-light dark:bg-accent/30 border border-gray-300 dark:border-accent text-text-light dark:text-text-dark text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5" 
+                                       id="direccion" name="direccion" placeholder="Dirección completa" type="text"/>
+                            </div>
+                        </div>
+
+                        <div class="mt-6">
+                            <label class="block mb-2 text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark" for="contrasena">Contraseña *</label>
+                            <input class="w-full bg-background-light dark:bg-accent/30 border border-gray-300 dark:border-accent text-text-light dark:text-text-dark text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5" 
+                                   id="contrasena" name="contrasena" placeholder="Mínimo 8 caracteres" type="password" required minlength="8"/>
+                            
+                            <!-- Password Strength Indicator -->
+                            <div class="mt-2">
+                                <div class="w-full bg-gray-200 dark:bg-accent/20 rounded-full h-2">
+                                    <div id="passwordStrengthBar" class="h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+                                </div>
+                                <div class="mt-1">
+                                    <span id="passwordStrengthText" class="text-sm text-text-secondary-light dark:text-text-secondary-dark">Fortaleza de la contraseña</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Password Requirements -->
+                            <div class="mt-3">
+                                <p class="text-sm text-text-secondary-light dark:text-text-secondary-dark mb-2">La contraseña debe cumplir:</p>
+                                <ul class="text-sm space-y-1">
+                                    <li id="reqLength" class="flex items-center">
+                                        <span class="text-red-500 mr-2">✗</span>
+                                        <span class="text-text-secondary-light dark:text-text-secondary-dark">Mínimo 8 caracteres</span>
+                                    </li>
+                                    <li id="reqLowercase" class="flex items-center">
+                                        <span class="text-red-500 mr-2">✗</span>
+                                        <span class="text-text-secondary-light dark:text-text-secondary-dark">Al menos una minúscula</span>
+                                    </li>
+                                    <li id="reqUppercase" class="flex items-center">
+                                        <span class="text-red-500 mr-2">✗</span>
+                                        <span class="text-text-secondary-light dark:text-text-secondary-dark">Al menos una mayúscula</span>
+                                    </li>
+                                    <li id="reqNumber" class="flex items-center">
+                                        <span class="text-red-500 mr-2">✗</span>
+                                        <span class="text-text-secondary-light dark:text-text-secondary-dark">Al menos un número</span>
+                                    </li>
+                                    <li id="reqSpecial" class="flex items-center">
+                                        <span class="text-red-500 mr-2">✗</span>
+                                        <span class="text-text-secondary-light dark:text-text-secondary-dark">Al menos un carácter especial</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="mt-6">
+                            <label class="block mb-2 text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark" for="confirmar_contrasena">Confirmar Contraseña *</label>
+                            <input class="w-full bg-background-light dark:bg-accent/30 border border-gray-300 dark:border-accent text-text-light dark:text-text-dark text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5" 
+                                   id="confirmar_contrasena" name="confirmar_contrasena" placeholder="Repite la contraseña" type="password" required/>
+                        </div>
+
+                        <div class="mt-6">
+                            <label class="block mb-2 text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark" for="rol">Rol *</label>
+                            <select class="w-full bg-background-light dark:bg-accent/30 border border-gray-300 dark:border-accent text-text-light dark:text-text-dark text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5" 
+                                    id="rol" name="rol" required>
+                                <option value="">Seleccionar rol</option>
+                                <option value="admin">Administrador</option>
+                                <option value="super_admin">Super Administrador</option>
+                            </select>
+                            <p class="mt-1 text-sm text-text-secondary-light dark:text-text-secondary-dark">Los Super Administradores pueden crear otros administradores</p>
+                        </div>
+
+                        <div class="mt-8 flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-4">
+                            <button class="w-full sm:w-auto px-6 py-2.5 text-center text-sm font-medium text-text-light dark:text-text-dark bg-gray-200 dark:bg-accent/50 rounded-full hover:bg-gray-300 dark:hover:bg-accent/80 transition-colors" 
+                                    type="button" onclick="clearForm()">Cancelar</button>
+                            <button class="w-full sm:w-auto px-6 py-2.5 text-center text-sm font-medium text-white bg-primary rounded-full hover:bg-primary/90 focus:ring-4 focus:outline-none focus:ring-primary/50" 
+                                    type="submit" id="submitButton">
+                                <span class="material-symbols-outlined text-sm mr-1">person_add</span>
+                                Registrar Administrador
+                            </button>
+                        </div>
+                        </form>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Include session management -->
+    <script src="../../assets/js/session.js"></script>
+    
+    <script>
+        // Check authentication
+        if (!sessionManager.getAdminToken()) {
+            window.location.href = '/admin/recomended/login';
+        }
+
+        // API helper
+        async function api(path, options = {}) {
+            const token = sessionManager.getAdminToken();
+            if (!token) {
+                window.location.href = '/admin/recomended/login';
+                return;
+            }
+
+            const defaultOptions = {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            };
+
+            const response = await fetch(`/api/admin${path}`, { ...defaultOptions, ...options });
+            
+            if (response.status === 401) {
+                sessionManager.logout();
+                window.location.href = '/admin/recomended/login';
+                return;
+            }
+            
+            if (!response.ok) {
+                const text = await response.text();
+                throw new Error(text || `Error ${response.status}`);
+            }
+            
+            return response.json();
+        }
+
+        // Password strength validation
+        function validatePasswordStrength(password) {
+            const validations = {
+                length: password.length >= 8,
+                lowercase: /[a-z]/.test(password),
+                uppercase: /[A-Z]/.test(password),
+                numbers: /\d/.test(password),
+                special: /[!@#$%^&*(),.?":{}|<>]/.test(password)
+            };
+            
+            const score = Object.values(validations).filter(Boolean).length;
+            const maxScore = Object.keys(validations).length;
+            
+            let strength = 'Débil';
+            let color = 'bg-red-500';
+            
+            if (score >= 4) {
+                strength = 'Fuerte';
+                color = 'bg-green-500';
+            } else if (score >= 2) {
+                strength = 'Media';
+                color = 'bg-yellow-500';
+            }
+            
+            // Update progress bar
+            const percentage = (score / maxScore) * 100;
+            const bar = document.getElementById('passwordStrengthBar');
+            bar.style.width = percentage + '%';
+            bar.className = `h-2 rounded-full transition-all duration-300 ${color}`;
+            document.getElementById('passwordStrengthText').textContent = `Fortaleza: ${strength}`;
+            
+            // Update requirement indicators
+            document.getElementById('reqLength').innerHTML = validations.length ? 
+                '<span class="text-green-500 mr-2">✓</span><span class="text-text-secondary-light dark:text-text-secondary-dark">Mínimo 8 caracteres</span>' : 
+                '<span class="text-red-500 mr-2">✗</span><span class="text-text-secondary-light dark:text-text-secondary-dark">Mínimo 8 caracteres</span>';
+            
+            document.getElementById('reqLowercase').innerHTML = validations.lowercase ? 
+                '<span class="text-green-500 mr-2">✓</span><span class="text-text-secondary-light dark:text-text-secondary-dark">Al menos una minúscula</span>' : 
+                '<span class="text-red-500 mr-2">✗</span><span class="text-text-secondary-light dark:text-text-secondary-dark">Al menos una minúscula</span>';
+            
+            document.getElementById('reqUppercase').innerHTML = validations.uppercase ? 
+                '<span class="text-green-500 mr-2">✓</span><span class="text-text-secondary-light dark:text-text-secondary-dark">Al menos una mayúscula</span>' : 
+                '<span class="text-red-500 mr-2">✗</span><span class="text-text-secondary-light dark:text-text-secondary-dark">Al menos una mayúscula</span>';
+            
+            document.getElementById('reqNumber').innerHTML = validations.numbers ? 
+                '<span class="text-green-500 mr-2">✓</span><span class="text-text-secondary-light dark:text-text-secondary-dark">Al menos un número</span>' : 
+                '<span class="text-red-500 mr-2">✗</span><span class="text-text-secondary-light dark:text-text-secondary-dark">Al menos un número</span>';
+            
+            document.getElementById('reqSpecial').innerHTML = validations.special ? 
+                '<span class="text-green-500 mr-2">✓</span><span class="text-text-secondary-light dark:text-text-secondary-dark">Al menos un carácter especial</span>' : 
+                '<span class="text-red-500 mr-2">✗</span><span class="text-text-secondary-light dark:text-text-secondary-dark">Al menos un carácter especial</span>';
+            
+            return validations;
+        }
+
+        // Clear form
+        function clearForm() {
+            document.getElementById('adminRegistrationForm').reset();
+            document.getElementById('passwordStrengthBar').style.width = '0%';
+            document.getElementById('passwordStrengthBar').className = 'h-2 rounded-full transition-all duration-300 bg-gray-200 dark:bg-accent/20';
+            document.getElementById('passwordStrengthText').textContent = 'Fortaleza de la contraseña';
+            
+            // Reset requirement indicators
+            document.querySelectorAll('[id^="req"]').forEach(el => {
+                el.innerHTML = el.innerHTML.replace('✓', '✗').replace('text-green-500', 'text-red-500');
+            });
+            
+            hideMessages();
+        }
+
+        // Show message
+        function showMessage(message, type) {
+            const messageDiv = type === 'success' ? document.getElementById('successMessage') : document.getElementById('errorMessage');
+            const textDiv = type === 'success' ? document.getElementById('successText') : document.getElementById('errorText');
+            
+            textDiv.textContent = message;
+            messageDiv.classList.remove('hidden');
+            
+            setTimeout(() => {
+                messageDiv.classList.add('hidden');
+            }, 5000);
+        }
+
+        function showSuccess(message) {
+            showMessage(message, 'success');
+        }
+
+        function showError(message) {
+            showMessage(message, 'error');
+        }
+
+        function hideMessages() {
+            document.getElementById('successMessage').classList.add('hidden');
+            document.getElementById('errorMessage').classList.add('hidden');
+        }
+
+        function showLoading(show) {
+            const loading = document.getElementById('loadingMessage');
+            const submitBtn = document.getElementById('submitButton');
+            
+            if (show) {
+                loading.classList.remove('hidden');
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span class="loading material-symbols-outlined text-sm mr-1">refresh</span>Registrando...';
+            } else {
+                loading.classList.add('hidden');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<span class="material-symbols-outlined text-sm mr-1">person_add</span>Registrar Administrador';
+            }
+        }
+
+        // Logout
+        function logout() {
+            if (confirm('¿Estás seguro de que quieres cerrar sesión?')) {
+                localStorage.removeItem('adminToken');
+                localStorage.removeItem('adminUser');
+                window.location.href = '/admin/recomended/login';
+            }
+        }
+
+        // Mobile menu toggle
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        // Event listeners
+        document.getElementById('contrasena').addEventListener('input', function() {
+            validatePasswordStrength(this.value);
+        });
+
+        document.getElementById('adminRegistrationForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData.entries());
+
+            // Validate passwords match
+            if (data.contrasena !== data.confirmar_contrasena) {
+                showError('Las contraseñas no coinciden');
+                return;
+            }
+
+            // Validate password strength
+            const passwordValidation = validatePasswordStrength(data.contrasena);
+            const allRequirementsMet = Object.values(passwordValidation).every(Boolean);
+            
+            if (!allRequirementsMet) {
+                showError('La contraseña debe cumplir todos los requisitos de seguridad');
+                return;
+            }
+
+            // Remove confirmar_contrasena from data
+            delete data.confirmar_contrasena;
+
+            try {
+                showLoading(true);
+                hideMessages();
+
+                const result = await api('/create', {
+                    method: 'POST',
+                    body: JSON.stringify(data)
+                });
+
+                if (result.success) {
+                    showSuccess('Administrador registrado exitosamente');
+                    clearForm();
+                } else {
+                    showError(result.message || 'Error al registrar administrador');
+                }
+            } catch (error) {
+                console.error('Error registering admin:', error);
+                showError('Error al registrar administrador. Verifica los datos e intenta nuevamente.');
+            } finally {
+                showLoading(false);
+            }
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set admin name
+            const admin = sessionManager.getUser();
+            if (admin) {
+                document.getElementById('adminName').textContent = admin.nombres + ' ' + admin.apellidos;
+                document.getElementById('adminNameMobile').textContent = admin.nombres + ' ' + admin.apellidos;
+            }
+        });
+    </script>
+</body>
+</html>

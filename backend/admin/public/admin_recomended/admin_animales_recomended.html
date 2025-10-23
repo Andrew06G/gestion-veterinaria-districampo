@@ -634,8 +634,11 @@
 
         // Logout
         function logout() {
-            sessionManager.logout();
-            window.location.href = '/admin/recomended/login';
+            if (confirm('¿Estás seguro de que quieres cerrar sesión?')) {
+                localStorage.removeItem('adminToken');
+                localStorage.removeItem('adminUser');
+                window.location.href = '/admin/recomended/login';
+            }
         }
 
         // Mobile menu toggle
