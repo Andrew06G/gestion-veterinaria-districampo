@@ -70,50 +70,17 @@ app.get('/register', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'pages', 'register.html'));
 });
 
-app.get('/dashboard', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'pages', 'dashboard.html'));
-});
 
-app.get('/animals', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'pages', 'animals.html'));
-});
 
-app.get('/animal-info', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'pages', 'animal_info.html'));
-});
 
-app.get('/solicitar-analisis', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'pages', 'solicitar_analisis.html'));
-});
 
-app.get('/mis-analisis', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'pages', 'mis_analisis.html'));
-});
 
 // Páginas del módulo Admin (estructura modular)
-app.get('/admin', (req, res) => {
-  res.sendFile(path.join(__dirname, 'admin', 'public', 'pages', 'admin_dashboard.html'));
-});
 
-app.get('/admin/login', (req, res) => {
-  res.sendFile(path.join(__dirname, 'admin', 'public', 'pages', 'admin_login.html'));
-});
 
-app.get('/admin/propietarios', (req, res) => {
-  res.sendFile(path.join(__dirname, 'admin', 'public', 'pages', 'admin_propietarios.html'));
-});
 
-app.get('/admin/animales', (req, res) => {
-  res.sendFile(path.join(__dirname, 'admin', 'public', 'pages', 'admin_animales.html'));
-});
 
-app.get('/admin/analisis', (req, res) => {
-  res.sendFile(path.join(__dirname, 'admin', 'public', 'pages', 'admin_analisis.html'));
-});
 
-app.get('/admin/registro', (req, res) => {
-  res.sendFile(path.join(__dirname, 'admin', 'public', 'pages', 'admin_registro.html'));
-});
 
 app.get('/test', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'pages', 'test.html'));

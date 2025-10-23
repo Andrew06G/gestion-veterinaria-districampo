@@ -476,6 +476,12 @@
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
+            // Check authentication
+            if (!sessionManager.getAdminToken()) {
+                window.location.href = '/admin/recomended/login';
+                return;
+            }
+            
             // Set admin name
             const admin = sessionManager.getUser();
             if (admin) {

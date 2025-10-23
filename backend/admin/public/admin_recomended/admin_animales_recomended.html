@@ -704,6 +704,12 @@
 
         // Initialize
         document.addEventListener('DOMContentLoaded', async () => {
+            // Check authentication
+            if (!sessionManager.getAdminToken()) {
+                window.location.href = '/admin/recomended/login';
+                return;
+            }
+            
             // Set admin name
             const adminName = localStorage.getItem('adminName') || 'Administrador';
             document.getElementById('adminName').textContent = adminName;

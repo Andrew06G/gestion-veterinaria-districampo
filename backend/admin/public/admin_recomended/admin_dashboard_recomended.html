@@ -233,7 +233,7 @@
     <script>
         // Check authentication on page load
         document.addEventListener('DOMContentLoaded', function() {
-            if (!localStorage.getItem('adminToken')) {
+            if (!sessionManager.getAdminToken()) {
                 window.location.href = '/admin/recomended/login';
                 return;
             }
@@ -254,12 +254,26 @@
             try {
                 const token = localStorage.getItem('adminToken');
                 
+                // Check if token exists
+                if (!token) {
+                    window.location.href = '/admin/recomended/login';
+                    return;
+                }
+                
                 // Load propietarios count
                 const propietariosResponse = await fetch('/api/admin/propietarios', {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
                 });
+                
+                if (propietariosResponse.status === 401) {
+                    // Token expired or invalid, redirect to login
+                    localStorage.removeItem('adminToken');
+                    localStorage.removeItem('adminUser');
+                    window.location.href = '/admin/recomended/login';
+                    return;
+                }
                 
                 if (propietariosResponse.ok) {
                     const propietarios = await propietariosResponse.json();
@@ -273,6 +287,14 @@
                     }
                 });
                 
+                if (animalesResponse.status === 401) {
+                    // Token expired or invalid, redirect to login
+                    localStorage.removeItem('adminToken');
+                    localStorage.removeItem('adminUser');
+                    window.location.href = '/admin/recomended/login';
+                    return;
+                }
+                
                 if (animalesResponse.ok) {
                     const animales = await animalesResponse.json();
                     document.getElementById('animalesCount').textContent = animales.length;
@@ -285,6 +307,14 @@
                     }
                 });
                 
+                if (analysesResponse.status === 401) {
+                    // Token expired or invalid, redirect to login
+                    localStorage.removeItem('adminToken');
+                    localStorage.removeItem('adminUser');
+                    window.location.href = '/admin/recomended/login';
+                    return;
+                }
+                
                 if (analysesResponse.ok) {
                     const analyses = await analysesResponse.json();
                     document.getElementById('analisisCount').textContent = analyses.length;
@@ -296,6 +326,10 @@
 
             } catch (error) {
                 console.error('Error loading dashboard data:', error);
+                // On any error, redirect to login
+                localStorage.removeItem('adminToken');
+                localStorage.removeItem('adminUser');
+                window.location.href = '/admin/recomended/login';
             }
         }
 
