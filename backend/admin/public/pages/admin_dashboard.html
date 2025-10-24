@@ -66,10 +66,10 @@
 </div>
 <div class="hidden lg:flex items-center space-x-6 text-text-light dark:text-text-dark font-medium">
                         <a class="font-bold text-primary" href="#">Dashboard</a>
-                        <a class="hover:text-primary transition-colors" href="/admin/recomended/propietarios">Propietarios</a>
-                        <a class="hover:text-primary transition-colors" href="/admin/recomended/animales">Animales</a>
-                        <a class="hover:text-primary transition-colors" href="/admin/recomended/analisis">Análisis</a>
-                        <a class="hover:text-primary transition-colors" href="/admin/recomended/registro-admin">Registro Admin</a>
+                        <a class="hover:text-primary transition-colors" href="/admin/propietarios">Propietarios</a>
+                        <a class="hover:text-primary transition-colors" href="/admin/animales">Animales</a>
+                        <a class="hover:text-primary transition-colors" href="/admin/analisis">Análisis</a>
+                        <a class="hover:text-primary transition-colors" href="/admin/registro-admin">Registro Admin</a>
 </div>
 <div class="hidden lg:flex items-center space-x-4">
                         <div class="text-sm text-text-secondary-light dark:text-text-secondary-dark">
@@ -89,10 +89,10 @@
                 <div id="mobileMenu" class="lg:hidden hidden mt-4 bg-card-light/90 dark:bg-card-dark/90 backdrop-blur-sm rounded-lg p-4">
                     <div class="flex flex-col space-y-3">
                         <a class="text-primary font-medium" href="#">Dashboard</a>
-                        <a class="text-text-light dark:text-text-dark hover:text-primary transition-colors" href="/admin/recomended/propietarios">Propietarios</a>
-                        <a class="text-text-light dark:text-text-dark hover:text-primary transition-colors" href="/admin/recomended/animales">Animales</a>
-                        <a class="text-text-light dark:text-text-dark hover:text-primary transition-colors" href="/admin/recomended/analisis">Análisis</a>
-                        <a class="text-text-light dark:text-text-dark hover:text-primary transition-colors" href="/admin/recomended/registro-admin">Registro Admin</a>
+                        <a class="text-text-light dark:text-text-dark hover:text-primary transition-colors" href="/admin/propietarios">Propietarios</a>
+                        <a class="text-text-light dark:text-text-dark hover:text-primary transition-colors" href="/admin/animales">Animales</a>
+                        <a class="text-text-light dark:text-text-dark hover:text-primary transition-colors" href="/admin/analisis">Análisis</a>
+                        <a class="text-text-light dark:text-text-dark hover:text-primary transition-colors" href="/admin/registro-admin">Registro Admin</a>
                         <div class="border-t border-gray-300 dark:border-gray-600 pt-3 mt-3">
                             <div class="text-sm text-text-secondary-light dark:text-text-secondary-dark mb-2">
                                 Bienvenido, <span id="adminNameMobile" class="font-medium text-text-light dark:text-text-dark"></span>
@@ -175,7 +175,7 @@
                             </div>
                             <h3 class="text-lg font-semibold text-text-light dark:text-text-dark mb-2">Propietarios</h3>
                             <p class="text-text-secondary-light dark:text-text-secondary-dark text-sm mb-4">Gestiona los propietarios del sistema</p>
-                            <a href="/admin/recomended/propietarios" class="w-full bg-primary text-white py-2 px-4 rounded-lg font-medium hover:bg-opacity-90 transition-colors inline-block text-center">
+                            <a href="/admin/propietarios" class="w-full bg-primary text-white py-2 px-4 rounded-lg font-medium hover:bg-opacity-90 transition-colors inline-block text-center">
                                 Administrar
                             </a>
                         </div>
@@ -189,7 +189,7 @@
                             </div>
                             <h3 class="text-lg font-semibold text-text-light dark:text-text-dark mb-2">Animales</h3>
                             <p class="text-text-secondary-light dark:text-text-secondary-dark text-sm mb-4">Administra todos los animales</p>
-                            <a href="/admin/recomended/animales" class="w-full bg-green-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-opacity-90 transition-colors inline-block text-center">
+                            <a href="/admin/animales" class="w-full bg-green-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-opacity-90 transition-colors inline-block text-center">
                                 Administrar
                             </a>
                         </div>
@@ -203,7 +203,7 @@
 </div>
                             <h3 class="text-lg font-semibold text-text-light dark:text-text-dark mb-2">Análisis</h3>
                             <p class="text-text-secondary-light dark:text-text-secondary-dark text-sm mb-4">Gestiona los análisis clínicos</p>
-                            <a href="/admin/recomended/analisis" class="w-full bg-yellow-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-opacity-90 transition-colors inline-block text-center">
+                            <a href="/admin/analisis" class="w-full bg-yellow-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-opacity-90 transition-colors inline-block text-center">
                                 Administrar
                             </a>
 </div>
@@ -217,7 +217,7 @@
                             </div>
                             <h3 class="text-lg font-semibold text-text-light dark:text-text-dark mb-2">Registro Admin</h3>
                             <p class="text-text-secondary-light dark:text-text-secondary-dark text-sm mb-4">Registra nuevos administradores</p>
-                            <a href="/admin/recomended/registro-admin" class="w-full bg-purple-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-opacity-90 transition-colors inline-block text-center">
+                            <a href="/admin/registro-admin" class="w-full bg-purple-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-opacity-90 transition-colors inline-block text-center">
                                 Registrar
                             </a>
                         </div>
@@ -234,7 +234,7 @@
         // Check authentication on page load
         document.addEventListener('DOMContentLoaded', function() {
             if (!sessionManager.getAdminToken()) {
-                window.location.href = '/admin/recomended/login';
+                window.location.href = '/admin/login';
                 return;
             }
 
@@ -256,7 +256,7 @@
                 
                 // Check if token exists
                 if (!token) {
-                    window.location.href = '/admin/recomended/login';
+                    window.location.href = '/admin/login';
                     return;
                 }
                 
@@ -271,7 +271,7 @@
                     // Token expired or invalid, redirect to login
                     localStorage.removeItem('adminToken');
                     localStorage.removeItem('adminUser');
-                    window.location.href = '/admin/recomended/login';
+                    window.location.href = '/admin/login';
                     return;
                 }
                 
@@ -291,7 +291,7 @@
                     // Token expired or invalid, redirect to login
                     localStorage.removeItem('adminToken');
                     localStorage.removeItem('adminUser');
-                    window.location.href = '/admin/recomended/login';
+                    window.location.href = '/admin/login';
                     return;
                 }
                 
@@ -311,7 +311,7 @@
                     // Token expired or invalid, redirect to login
                     localStorage.removeItem('adminToken');
                     localStorage.removeItem('adminUser');
-                    window.location.href = '/admin/recomended/login';
+                    window.location.href = '/admin/login';
                     return;
                 }
                 
@@ -329,7 +329,7 @@
                 // On any error, redirect to login
                 localStorage.removeItem('adminToken');
                 localStorage.removeItem('adminUser');
-                window.location.href = '/admin/recomended/login';
+                window.location.href = '/admin/login';
             }
         }
 
@@ -342,7 +342,7 @@
             if (confirm('¿Estás seguro de que quieres cerrar sesión?')) {
                 localStorage.removeItem('adminToken');
                 localStorage.removeItem('adminUser');
-                window.location.href = '/admin/recomended/login';
+                window.location.href = '/admin/login';
             }
         }
     </script>

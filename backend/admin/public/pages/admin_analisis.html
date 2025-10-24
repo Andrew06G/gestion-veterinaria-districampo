@@ -65,11 +65,11 @@
                         <a class="text-2xl font-bold text-text-light dark:text-text-dark" href="../../index.html">DistriCampo Admin</a>
 </div>
 <div class="hidden lg:flex items-center space-x-6 text-text-light dark:text-text-dark font-medium">
-                        <a class="hover:text-primary transition-colors" href="/admin/recomended/dashboard">Dashboard</a>
-                        <a class="hover:text-primary transition-colors" href="/admin/recomended/propietarios">Propietarios</a>
-                        <a class="hover:text-primary transition-colors" href="/admin/recomended/animales">Animales</a>
+                        <a class="hover:text-primary transition-colors" href="/admin/dashboard">Dashboard</a>
+                        <a class="hover:text-primary transition-colors" href="/admin/propietarios">Propietarios</a>
+                        <a class="hover:text-primary transition-colors" href="/admin/animales">Animales</a>
                         <a class="font-bold text-primary" href="#">Análisis</a>
-                        <a class="hover:text-primary transition-colors" href="/admin/recomended/registro-admin">Registro Admin</a>
+                        <a class="hover:text-primary transition-colors" href="/admin/registro-admin">Registro Admin</a>
 </div>
 <div class="hidden lg:flex items-center space-x-4">
                         <div class="text-sm text-text-secondary-light dark:text-text-secondary-dark">
@@ -254,7 +254,7 @@
         // Check authentication on page load
         document.addEventListener('DOMContentLoaded', function() {
             if (!getAdminToken()) {
-                window.location.href = '/admin/recomended/login';
+                window.location.href = '/admin/login';
                 return;
             }
 
@@ -285,7 +285,7 @@
         async function api(path, options = {}) {
             const token = getAdminToken();
             if (!token) {
-                window.location.href = '/admin/recomended/login';
+                window.location.href = '/admin/login';
                 return;
             }
             
@@ -299,7 +299,7 @@
             });
             
             if (response.status === 401) {
-                window.location.href = '/admin/recomended/login';
+                window.location.href = '/admin/login';
                 return;
             }
             
@@ -1059,7 +1059,7 @@
             if (confirm('¿Estás seguro de que quieres cerrar sesión?')) {
                 localStorage.removeItem('adminToken');
                 localStorage.removeItem('adminUser');
-                window.location.href = '/admin/recomended/login';
+                window.location.href = '/admin/login';
             }
         }
     </script>

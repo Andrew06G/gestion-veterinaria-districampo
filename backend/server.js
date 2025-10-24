@@ -23,16 +23,6 @@ app.use(express.static(path.join(__dirname, 'public'), {
   }
 }));
 
-// Servir archivos estáticos del frontend recomendado
-app.use('/recomended/assets', express.static(path.join(__dirname, 'public', 'front_recomended', 'assets'), {
-  setHeaders: (res, path, stat) => {
-    if (path.endsWith('.js')) {
-      res.set('Content-Type', 'application/javascript');
-    } else if (path.endsWith('.css')) {
-      res.set('Content-Type', 'text/css');
-    }
-  }
-}));
 
 // Importar rutas
 const userRoutes = require('./src/routes/userRoutes');
@@ -62,13 +52,6 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-app.get('/login', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'pages', 'login.html'));
-});
-
-app.get('/register', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'pages', 'register.html'));
-});
 
 
 
@@ -86,62 +69,58 @@ app.get('/test', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'pages', 'test.html'));
 });
 
-// Rutas para el frontend recomendado (pruebas)
-app.get('/recomended', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'front_recomended', 'main.html'));
+// Rutas para el frontend principal
+app.get('/login', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'pages', 'login.html'));
 });
 
-app.get('/recomended/login', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'front_recomended', 'login_recomended.html'));
+app.get('/register', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'pages', 'register.html'));
 });
 
-app.get('/recomended/register', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'front_recomended', 'register_recomended.html'));
+app.get('/dashboard', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'pages', 'dashboard.html'));
 });
 
-app.get('/recomended/register-animal', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'front_recomended', 'register_animal_recomended.html'));
+app.get('/animal-info', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'pages', 'animal_info.html'));
 });
 
-app.get('/recomended/dashboard', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'front_recomended', 'dashboard_recomended.html'));
+app.get('/register-animal', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'pages', 'register_animal.html'));
 });
 
-app.get('/recomended/animal-info', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'front_recomended', 'animal_info_recomended.html'));
+app.get('/solicitar-analisis', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'pages', 'solicitar_analisis.html'));
 });
 
-app.get('/recomended/solicitar-analisis', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'front_recomended', 'solicitar_análisis_recomended.html'));
-});
-
-app.get('/recomended/mis-analisis', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'front_recomended', 'mis_análsis.html'));
+app.get('/mis-analisis', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'pages', 'mis_analisis.html'));
 });
 
 // Rutas para Admin Recomendado
-app.get('/admin/recomended/dashboard', (req, res) => {
-  res.sendFile(path.join(__dirname, 'admin', 'public', 'admin_recomended', 'admin_dashboard_recomended.html'));
+app.get('/admin/dashboard', (req, res) => {
+  res.sendFile(path.join(__dirname, 'admin', 'public', 'pages', 'admin_dashboard.html'));
 });
 
-app.get('/admin/recomended/propietarios', (req, res) => {
-  res.sendFile(path.join(__dirname, 'admin', 'public', 'admin_recomended', 'admin_propietarios_recomended.html'));
+app.get('/admin/propietarios', (req, res) => {
+  res.sendFile(path.join(__dirname, 'admin', 'public', 'pages', 'admin_propietarios.html'));
 });
 
-app.get('/admin/recomended/animales', (req, res) => {
-  res.sendFile(path.join(__dirname, 'admin', 'public', 'admin_recomended', 'admin_animales_recomended.html'));
+app.get('/admin/animales', (req, res) => {
+  res.sendFile(path.join(__dirname, 'admin', 'public', 'pages', 'admin_animales.html'));
 });
 
-app.get('/admin/recomended/analisis', (req, res) => {
-  res.sendFile(path.join(__dirname, 'admin', 'public', 'admin_recomended', 'admin_analisis_recomended.html'));
+app.get('/admin/analisis', (req, res) => {
+  res.sendFile(path.join(__dirname, 'admin', 'public', 'pages', 'admin_analisis.html'));
 });
 
-app.get('/admin/recomended/registro-admin', (req, res) => {
-  res.sendFile(path.join(__dirname, 'admin', 'public', 'admin_recomended', 'admin_register_recomended.html'));
+app.get('/admin/registro-admin', (req, res) => {
+  res.sendFile(path.join(__dirname, 'admin', 'public', 'pages', 'admin_register.html'));
 });
 
-app.get('/admin/recomended/login', (req, res) => {
-  res.sendFile(path.join(__dirname, 'admin', 'public', 'admin_recomended', 'admin_login_recomended.html'));
+app.get('/admin/login', (req, res) => {
+  res.sendFile(path.join(__dirname, 'admin', 'public', 'pages', 'admin_login.html'));
 });
 
 // Iniciar servidor
@@ -158,8 +137,8 @@ app.listen(PORT, () => {
   console.log('- /mis-analisis - Mis análisis');
   console.log('- /admin - Admin Dashboard (beta)');
   console.log('- /admin/login - Admin Login (beta)');
-  console.log('- /admin/recomended/dashboard - Admin Dashboard Recomendado');
-  console.log('- /admin/recomended/login - Admin Login Recomendado');
+  console.log('- /admin/dashboard - Admin Dashboard');
+  console.log('- /admin/login - Admin Login');
   console.log('- /api/admin/login - API Login Admin');
   console.log('- /api/admin/profile - API Perfil Admin');
   

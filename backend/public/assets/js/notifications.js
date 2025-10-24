@@ -25,8 +25,8 @@ class NotificationSystem {
   
     // Espera hasta que el navbar esté disponible en el DOM
     waitForNavbar(callback) {
-      // Detectar si estamos en el frontend recomendado
-      this.isRecommendedFrontend = window.location.pathname.includes('/recomended');
+      // Detectar si estamos en el frontend principal (ahora es el recomendado)
+      this.isRecommendedFrontend = !window.location.pathname.includes('/admin');
       
       const navSelector = this.isRecommendedFrontend ? "nav" : "nav.navbar";
       
@@ -636,7 +636,7 @@ class NotificationSystem {
 
       // Redirigir a la vista "Mis análisis" según el frontend
       if (this.isRecommendedFrontend) {
-        window.location.href = "/recomended/mis-analisis";
+        window.location.href = "/mis-analisis";
       } else {
         window.location.href = "/mis-analisis";
       }

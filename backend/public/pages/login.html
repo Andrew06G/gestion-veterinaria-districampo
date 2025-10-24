@@ -1,103 +1,251 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login - DistriCampo</title>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-  <!-- Importación de la fuente Roboto -->
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-  <!-- Archivo de estilos personalizado -->
-  <link rel="stylesheet" href="../assets/css/style.css">
-  <link rel="stylesheet" href="../assets/css/navbar-global.css">
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>DistriCampo - Inicio de Sesión</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0,
+            'wght' 400,
+            'GRAD' 0,
+            'opsz' 24
+        }
+        
+        .loading {
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#0A74DA',
+                        "background-light": "#F9FAFB",
+                        "background-dark": "#1F2937",
+                        "card-light": "#FFFFFF",
+                        "card-dark": "#374151",
+                        "text-light": "#111827",
+                        "text-dark": "#F3F4F6",
+                        "text-secondary-light": "#6B7280",
+                        "text-secondary-dark": "#D1D5DB",
+                    },
+                    fontFamily: {
+                        display: ["Poppins", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.75rem",
+                    },
+                },
+            },
+        };
+    </script>
+    <link href="https://fonts.googleapis.com" rel="preconnect"/>
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
 </head>
-<body>
-  <!-- Barra de navegación -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand" href="#">
-      <strong>DistriCampo</strong>
-    </a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav ml-auto">
-        <li class="nav-item"><a class="nav-link" href="/dashboard">Home</a></li>
-        <li class="nav-item"><a class="nav-link" href="/animals">Registro de Animales</a></li>
-        <li class="nav-item"><a class="nav-link" href="/solicitar-analisis">Solicitar Análisis</a></li>
-      </ul>
+<body class="bg-background-light font-display text-text-light min-h-screen">
+    <div class="relative min-h-screen">
+        <!-- Background Image with Overlay -->
+        <div class="absolute inset-0 z-0">
+            <img alt="Veterinario examinando un perro" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAtWRSNTbeuUmLxhqrm3MzaBtJA_OMjNqomLocVz5QLAoCxaz2Hdq7uxdJ6cGm8X85wW6VdQJUPNOcpqf0vGc2Qonq2bLUhBhH_vBhQ0pbPs_TBdTU_cKD85wkV7oIUnpyDSJr4ufysol_UrrIaKpSPS0qrKY8LFSHgpGM2gjtT_VB9TuXaojQCbb3d6yvE5UpGtpsZXhJmQMBN0QWoaDX3lWZ-YTSaCUo-lvE_H4hqoQZGg_jTQVjmkLDoQ19uDB1k4OOUqiZhn2IS"/>
+            <div class="absolute inset-0 bg-black bg-opacity-60"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-background-light via-transparent to-transparent dark:from-background-dark"></div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="relative z-10 flex items-center justify-center min-h-screen py-12 px-4 sm:px-6 lg:px-8">
+            <div class="max-w-md w-full">
+                <!-- Header -->
+                <div class="text-center mb-8">
+                    <div class="flex items-center justify-center space-x-2 mb-4">
+                        <span class="material-symbols-outlined text-primary text-4xl">pets</span>
+                        <span class="text-2xl font-bold text-white">DistriCampo</span>
+                    </div>
+                    <h2 class="text-3xl font-bold text-white mb-2">Iniciar Sesión</h2>
+                    <p class="text-gray-200">Accede a tu cuenta para gestionar tus mascotas</p>
+                </div>
+
+                <!-- Success Message -->
+                <div id="successMessage" class="hidden mb-6 p-4 bg-green-100 dark:bg-green-900/30 border border-green-300 dark:border-green-700 rounded-lg">
+                    <div class="flex items-center">
+                        <span class="material-symbols-outlined text-green-600 dark:text-green-400 mr-2">check_circle</span>
+                        <span class="text-green-800 dark:text-green-200 font-medium" id="successText">Inicio de sesión exitoso</span>
+                    </div>
+                </div>
+
+                <!-- Error Message -->
+                <div id="errorMessage" class="hidden mb-6 p-4 bg-red-100 dark:bg-red-900/30 border border-red-300 dark:border-red-700 rounded-lg">
+                    <div class="flex items-center">
+                        <span class="material-symbols-outlined text-red-600 dark:text-red-400 mr-2">error</span>
+                        <span class="text-red-800 dark:text-red-200 font-medium" id="errorText">Error al iniciar sesión</span>
+                    </div>
+                </div>
+
+                <!-- Loading Message -->
+                <div id="loadingMessage" class="hidden mb-6 p-4 bg-blue-100 dark:bg-blue-900/30 border border-blue-300 dark:border-blue-700 rounded-lg">
+                    <div class="flex items-center">
+                        <span class="loading material-symbols-outlined text-blue-600 dark:text-blue-400 mr-2">refresh</span>
+                        <span class="text-blue-800 dark:text-blue-200 font-medium">Iniciando sesión...</span>
+                    </div>
+                </div>
+
+                <!-- Login Form -->
+                <div class="bg-white/10 backdrop-blur-sm rounded-xl shadow-2xl p-8">
+                    <form id="loginForm" class="space-y-6">
+                        <div>
+                            <label for="correoElectronico" class="block text-sm font-medium text-white mb-2">Correo Electrónico</label>
+                            <div class="relative">
+                                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">mail</span>
+                                <input type="email" id="correoElectronico" name="correoElectronico" required 
+                                       class="w-full pl-10 pr-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                                       placeholder="tu@email.com">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="contrasena" class="block text-sm font-medium text-white mb-2">Contraseña</label>
+                            <div class="relative">
+                                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">lock</span>
+                                <input type="password" id="contrasena" name="contrasena" required 
+                                       class="w-full pl-10 pr-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                                       placeholder="Tu contraseña">
+                            </div>
+                        </div>
+
+                        <button type="submit" id="submitBtn"
+                                class="w-full bg-primary text-white py-3 px-4 rounded-lg font-semibold hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                            <span id="submitText">Iniciar Sesión</span>
+                        </button>
+                    </form>
+
+                    <!-- Register Link -->
+                    <div class="mt-6 text-center">
+                        <p class="text-white">
+                            ¿No tienes una cuenta? 
+                            <a href="/register" class="text-primary hover:underline font-medium">Regístrate aquí</a>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Back to Home -->
+                <div class="text-center mt-6">
+                    <a href="../index.html" class="text-white hover:text-primary transition-colors">
+                        <span class="material-symbols-outlined inline mr-1">arrow_back</span>
+                        Volver al inicio
+                    </a>
+                </div>
+            </div>
+        </div>
     </div>
-  </nav>
-  <div class="container mt-5">
-    <div class="text-center mb-4">
-     
-    </div>
-    <h2 class="text-center">Iniciar Sesión</h2>
-    <form id="loginForm">
-      <div class="form-group">
-        <label for="correoElectronico">Correo Electrónico:</label>
-        <input type="email" class="form-control" id="correoElectronico" name="correoElectronico" required>
-      </div>
-      <div class="form-group">
-        <label for="contrasena">Contraseña:</label>
-        <input type="password" class="form-control" id="contrasena" name="contrasena" required>
-      </div>
-      <button type="submit" class="btn btn-primary btn-block">Iniciar Sesión</button>
-    </form>
+
+    <!-- Include session management -->
+    <script src="../assets/js/session.js"></script>
     
-    <!-- Nuevo botón para redirigir al registro -->
-    <div class="text-center mt-3">
-      <p>¿No tienes una cuenta? <a href="/register" class="btn btn-link">Regístrate aquí</a></p>
-    </div>
-  </div>
-  
-  <!-- Incluir el sistema de gestión de sesión -->
-  <script src="../assets/js/session.js"></script>
-  
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      // Verificar si ya está autenticado
-      if (sessionManager.isAuthenticated()) {
-        window.location.href = '/dashboard';
-        return;
-      }
-
-      const loginForm = document.getElementById('loginForm');
-
-      if (loginForm) {
-        loginForm.addEventListener('submit', async (event) => {
-          event.preventDefault();
-          const correoElectronico = document.getElementById('correoElectronico').value;
-          const contrasena = document.getElementById('contrasena').value;
-
-          try {
-            const response = await fetch('/api/users/login', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({
-                correo_electronico: correoElectronico,
-                contrasena
-              })
-            });
-
-                         if (response.ok) {
-               const data = await response.json();
-               // Usar el sistema de gestión de sesión
-               sessionManager.setSession(data.token, data.user);
-               window.location.href = '/dashboard';
-             } else {
-              const errorData = await response.json();
-              alert('Error: ' + errorData.message);
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check if already authenticated
+            if (sessionManager.isAuthenticated()) {
+                window.location.href = '/dashboard';
+                return;
             }
-          } catch (error) {
-            console.error('Error al iniciar sesión:', error);
-            alert('Error al iniciar sesión');
-          }
+
+            const loginForm = document.getElementById('loginForm');
+
+            if (loginForm) {
+                loginForm.addEventListener('submit', async (event) => {
+                    event.preventDefault();
+                    const correoElectronico = document.getElementById('correoElectronico').value;
+                    const contrasena = document.getElementById('contrasena').value;
+
+                    // Validate form
+                    if (!correoElectronico || !contrasena) {
+                        showError('Por favor completa todos los campos');
+                        return;
+                    }
+
+                    try {
+                        setSubmitLoading(true);
+                        hideMessages();
+
+                        const response = await fetch('/api/users/login', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                correo_electronico: correoElectronico,
+                                contrasena: contrasena
+                            })
+                        });
+
+                        if (response.ok) {
+                            const data = await response.json();
+                            // Use session management system
+                            sessionManager.setSession(data.token, data.user);
+                            showSuccess('Inicio de sesión exitoso. Redirigiendo...');
+                            
+                            // Redirect to recommended dashboard
+                            setTimeout(() => {
+                                window.location.href = '/dashboard';
+                            }, 1500);
+                        } else {
+                            const errorData = await response.json();
+                            showError('Error: ' + errorData.message);
+                        }
+                    } catch (error) {
+                        console.error('Error al iniciar sesión:', error);
+                        showError('Error al iniciar sesión. Verifica tu conexión.');
+                    } finally {
+                        setSubmitLoading(false);
+                    }
+                });
+            }
         });
-      }
-    });
-  </script>
+
+        // Utility functions
+        function setSubmitLoading(loading) {
+            const submitBtn = document.getElementById('submitBtn');
+            const submitText = document.getElementById('submitText');
+            
+            if (loading) {
+                submitBtn.disabled = true;
+                submitText.innerHTML = '<span class="loading material-symbols-outlined text-sm mr-1">refresh</span>Iniciando sesión...';
+            } else {
+                submitBtn.disabled = false;
+                submitText.textContent = 'Iniciar Sesión';
+            }
+        }
+
+        function showSuccess(message) {
+            document.getElementById('successText').textContent = message;
+            document.getElementById('successMessage').classList.remove('hidden');
+            setTimeout(() => {
+                document.getElementById('successMessage').classList.add('hidden');
+            }, 5000);
+        }
+
+        function showError(message) {
+            document.getElementById('errorText').textContent = message;
+            document.getElementById('errorMessage').classList.remove('hidden');
+            setTimeout(() => {
+                document.getElementById('errorMessage').classList.add('hidden');
+            }, 5000);
+        }
+
+        function hideMessages() {
+            document.getElementById('successMessage').classList.add('hidden');
+            document.getElementById('errorMessage').classList.add('hidden');
+        }
+    </script>
 </body>
 </html>

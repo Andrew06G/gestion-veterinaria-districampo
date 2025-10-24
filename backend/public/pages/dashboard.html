@@ -66,10 +66,10 @@
                     </div>
                     <div class="hidden lg:flex items-center space-x-6 text-text-light dark:text-text-dark font-medium">
                         <a class="font-bold text-primary" href="#">Dashboard</a>
-                        <a class="hover:text-primary transition-colors" href="/recomended/register-animal">Registro de Animales</a>
-                        <a class="hover:text-primary transition-colors" href="/recomended/animal-info">Mis Animales</a>
-                        <a class="hover:text-primary transition-colors" href="/recomended/solicitar-analisis">Solicitar Análisis</a>
-                        <a class="hover:text-primary transition-colors" href="/recomended/mis-analisis">Mis Análisis</a>
+                        <a class="hover:text-primary transition-colors" href="/register-animal">Registro de Animales</a>
+                        <a class="hover:text-primary transition-colors" href="/animal-info">Mis Animales</a>
+                        <a class="hover:text-primary transition-colors" href="/solicitar-analisis">Solicitar Análisis</a>
+                        <a class="hover:text-primary transition-colors" href="/mis-analisis">Mis Análisis</a>
                     </div>
                     <div class="hidden lg:flex items-center space-x-4">
                         <div class="text-sm text-text-secondary-light dark:text-text-secondary-dark">
@@ -114,10 +114,10 @@
                 <div id="mobileMenu" class="lg:hidden hidden mt-4 bg-card-light/90 dark:bg-card-dark/90 backdrop-blur-sm rounded-lg p-4">
                     <div class="flex flex-col space-y-3">
                         <a class="text-primary font-medium" href="#">Dashboard</a>
-                        <a class="text-text-light dark:text-text-dark hover:text-primary transition-colors" href="/recomended/register-animal">Registro de Animales</a>
-                        <a class="text-text-light dark:text-text-dark hover:text-primary transition-colors" href="/recomended/animal-info">Mis Animales</a>
-                        <a class="text-text-light dark:text-text-dark hover:text-primary transition-colors" href="/recomended/solicitar-analisis">Solicitar Análisis</a>
-                        <a class="text-text-light dark:text-text-dark hover:text-primary transition-colors" href="/recomended/mis-analisis">Mis Análisis</a>
+                        <a class="text-text-light dark:text-text-dark hover:text-primary transition-colors" href="/register-animal">Registro de Animales</a>
+                        <a class="text-text-light dark:text-text-dark hover:text-primary transition-colors" href="/animal-info">Mis Animales</a>
+                        <a class="text-text-light dark:text-text-dark hover:text-primary transition-colors" href="/solicitar-analisis">Solicitar Análisis</a>
+                        <a class="text-text-light dark:text-text-dark hover:text-primary transition-colors" href="/mis-analisis">Mis Análisis</a>
                         <div class="border-t border-gray-300 dark:border-gray-600 pt-3 mt-3">
                             <div class="text-sm text-text-secondary-light dark:text-text-secondary-dark mb-2">
                                 Bienvenido, <span id="userNameMobile" class="font-medium text-text-light dark:text-text-dark"></span>
@@ -188,7 +188,7 @@
                             </div>
                             <h3 class="text-lg font-semibold text-text-light dark:text-text-dark mb-2">Registrar Animal</h3>
                             <p class="text-text-secondary-light dark:text-text-secondary-dark text-sm mb-4">Agrega una nueva mascota al sistema</p>
-                            <a href="/recomended/register-animal" class="w-full bg-primary text-white py-2 px-4 rounded-lg font-medium hover:bg-opacity-90 transition-colors inline-block text-center">
+                            <a href="/register-animal" class="w-full bg-primary text-white py-2 px-4 rounded-lg font-medium hover:bg-opacity-90 transition-colors inline-block text-center">
                                 Registrar
                             </a>
                         </div>
@@ -202,7 +202,7 @@
                             </div>
                             <h3 class="text-lg font-semibold text-text-light dark:text-text-dark mb-2">Información de Animales</h3>
                             <p class="text-text-secondary-light dark:text-text-secondary-dark text-sm mb-4">Consulta y edita datos de tus mascotas</p>
-                            <a href="/recomended/animal-info" class="w-full bg-green-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-opacity-90 transition-colors inline-block text-center">
+                            <a href="/animal-info" class="w-full bg-green-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-opacity-90 transition-colors inline-block text-center">
                                 Ver Info
                             </a>
                         </div>
@@ -216,7 +216,7 @@
                             </div>
                             <h3 class="text-lg font-semibold text-text-light dark:text-text-dark mb-2">Solicitar Análisis</h3>
                             <p class="text-text-secondary-light dark:text-text-secondary-dark text-sm mb-4">Programa nuevos análisis clínicos</p>
-                            <a href="/recomended/solicitar-analisis" class="w-full bg-yellow-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-opacity-90 transition-colors inline-block text-center">
+                            <a href="/solicitar-analisis" class="w-full bg-yellow-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-opacity-90 transition-colors inline-block text-center">
                                 Solicitar
                             </a>
                         </div>
@@ -230,7 +230,7 @@
                             </div>
                             <h3 class="text-lg font-semibold text-text-light dark:text-text-dark mb-2">Mis Análisis</h3>
                             <p class="text-text-secondary-light dark:text-text-secondary-dark text-sm mb-4">Revisa resultados y descarga reportes</p>
-                            <a href="/recomended/mis-analisis" class="w-full bg-purple-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-opacity-90 transition-colors inline-block text-center">
+                            <a href="/mis-analisis" class="w-full bg-purple-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-opacity-90 transition-colors inline-block text-center">
                                 Ver Análisis
                             </a>
                         </div>
@@ -249,7 +249,7 @@
         // Check authentication on page load
         document.addEventListener('DOMContentLoaded', function() {
             if (!sessionManager.isAuthenticated()) {
-                window.location.href = '/recomended/login';
+                window.location.href = '/login';
                 return;
             }
 
@@ -313,7 +313,7 @@
                 sessionManager.user = null;
                 localStorage.removeItem('token');
                 localStorage.removeItem('user');
-                window.location.href = '/recomended/login';
+                window.location.href = '/login';
             }
         }
     </script>

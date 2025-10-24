@@ -74,11 +74,11 @@
                         <a class="text-2xl font-bold text-text-light dark:text-text-dark" href="../index.html">DistriCampo</a>
                     </div>
                     <div class="hidden lg:flex items-center space-x-6 text-text-light dark:text-text-dark font-medium">
-                        <a class="hover:text-primary transition-colors" href="/recomended/dashboard">Dashboard</a>
-                        <a class="hover:text-primary transition-colors" href="/recomended/register-animal">Registro de Animales</a>
+                        <a class="hover:text-primary transition-colors" href="/dashboard">Dashboard</a>
+                        <a class="hover:text-primary transition-colors" href="/register-animal">Registro de Animales</a>
                         <a class="font-bold text-primary" href="#">Mis Animales</a>
-                        <a class="hover:text-primary transition-colors" href="/recomended/solicitar-analisis">Solicitar Análisis</a>
-                        <a class="hover:text-primary transition-colors" href="/recomended/mis-analisis">Mis Análisis</a>
+                        <a class="hover:text-primary transition-colors" href="/solicitar-analisis">Solicitar Análisis</a>
+                        <a class="hover:text-primary transition-colors" href="/mis-analisis">Mis Análisis</a>
                     </div>
                     <div class="hidden lg:flex items-center space-x-4">
                         <div class="text-sm text-text-secondary-light dark:text-text-secondary-dark">
@@ -122,11 +122,11 @@
                 <!-- Mobile Menu -->
                 <div id="mobileMenu" class="lg:hidden hidden mt-4 bg-card-light/90 dark:bg-card-dark/90 backdrop-blur-sm rounded-lg p-4">
                     <div class="flex flex-col space-y-3">
-                        <a class="text-text-light dark:text-text-dark hover:text-primary transition-colors" href="/recomended/dashboard">Dashboard</a>
-                        <a class="text-text-light dark:text-text-dark hover:text-primary transition-colors" href="/recomended/register-animal">Registro de Animales</a>
+                        <a class="text-text-light dark:text-text-dark hover:text-primary transition-colors" href="/dashboard">Dashboard</a>
+                        <a class="text-text-light dark:text-text-dark hover:text-primary transition-colors" href="/register-animal">Registro de Animales</a>
                         <a class="text-primary font-medium" href="#">Mis Animales</a>
-                        <a class="text-text-light dark:text-text-dark hover:text-primary transition-colors" href="/recomended/solicitar-analisis">Solicitar Análisis</a>
-                        <a class="text-text-light dark:text-text-dark hover:text-primary transition-colors" href="/recomended/mis-analisis">Mis Análisis</a>
+                        <a class="text-text-light dark:text-text-dark hover:text-primary transition-colors" href="/solicitar-analisis">Solicitar Análisis</a>
+                        <a class="text-text-light dark:text-text-dark hover:text-primary transition-colors" href="/mis-analisis">Mis Análisis</a>
                         <div class="border-t border-gray-300 dark:border-gray-600 pt-3 mt-3">
                             <div class="text-sm text-text-secondary-light dark:text-text-secondary-dark mb-2">
                                 Bienvenido, <span id="userNameMobile" class="font-medium text-text-light dark:text-text-dark"></span>
@@ -245,7 +245,7 @@
         // Check authentication on page load
         document.addEventListener('DOMContentLoaded', function() {
             if (!sessionManager.isAuthenticated()) {
-                window.location.href = '/recomended/login';
+                window.location.href = '/login';
                 return;
             }
 
@@ -304,7 +304,7 @@
                         <span class="material-symbols-outlined text-6xl text-text-secondary-light dark:text-text-secondary-dark mb-4 block">pets</span>
                         <h3 class="text-xl font-semibold text-text-light dark:text-text-dark mb-2">No tienes animales registrados</h3>
                         <p class="text-text-secondary-light dark:text-text-secondary-dark mb-4">Comienza registrando tu primera mascota</p>
-                        <a href="/recomended/register-animal" class="inline-flex items-center px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors">
+                        <a href="/register-animal" class="inline-flex items-center px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors">
                             <span class="material-symbols-outlined mr-2">add</span>
                             Registrar Animal
                         </a>
@@ -734,7 +734,7 @@
                 sessionManager.user = null;
                 localStorage.removeItem('token');
                 localStorage.removeItem('user');
-                window.location.href = '/recomended/login';
+                window.location.href = '/login';
             }
         }
     </script>
