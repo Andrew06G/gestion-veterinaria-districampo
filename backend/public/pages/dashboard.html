@@ -236,6 +236,27 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Recent Activity Section -->
+                <div class="mt-12">
+                    <div class="bg-card-light dark:bg-card-dark rounded-xl shadow-custom dark:shadow-custom-dark p-6 border">
+                        <div class="flex items-center justify-between mb-6">
+                            <h2 class="text-2xl font-bold text-text-light dark:text-text-dark">Actividad Reciente</h2>
+                            <span class="material-symbols-outlined text-primary text-2xl">history</span>
+                        </div>
+                        
+                        <!-- Activity List -->
+                        <div id="recentActivityList" class="space-y-4">
+                            <!-- Activities will be loaded here dynamically -->
+                            <div class="flex items-center justify-center py-8">
+                                <div class="flex items-center text-text-secondary-light dark:text-text-secondary-dark">
+                                    <span class="loading material-symbols-outlined text-primary mr-2">refresh</span>
+                                    <span>Cargando actividad reciente...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </main>
         </div>
     </div>
@@ -262,6 +283,9 @@
 
             // Load dashboard data
             loadDashboardData();
+            
+            // Load recent activity
+            loadRecentActivity();
         });
 
         // Load dashboard statistics
@@ -305,6 +329,112 @@
         function toggleMobileMenu() {
             const menu = document.getElementById('mobileMenu');
             menu.classList.toggle('hidden');
+        }
+
+        // Load recent activity
+        async function loadRecentActivity() {
+            try {
+                const token = sessionManager.getToken();
+                const response = await fetch('/api/analyses/recent-activity', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    const activities = await response.json();
+                    displayRecentActivity(activities);
+                } else {
+                    throw new Error('Error al cargar actividad reciente');
+                }
+            } catch (error) {
+                console.error('Error loading recent activity:', error);
+                displayRecentActivityError();
+            }
+        }
+
+        // Display recent activity
+        function displayRecentActivity(activities) {
+            const container = document.getElementById('recentActivityList');
+            
+            if (activities.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8">
+                        <span class="material-symbols-outlined text-6xl text-text-secondary-light dark:text-text-secondary-dark mb-4 block">inbox</span>
+                        <p class="text-text-secondary-light dark:text-text-secondary-dark">No hay actividad reciente</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const activitiesHtml = activities.map(activity => `
+                <div class="flex items-start space-x-3 p-4 bg-background-light dark:bg-background-dark rounded-lg border border-gray-200 dark:border-gray-700">
+                    <div class="flex-shrink-0">
+                        <div class="w-8 h-8 ${getActivityIconColor(activity.type)} rounded-full flex items-center justify-center">
+                            <span class="material-symbols-outlined text-sm">${getActivityIcon(activity.type)}</span>
+                        </div>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm text-text-light dark:text-text-dark">${activity.message}</p>
+                        <p class="text-xs text-text-secondary-light dark:text-text-secondary-dark mt-1">${formatActivityTime(activity.created_at)}</p>
+                    </div>
+                </div>
+            `).join('');
+
+            container.innerHTML = activitiesHtml;
+        }
+
+        // Display error state for recent activity
+        function displayRecentActivityError() {
+            const container = document.getElementById('recentActivityList');
+            container.innerHTML = `
+                <div class="text-center py-8">
+                    <span class="material-symbols-outlined text-6xl text-red-500 mb-4 block">error</span>
+                    <p class="text-text-secondary-light dark:text-text-secondary-dark">Error al cargar la actividad reciente</p>
+                </div>
+            `;
+        }
+
+        // Get activity icon based on type
+        function getActivityIcon(type) {
+            const icons = {
+                'sample_soon': 'schedule',
+                'analysis_processing': 'science',
+                'analysis_completed': 'check_circle',
+                'analysis_cancelled': 'cancel',
+                'sample_taken': 'biotech'
+            };
+            return icons[type] || 'info';
+        }
+
+        // Get activity icon color based on type
+        function getActivityIconColor(type) {
+            const colors = {
+                'sample_soon': 'bg-orange-100 dark:bg-orange-900/30 text-orange-600',
+                'analysis_processing': 'bg-blue-100 dark:bg-blue-900/30 text-blue-600',
+                'analysis_completed': 'bg-green-100 dark:bg-green-900/30 text-green-600',
+                'analysis_cancelled': 'bg-red-100 dark:bg-red-900/30 text-red-600',
+                'sample_taken': 'bg-purple-100 dark:bg-purple-900/30 text-purple-600'
+            };
+            return colors[type] || 'bg-gray-100 dark:bg-gray-900/30 text-gray-600';
+        }
+
+        // Format activity time
+        function formatActivityTime(timestamp) {
+            const now = new Date();
+            const activityTime = new Date(timestamp);
+            const diffInMinutes = Math.floor((now - activityTime) / (1000 * 60));
+            
+            if (diffInMinutes < 1) return 'Hace un momento';
+            if (diffInMinutes < 60) return `Hace ${diffInMinutes} minutos`;
+            
+            const diffInHours = Math.floor(diffInMinutes / 60);
+            if (diffInHours < 24) return `Hace ${diffInHours} horas`;
+            
+            const diffInDays = Math.floor(diffInHours / 24);
+            if (diffInDays < 7) return `Hace ${diffInDays} días`;
+            
+            return activityTime.toLocaleDateString('es-ES');
         }
 
         function logout() {

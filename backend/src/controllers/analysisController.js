@@ -1,4 +1,5 @@
 const Analysis = require('../models/Analysis');
+const { decrypt } = require('../utils/crypto');
 
 // Crear un nuevo análisis
 const createAnalysis = async (req, res) => {
@@ -184,6 +185,94 @@ const deleteAnalysisPermanent = async (req, res) => {
   }
 };
 
+// Obtener actividad reciente del usuario
+const getRecentActivity = async (req, res) => {
+  try {
+    console.log('Getting recent activity for user:', req.user.id);
+    const id_propietario = req.user.id;
+    const limit = 5; // Mostrar solo 5 actividades recientes
+
+    // Consulta usando la estructura real de la base de datos
+    const query = `
+      SELECT 
+        r.id_resultado,
+        r.fecha_emision,
+        r.id_animal,
+        r.id_estado,
+        m.fecha_toma,
+        ta.nombre_analisis,
+        te.nombre_estado,
+        a.nombre_animal,
+        COALESCE(r.fecha_emision, m.fecha_toma) as activity_date
+      FROM resultado r
+      JOIN muestra m ON r.id_muestra = m.id_muestra
+      JOIN tipo_analisis ta ON r.id_tipo_analisis = ta.id_tipo_analisis
+      JOIN tipo_estado te ON r.id_estado = te.id_tipo_estado
+      JOIN animal a ON r.id_animal = a.id_animal
+      WHERE a.id_propietario = ?
+      ORDER BY activity_date DESC
+      LIMIT ?
+    `;
+
+    const [rows] = await Analysis._rawQuery(query, [id_propietario, limit]);
+    console.log('Query executed successfully, rows found:', rows.length);
+
+    // Formatear los resultados con datos reales
+    const activities = rows.map(row => {
+      let activityType = 'info';
+      let message = '';
+      
+      // Desencriptar el nombre del animal
+      let animalName = 'Animal';
+      try {
+        animalName = decrypt(row.nombre_animal) || 'Animal';
+      } catch (error) {
+        console.warn('Error al desencriptar nombre del animal:', error.message);
+        animalName = 'Animal';
+      }
+      
+      // Determinar tipo de actividad y mensaje basado en estado
+      switch(row.id_estado) {
+        case 1:
+          activityType = 'sample_taken';
+          message = `Muestra tomada de ${animalName} para ${row.nombre_analisis}`;
+          break;
+        case 2:
+          activityType = 'analysis_processing';
+          message = `El análisis de ${animalName} de ${row.nombre_analisis} está en proceso`;
+          break;
+        case 3:
+          activityType = 'analysis_completed';
+          message = `El análisis de ${animalName} de ${row.nombre_analisis} ha sido finalizado`;
+          break;
+        case 4:
+          activityType = 'analysis_cancelled';
+          message = `El análisis de ${animalName} de ${row.nombre_analisis} ha sido cancelado`;
+          break;
+        default:
+          activityType = 'info';
+          message = `Análisis de ${animalName} - ${row.nombre_analisis}`;
+      }
+      
+      return {
+        id: row.id_resultado,
+        type: activityType,
+        message: message,
+        created_at: row.activity_date,
+        animal_id: row.id_animal,
+        animal_name: animalName,
+        status: row.nombre_estado,
+        analysis_name: row.nombre_analisis
+      };
+    });
+
+    res.json(activities);
+  } catch (error) {
+    console.error('Error getting recent activity:', error);
+    res.status(500).json({ message: 'Error interno del servidor' });
+  }
+};
+
 module.exports = {
   createAnalysis,
   getUserAnalyses,
@@ -192,5 +281,6 @@ module.exports = {
   getStatuses,
   getAnalysesByAnimal,
   cancelAnalysis,
-  deleteAnalysisPermanent
+  deleteAnalysisPermanent,
+  getRecentActivity
 };
