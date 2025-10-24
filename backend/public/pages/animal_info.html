@@ -173,6 +173,23 @@
                     <!-- Animals will be loaded here dynamically -->
                 </div>
 
+                <!-- Pagination -->
+                <div class="bg-card-light dark:bg-card-dark p-4 rounded-lg shadow-custom dark:shadow-custom-dark mb-8">
+                    <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <div class="text-sm text-text-secondary-light dark:text-text-secondary-dark">
+                            <span id="pageInfo">Página 1 de 1</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button id="prevBtn" class="px-3 py-2 text-sm font-medium text-text-light dark:text-text-dark bg-background-light dark:bg-accent/30 border border-gray-300 dark:border-accent rounded-lg hover:bg-gray-50 dark:hover:bg-accent/50 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                                Anterior
+                            </button>
+                            <button id="nextBtn" class="px-3 py-2 text-sm font-medium text-text-light dark:text-text-dark bg-background-light dark:bg-accent/30 border border-gray-300 dark:border-accent rounded-lg hover:bg-gray-50 dark:hover:bg-accent/50 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                                Siguiente
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Edit Animal Form -->
                 <div class="bg-card-light dark:bg-card-dark p-6 sm:p-8 rounded-lg shadow-custom dark:shadow-custom-dark">
                     <h2 class="text-2xl font-bold mb-6 text-text-light dark:text-text-dark">Editar Información del Animal</h2>
@@ -241,6 +258,11 @@
         // Global variables
         let animalesList = [];
         let animalSeleccionado = null;
+        
+        // Pagination variables
+        let currentPage = 1;
+        let totalPages = 1;
+        let itemsPerPage = 10;
 
         // Check authentication on page load
         document.addEventListener('DOMContentLoaded', function() {
@@ -262,6 +284,10 @@
             
             // Add event listener for animal selection dropdown
             document.getElementById('edit_animal_select').addEventListener('change', cargarDatosAnimal);
+            
+            // Add pagination event listeners
+            document.getElementById('prevBtn').addEventListener('click', () => changePage('prev'));
+            document.getElementById('nextBtn').addEventListener('click', () => changePage('next'));
         });
 
         // Load animals from API
@@ -280,6 +306,7 @@
                 if (response.ok) {
                     const animales = await response.json();
                     animalesList = animales;
+                    currentPage = 1; // Reset to first page when loading new data
                     mostrarAnimales(animales);
                     llenarDropdownAnimales(animales);
                 } else {
@@ -294,7 +321,31 @@
             }
         }
 
-        // Display animals in grid
+        // Create animal card HTML
+        function createAnimalCard(animal) {
+            return `
+                <div class="bg-card-light dark:bg-card-dark p-6 rounded-lg shadow-custom dark:shadow-custom-dark flex flex-col justify-between">
+                    <div>
+                        <h2 class="text-xl font-bold text-text-light dark:text-text-dark mb-2">${animal.nombre_animal}</h2>
+                        <p class="text-sm text-text-secondary-light dark:text-text-secondary-dark mt-1">Edad: ${animal.edad} años</p>
+                        <p class="text-sm text-text-secondary-light dark:text-text-secondary-dark">Raza: ${animal.nombre_raza}</p>
+                        <p class="text-sm text-text-secondary-light dark:text-text-secondary-dark">Especie: ${animal.nombre_especie}</p>
+                    </div>
+                    <div class="flex justify-end space-x-2 mt-4">
+                        <button class="text-sm text-primary hover:underline font-medium" onclick="seleccionarAnimalParaEditar(${animal.id_animal})">
+                            <span class="material-symbols-outlined text-sm mr-1">edit</span>
+                            Editar
+                        </button>
+                        <button class="text-sm text-red-500 hover:underline font-medium" onclick="eliminarAnimal(${animal.id_animal}, '${animal.nombre_animal}')">
+                            <span class="material-symbols-outlined text-sm mr-1">delete</span>
+                            Eliminar
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Display animals with pagination
         function mostrarAnimales(animales) {
             const container = document.getElementById('animalsGrid');
             
@@ -310,34 +361,43 @@
                         </a>
                     </div>
                 `;
+                updatePagination(0);
                 return;
             }
 
-            let html = '';
-            animales.forEach((animal, index) => {
-                html += `
-                    <div class="bg-card-light dark:bg-card-dark p-6 rounded-lg shadow-custom dark:shadow-custom-dark flex flex-col justify-between">
-                        <div>
-                            <h2 class="text-xl font-bold text-text-light dark:text-text-dark mb-2">${animal.nombre_animal}</h2>
-                            <p class="text-sm text-text-secondary-light dark:text-text-secondary-dark mt-1">Edad: ${animal.edad} años</p>
-                            <p class="text-sm text-text-secondary-light dark:text-text-secondary-dark">Raza: ${animal.nombre_raza}</p>
-                            <p class="text-sm text-text-secondary-light dark:text-text-secondary-dark">Especie: ${animal.nombre_especie}</p>
-                        </div>
-                        <div class="flex justify-end space-x-2 mt-4">
-                            <button class="text-sm text-primary hover:underline font-medium" onclick="seleccionarAnimalParaEditar(${animal.id_animal})">
-                                <span class="material-symbols-outlined text-sm mr-1">edit</span>
-                                Editar
-                            </button>
-                            <button class="text-sm text-red-500 hover:underline font-medium" onclick="eliminarAnimal(${animal.id_animal}, '${animal.nombre_animal}')">
-                                <span class="material-symbols-outlined text-sm mr-1">delete</span>
-                                Eliminar
-                            </button>
-                        </div>
-                    </div>
-                `;
-            });
+            // Calculate pagination
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const paginatedAnimals = animales.slice(startIndex, endIndex);
 
-            container.innerHTML = html;
+            container.innerHTML = paginatedAnimals.map(createAnimalCard).join('');
+            updatePagination(animales.length);
+        }
+
+        // Update pagination controls
+        function updatePagination(totalItems) {
+            totalPages = Math.ceil(totalItems / itemsPerPage);
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const pageInfo = document.getElementById('pageInfo');
+            
+            prevBtn.disabled = currentPage <= 1;
+            nextBtn.disabled = currentPage >= totalPages;
+            
+            const startRecord = ((currentPage - 1) * itemsPerPage) + 1;
+            const endRecord = Math.min(currentPage * itemsPerPage, totalItems);
+            pageInfo.textContent = `Página ${currentPage} de ${totalPages} (${startRecord}-${endRecord} de ${totalItems})`;
+        }
+
+        // Change page function
+        function changePage(direction) {
+            if (direction === 'prev' && currentPage > 1) {
+                currentPage--;
+            } else if (direction === 'next' && currentPage < totalPages) {
+                currentPage++;
+            }
+            
+            mostrarAnimales(animalesList);
         }
 
         // Fill dropdown with animals
