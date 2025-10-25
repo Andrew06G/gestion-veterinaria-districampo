@@ -232,11 +232,11 @@ const getRecentActivity = async (req, res) => {
       }
       
       // Determinar tipo de actividad y mensaje basado en estado
+      // Excluir mensajes de "Muestra Tomada" (estado 1)
       switch(row.id_estado) {
         case 1:
-          activityType = 'sample_taken';
-          message = `Muestra tomada de ${animalName} para ${row.nombre_analisis}`;
-          break;
+          // No mostrar mensajes de muestra tomada
+          return null;
         case 2:
           activityType = 'analysis_processing';
           message = `El análisis de ${animalName} de ${row.nombre_analisis} está en proceso`;
@@ -266,9 +266,88 @@ const getRecentActivity = async (req, res) => {
       };
     });
 
-    res.json(activities);
+    // Filtrar actividades nulas (muestras tomadas)
+    const filteredActivities = activities.filter(activity => activity !== null);
+    
+    res.json(filteredActivities);
   } catch (error) {
     console.error('Error getting recent activity:', error);
+    res.status(500).json({ message: 'Error interno del servidor' });
+  }
+};
+
+// Obtener solicitudes recientes para admin
+const getRecentRequests = async (req, res) => {
+  try {
+    console.log('Getting recent requests for admin');
+    const limit = 5; // Mostrar solo 5 solicitudes recientes
+
+    // Consulta para obtener solicitudes recientes con información del propietario y animal
+    const query = `
+      SELECT 
+        r.id_resultado,
+        r.fecha_emision,
+        r.id_animal,
+        r.id_estado,
+        m.fecha_toma,
+        ta.nombre_analisis,
+        te.nombre_estado,
+        a.nombre_animal,
+        p.nombres as propietario_nombres,
+        p.apellidos as propietario_apellidos,
+        COALESCE(r.fecha_emision, m.fecha_toma) as request_date
+      FROM resultado r
+      JOIN muestra m ON r.id_muestra = m.id_muestra
+      JOIN tipo_analisis ta ON r.id_tipo_analisis = ta.id_tipo_analisis
+      JOIN tipo_estado te ON r.id_estado = te.id_tipo_estado
+      JOIN animal a ON r.id_animal = a.id_animal
+      JOIN propietario p ON a.id_propietario = p.id_propietario
+      ORDER BY request_date DESC
+      LIMIT ?
+    `;
+
+    const [rows] = await Analysis._rawQuery(query, [limit]);
+    console.log('Query executed successfully, rows found:', rows.length);
+
+    // Formatear los resultados con datos reales
+    const requests = rows.map(row => {
+      // Desencriptar el nombre del animal
+      let animalName = 'Animal';
+      try {
+        animalName = decrypt(row.nombre_animal) || 'Animal';
+      } catch (error) {
+        console.warn('Error al desencriptar nombre del animal:', error.message);
+        animalName = 'Animal';
+      }
+
+      // Desencriptar nombres del propietario
+      let ownerName = 'Propietario';
+      try {
+        const nombres = decrypt(row.propietario_nombres) || '';
+        const apellidos = decrypt(row.propietario_apellidos) || '';
+        ownerName = `${nombres} ${apellidos}`.trim() || 'Propietario';
+      } catch (error) {
+        console.warn('Error al desencriptar nombres del propietario:', error.message);
+        ownerName = 'Propietario';
+      }
+
+      const message = `${ownerName} solicitó análisis de ${animalName} - ${row.nombre_analisis}`;
+      
+      return {
+        id: row.id_resultado,
+        message: message,
+        created_at: row.request_date,
+        animal_id: row.id_animal,
+        animal_name: animalName,
+        owner_name: ownerName,
+        analysis_name: row.nombre_analisis,
+        status: row.nombre_estado
+      };
+    });
+
+    res.json(requests);
+  } catch (error) {
+    console.error('Error getting recent requests:', error);
     res.status(500).json({ message: 'Error interno del servidor' });
   }
 };
@@ -282,5 +361,6 @@ module.exports = {
   getAnalysesByAnimal,
   cancelAnalysis,
   deleteAnalysisPermanent,
-  getRecentActivity
+  getRecentActivity,
+  getRecentRequests
 };

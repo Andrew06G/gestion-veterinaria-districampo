@@ -10,7 +10,8 @@ const {
   getAnalysesByAnimal,
   cancelAnalysis,
   deleteAnalysisPermanent,
-  getRecentActivity
+  getRecentActivity,
+  getRecentRequests
 } = require('../controllers/analysisController');
 const { generatePDF } = require('../controllers/pdfController');
 
@@ -28,6 +29,9 @@ router.get('/estados', authenticateToken, getStatuses);
 
 // Ruta para obtener actividad reciente (protegida)
 router.get('/recent-activity', authenticateToken, getRecentActivity);
+
+// Ruta para obtener solicitudes recientes para admin (protegida)
+router.get('/recent-requests', authenticateToken, getRecentRequests);
 
 // Ruta para generar y devolver el PDF (protegida)
 router.get('/:id/pdf', authenticateToken, generatePDF);

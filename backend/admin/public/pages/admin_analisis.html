@@ -230,6 +230,7 @@
                         <div class="mt-8 flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-4">
                             <button class="w-full sm:w-auto px-6 py-2.5 text-center text-sm font-medium text-text-light dark:text-text-dark bg-gray-200 dark:bg-accent/50 rounded-full hover:bg-gray-300 dark:hover:bg-accent/80 transition-colors" type="button" onclick="clearForm()">Cancelar</button>
                             <button class="w-full sm:w-auto px-6 py-2.5 text-center text-sm font-medium text-white bg-primary rounded-full hover:bg-primary/90 focus:ring-4 focus:outline-none focus:ring-primary/50" type="submit">Guardar Cambios</button>
+                            <button class="w-full sm:w-auto px-6 py-2.5 text-center text-sm font-medium text-white bg-red-600 rounded-full hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-500/50 transition-colors" type="button" onclick="eliminarAnalisisSeleccionado()">Eliminar Análisis</button>
                         </div>
                     </form>
                 </div>
@@ -869,6 +870,44 @@
             }
         }
 
+        // Delete selected analysis from form
+        async function eliminarAnalisisSeleccionado() {
+            if (!currentAnalisisId) {
+                showError('Por favor selecciona un análisis para eliminar.');
+                return;
+            }
+
+            // Get analysis info for confirmation
+            const analysisSelect = document.getElementById('select-analisis');
+            const selectedOption = analysisSelect.options[analysisSelect.selectedIndex];
+            const analysisText = selectedOption ? selectedOption.textContent : 'este análisis';
+
+            if (!confirm(`¿Está seguro de que desea eliminar ${analysisText}? Esta acción no se puede deshacer.`)) {
+                return;
+            }
+
+            try {
+                const res = await api(`/api/admin/analyses/${currentAnalisisId}`, {
+                    method: 'DELETE'
+                });
+                
+                if (!res) return;
+                
+                showSuccess('Análisis eliminado correctamente.');
+                
+                // Clear form and reset current analysis ID
+                clearForm();
+                currentAnalisisId = null;
+                
+                // Reload analyses based on current filters
+                loadAnalysesWithPagination();
+                
+            } catch (error) {
+                console.error('Error deleting analysis:', error);
+                showError('Error al eliminar el análisis');
+            }
+        }
+
         // Delete analysis
         async function deleteAnalisis(analysisId, animalName) {
             if (!confirm(`¿Está seguro de que desea eliminar el análisis de ${animalName}? Esta acción no se puede deshacer.`)) {
@@ -884,17 +923,14 @@
                 
                 showSuccess('Análisis eliminado exitosamente');
                 
-                // Reload analyses
-                const ownerId = document.getElementById('ownerFilter').value;
-                const animalId = document.getElementById('animalFilter').value;
-                
-                if (animalId) {
-                    loadAnalysesByAnimal();
-                } else if (ownerId) {
-                    loadAnalysesByOwner(ownerId);
-                } else {
-                    loadAllAnalyses();
+                // Clear form if this was the selected analysis
+                if (currentAnalisisId === analysisId) {
+                    clearForm();
+                    currentAnalisisId = null;
                 }
+                
+                // Reload analyses based on current filters
+                loadAnalysesWithPagination();
                 
             } catch (e) {
                 showError('Error al eliminar el análisis');

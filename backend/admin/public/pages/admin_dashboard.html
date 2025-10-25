@@ -222,10 +222,31 @@
                             </a>
                         </div>
 </div>
-</div>
-</main>
-</div>
-</div>
+                </div>
+
+                <!-- Recent Activity Section -->
+                <div class="mt-12">
+                    <div class="bg-card-light dark:bg-card-dark rounded-xl shadow-custom dark:shadow-custom-dark p-6 border">
+                        <div class="flex items-center justify-between mb-6">
+                            <h2 class="text-2xl font-bold text-text-light dark:text-text-dark">Solicitudes Recientes</h2>
+                            <span class="material-symbols-outlined text-primary text-2xl">assignment</span>
+                        </div>
+                        
+                        <!-- Activity List -->
+                        <div id="recentRequestsList" class="space-y-4">
+                            <!-- Requests will be loaded here dynamically -->
+                            <div class="flex items-center justify-center py-8">
+                                <div class="flex items-center text-text-secondary-light dark:text-text-secondary-dark">
+                                    <span class="loading material-symbols-outlined text-primary mr-2">refresh</span>
+                                    <span>Cargando solicitudes recientes...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
 
     <!-- Include session management -->
     <script src="../../assets/js/session.js"></script>
@@ -247,6 +268,9 @@
 
             // Load dashboard data
             loadDashboardData();
+            
+            // Load recent requests
+            loadRecentRequests();
         });
 
         // Load dashboard statistics
@@ -336,6 +360,88 @@
         function toggleMobileMenu() {
             const menu = document.getElementById('mobileMenu');
             menu.classList.toggle('hidden');
+        }
+
+        // Load recent requests
+        async function loadRecentRequests() {
+            try {
+                const token = localStorage.getItem('adminToken');
+                const response = await fetch('/api/analyses/recent-requests', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    const requests = await response.json();
+                    displayRecentRequests(requests);
+                } else {
+                    throw new Error('Error al cargar solicitudes recientes');
+                }
+            } catch (error) {
+                console.error('Error loading recent requests:', error);
+                displayRecentRequestsError();
+            }
+        }
+
+        // Display recent requests
+        function displayRecentRequests(requests) {
+            const container = document.getElementById('recentRequestsList');
+            
+            if (requests.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8">
+                        <span class="material-symbols-outlined text-6xl text-text-secondary-light dark:text-text-secondary-dark mb-4 block">inbox</span>
+                        <p class="text-text-secondary-light dark:text-text-secondary-dark">No hay solicitudes recientes</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const requestsHtml = requests.map(request => `
+                <div class="flex items-start space-x-3 p-4 bg-background-light dark:bg-background-dark rounded-lg border border-gray-200 dark:border-gray-700">
+                    <div class="flex-shrink-0">
+                        <div class="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
+                            <span class="material-symbols-outlined text-sm text-blue-600">assignment</span>
+                        </div>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm text-text-light dark:text-text-dark">${request.message}</p>
+                        <p class="text-xs text-text-secondary-light dark:text-text-secondary-dark mt-1">${formatRequestTime(request.created_at)}</p>
+                    </div>
+                </div>
+            `).join('');
+
+            container.innerHTML = requestsHtml;
+        }
+
+        // Display error state for recent requests
+        function displayRecentRequestsError() {
+            const container = document.getElementById('recentRequestsList');
+            container.innerHTML = `
+                <div class="text-center py-8">
+                    <span class="material-symbols-outlined text-6xl text-red-500 mb-4 block">error</span>
+                    <p class="text-text-secondary-light dark:text-text-secondary-dark">Error al cargar las solicitudes recientes</p>
+                </div>
+            `;
+        }
+
+        // Format request time
+        function formatRequestTime(timestamp) {
+            const now = new Date();
+            const requestTime = new Date(timestamp);
+            const diffInMinutes = Math.floor((now - requestTime) / (1000 * 60));
+            
+            if (diffInMinutes < 1) return 'Hace un momento';
+            if (diffInMinutes < 60) return `Hace ${diffInMinutes} minutos`;
+            
+            const diffInHours = Math.floor(diffInMinutes / 60);
+            if (diffInHours < 24) return `Hace ${diffInHours} horas`;
+            
+            const diffInDays = Math.floor(diffInHours / 24);
+            if (diffInDays < 7) return `Hace ${diffInDays} días`;
+            
+            return requestTime.toLocaleDateString('es-ES');
         }
 
         function logout() {

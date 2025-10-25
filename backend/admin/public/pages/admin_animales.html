@@ -190,7 +190,7 @@
                 </div>
 
                 <!-- Edit Animal Form -->
-                <div class="bg-card-light dark:bg-card-dark p-6 sm:p-8 rounded-lg shadow-custom dark:shadow-custom-dark">
+                <div id="editAnimalFormContainer" class="bg-card-light dark:bg-card-dark p-6 sm:p-8 rounded-lg shadow-custom dark:shadow-custom-dark">
                     <h2 class="text-2xl font-bold mb-6 text-text-light dark:text-text-dark">Editar Información del Animal</h2>
                     
                     <form id="editAnimalForm">
@@ -500,6 +500,17 @@
                 // Check for analyses
                 await checkAnimalAnalyses(animalId);
                 
+                // Scroll to edit form
+                setTimeout(() => {
+                    const editForm = document.getElementById('editAnimalFormContainer');
+                    if (editForm) {
+                        editForm.scrollIntoView({ 
+                            behavior: 'smooth', 
+                            block: 'start' 
+                        });
+                    }
+                }, 100);
+                
                 showSuccess('Animal seleccionado para editar.');
                 
             } catch (e) {
@@ -513,6 +524,17 @@
             const animalId = document.getElementById('animalSelect').value;
             if (animalId) {
                 selectAnimal(animalId);
+                
+                // Scroll to edit form when selecting from dropdown
+                setTimeout(() => {
+                    const editForm = document.getElementById('editAnimalFormContainer');
+                    if (editForm) {
+                        editForm.scrollIntoView({ 
+                            behavior: 'smooth', 
+                            block: 'start' 
+                        });
+                    }
+                }, 200);
             } else {
                 clearForm();
             }
