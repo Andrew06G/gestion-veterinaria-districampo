@@ -379,4 +379,52 @@ async function getEstadoNombre(idEstado) {
 }
 
 
-module.exports = { listAnalyses, getAnalysis, updateAnalysis, deleteAnalysis, getStatuses };
+// Obtener estadísticas de análisis para el dashboard
+async function getAnalysisStats(req, res) {
+  try {
+    // Consulta para obtener conteos totales
+    const [totalRows] = await db.query(`
+      SELECT COUNT(*) as total
+      FROM resultado r
+      JOIN muestra m ON r.id_muestra = m.id_muestra
+      JOIN animal a ON m.id_animal = a.id_animal
+      JOIN propietario p ON a.id_propietario = p.id_propietario
+      JOIN tipo_analisis ta ON r.id_tipo_analisis = ta.id_tipo_analisis
+      JOIN tipo_muestra tm ON m.id_tipo_muestra = tm.id_tipo_muestra
+      JOIN tipo_estado te ON r.id_estado = te.id_tipo_estado
+    `);
+
+    // Consulta para obtener conteos por estado
+    const [statusRows] = await db.query(`
+      SELECT 
+        te.nombre_estado,
+        COUNT(*) as count
+      FROM resultado r
+      JOIN tipo_estado te ON r.id_estado = te.id_tipo_estado
+      GROUP BY te.id_tipo_estado, te.nombre_estado
+    `);
+
+    const total = totalRows[0].total;
+    const statusCounts = {};
+    
+    statusRows.forEach(row => {
+      statusCounts[row.nombre_estado] = row.count;
+    });
+
+    res.json({
+      success: true,
+      stats: {
+        total,
+        pending: statusCounts['Pendiente'] || 0,
+        inProcess: statusCounts['En Proceso'] || 0,
+        completed: statusCounts['Finalizado'] || 0,
+        cancelled: statusCounts['Cancelado'] || 0
+      }
+    });
+  } catch (error) {
+    console.error('Error getting analysis stats:', error);
+    res.status(500).json({ success: false, message: 'Error interno del servidor' });
+  }
+}
+
+module.exports = { listAnalyses, getAnalysis, updateAnalysis, deleteAnalysis, getStatuses, getAnalysisStats };

@@ -285,7 +285,7 @@
                 }
                 
                 // Load propietarios count
-                const propietariosResponse = await fetch('/api/admin/propietarios', {
+                const propietariosResponse = await fetch('/api/admin/owners', {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -300,12 +300,12 @@
                 }
                 
                 if (propietariosResponse.ok) {
-                    const propietarios = await propietariosResponse.json();
-                    document.getElementById('propietariosCount').textContent = propietarios.length;
+                    const propietariosData = await propietariosResponse.json();
+                    document.getElementById('propietariosCount').textContent = propietariosData.owners.length;
                 }
 
                 // Load animales count
-                const animalesResponse = await fetch('/api/admin/animales', {
+                const animalesResponse = await fetch('/api/admin/animals', {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -320,12 +320,12 @@
                 }
                 
                 if (animalesResponse.ok) {
-                    const animales = await animalesResponse.json();
-                    document.getElementById('animalesCount').textContent = animales.length;
+                    const animalesData = await animalesResponse.json();
+                    document.getElementById('animalesCount').textContent = animalesData.animals.length;
                 }
 
-                // Load analyses count
-                const analysesResponse = await fetch('/api/admin/analisis', {
+                // Load analyses count and stats
+                const analysesResponse = await fetch('/api/admin/analyses-stats', {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -340,12 +340,9 @@
                 }
                 
                 if (analysesResponse.ok) {
-                    const analyses = await analysesResponse.json();
-                    document.getElementById('analisisCount').textContent = analyses.length;
-                    
-                    // Count pending analyses
-                    const pending = analyses.filter(a => a.nombre_estado === 'Pendiente').length;
-                    document.getElementById('pendientesCount').textContent = pending;
+                    const analysesData = await analysesResponse.json();
+                    document.getElementById('analisisCount').textContent = analysesData.stats.total;
+                    document.getElementById('pendientesCount').textContent = analysesData.stats.pending;
                 }
 
             } catch (error) {
