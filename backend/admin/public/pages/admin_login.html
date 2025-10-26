@@ -45,31 +45,29 @@
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
 </head>
-<body class="bg-background-light dark:bg-background-dark font-display text-text-light dark:text-text-dark">
-<div class="relative min-h-screen">
-<div class="absolute inset-0 z-0">
-<img alt="Veterinario examinando un perro" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAtWRSNTbeuUmLxhqrm3MzaBtJA_OMjNqomLocVz5QLAoCxaz2Hdq7uxdJ6cGm8X85wW6VdQJUPNOcpqf0vGc2Qonq2bLUhBhH_vBhQ0pbPs_TBdTU_cKD85wkV7oIUnpyDSJr4ufysol_UrrIaKpSPS0qrKY8LFSHgpGM2gjtT_VB9TuXaojQCbb3d6yvE5UpGtpsZXhJmQMBN0QWoaDX3lWZ-YTSaCUo-lvE_H4hqoQZGg_jTQVjmkLDoQ19uDB1k4OOUqiZhn2IS"/>
-<div class="absolute inset-0 bg-black bg-opacity-60"></div>
-<div class="absolute inset-0 bg-gradient-to-t from-background-light via-transparent to-transparent dark:from-background-dark"></div>
-</div>
-<div class="relative z-10 flex flex-col min-h-screen">
-<header class="py-6 px-4 sm:px-6 lg:px-8">
-<nav class="container mx-auto flex justify-between items-center">
-<div class="flex items-center space-x-2">
-<span class="material-symbols-outlined text-white text-4xl">admin_panel_settings</span>
-<a class="text-2xl font-bold text-white" href="#">DistriCampo Admin</a>
-</div>
-<div class="hidden lg:flex items-center space-x-6 text-white font-medium">
-</div>
-<button class="lg:hidden text-white">
-<span class="material-symbols-outlined text-3xl">
-                        menu
-                    </span>
-</button>
-</nav>
-</header>
-<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center text-center">
-<div class="bg-white/10 backdrop-blur-md p-8 sm:p-12 rounded-2xl shadow-2xl max-w-md w-full">
+<body class="bg-background-light font-display text-text-light min-h-screen">
+    <div class="relative min-h-screen">
+        <!-- Background Image with Overlay -->
+        <div class="absolute inset-0 z-0">
+            <img alt="Veterinario examinando un perro" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAtWRSNTbeuUmLxhqrm3MzaBtJA_OMjNqomLocVz5QLAoCxaz2Hdq7uxdJ6cGm8X85wW6VdQJUPNOcpqf0vGc2Qonq2bLUhBhH_vBhQ0pbPs_TBdTU_cKD85wkV7oIUnpyDSJr4ufysol_UrrIaKpSPS0qrKY8LFSHgpGM2gjtT_VB9TuXaojQCbb3d6yvE5UpGtpsZXhJmQMBN0QWoaDX3lWZ-YTSaCUo-lvE_H4hqoQZGg_jTQVjmkLDoQ19uDB1k4OOUqiZhn2IS"/>
+            <div class="absolute inset-0 bg-black bg-opacity-60"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-background-light via-transparent to-transparent"></div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="relative z-10 flex items-center justify-center min-h-screen py-12 px-4 sm:px-6 lg:px-8">
+            <div class="max-w-md w-full">
+                <!-- Header -->
+                <div class="text-center mb-8">
+                    <div class="flex items-center justify-center space-x-2 mb-4">
+                        <span class="material-symbols-outlined text-primary text-4xl">admin_panel_settings</span>
+                        <span class="text-2xl font-bold text-white">DistriCampo Admin</span>
+                    </div>
+                    <p class="text-white/80">Acceso exclusivo para administradores</p>
+                </div>
+
+                <!-- Login Form -->
+                <div class="bg-white/10 backdrop-blur-md p-8 sm:p-12 rounded-2xl shadow-2xl">
 <h1 class="text-3xl font-bold text-white mb-8">Inicio de Sesión para Administradores</h1>
 
 <!-- Success Message -->
@@ -108,7 +106,7 @@
 <input class="w-full bg-gray-700/50 border-gray-600 text-white rounded-lg pl-10 pr-4 py-3 focus:ring-primary focus:border-primary" 
        id="contrasena" name="contrasena" placeholder="••••••••" type="password" required/>
 </div>
-</div>
+      </div>
 <div>
 <button class="w-full bg-primary text-white py-3 px-6 rounded-full font-bold text-lg hover:bg-opacity-90 transition-transform transform hover:scale-105" 
         type="submit" id="loginBtn">
@@ -118,8 +116,8 @@
         Iniciando...
     </span>
 </button>
-</div>
-</form>
+      </div>
+    </form>
 
 <div class="mt-6 text-center">
     <a href="/admin/login" class="text-sm text-gray-300 hover:text-white hover:underline">¿Problemas para acceder? Usa el login oficial</a>
@@ -127,7 +125,7 @@
 </div>
 </main>
 </div>
-</div>
+  </div>
 
     <!-- Include session management -->
     <script src="../../assets/js/session.js"></script>
@@ -208,5 +206,8 @@
             document.getElementById('successMessage').classList.add('hidden');
         }
     </script>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

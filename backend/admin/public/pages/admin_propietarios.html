@@ -84,6 +84,24 @@
                         <span class="material-symbols-outlined text-3xl">menu</span>
 </button>
 </nav>
+<div id="mobileMenu" class="hidden lg:hidden mt-4 bg-card-light dark:bg-card-dark rounded-lg shadow-lg p-4">
+                        <div class="flex flex-col space-y-4">
+                            <a class="hover:text-primary transition-colors text-text-light dark:text-text-dark font-medium" href="/admin/dashboard">Dashboard</a>
+                            <a class="font-bold text-primary" href="#">Propietarios</a>
+                            <a class="hover:text-primary transition-colors text-text-light dark:text-text-dark font-medium" href="/admin/animales">Animales</a>
+                            <a class="hover:text-primary transition-colors text-text-light dark:text-text-dark font-medium" href="/admin/analisis">Análisis</a>
+                            <a class="hover:text-primary transition-colors text-text-light dark:text-text-dark font-medium" href="/admin/registro-admin">Registro Admin</a>
+                            <div class="pt-4 border-t border-gray-200 dark:border-gray-700">
+                                <div class="text-sm text-text-secondary-light dark:text-text-secondary-dark mb-2">
+                                    Bienvenido, <span id="adminNameMobile" class="font-medium text-text-light dark:text-text-dark"></span>
+                                </div>
+                                <button onclick="logout()" class="bg-accent/80 text-white px-4 py-2 rounded-lg hover:bg-accent transition-colors w-full text-left">
+                                    <span class="material-symbols-outlined text-sm mr-1">logout</span>
+                                    Cerrar Sesión
+                                </button>
+                            </div>
+                        </div>
+</div>
 </header>
 
             <!-- Main Content -->
@@ -197,6 +215,7 @@
             const admin = getAdminUser();
             if (admin) {
                 document.getElementById('adminName').textContent = admin.nombres + ' ' + admin.apellidos;
+                document.getElementById('adminNameMobile').textContent = admin.nombres + ' ' + admin.apellidos;
             }
 
             // Load propietarios
