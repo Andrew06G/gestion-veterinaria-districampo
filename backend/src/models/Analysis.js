@@ -36,10 +36,10 @@ class Analysis {
       
       const id_muestra = muestraResult.insertId;
       
-      // Crear el resultado (incluyendo id_animal que es requerido)
+      // Crear el resultado (incluyendo id_animal que es requerido y fecha_solicitud)
       await db.query(
-        'INSERT INTO resultado (id_muestra, id_tipo_analisis, resultado, fecha_emision, hora_emision, id_animal, id_estado) VALUES (?, ?, "Pendiente", ?, ?, ?, 1)',
-        [id_muestra, id_tipo_analisis, fecha_solicitud, null, id_animal]
+        'INSERT INTO resultado (id_muestra, id_tipo_analisis, resultado, fecha_emision, hora_emision, id_animal, id_estado, fecha_solicitud) VALUES (?, ?, "Pendiente", ?, ?, ?, 1, ?)',
+        [id_muestra, id_tipo_analisis, fecha_solicitud, null, id_animal, fecha_solicitud]
       );
       
       return id_muestra;

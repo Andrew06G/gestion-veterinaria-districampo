@@ -286,23 +286,21 @@ const getRecentRequests = async (req, res) => {
     const query = `
       SELECT 
         r.id_resultado,
-        r.fecha_emision,
+        r.fecha_solicitud,
         r.id_animal,
         r.id_estado,
-        m.fecha_toma,
         ta.nombre_analisis,
         te.nombre_estado,
         a.nombre_animal,
         p.nombres as propietario_nombres,
         p.apellidos as propietario_apellidos,
-        COALESCE(r.fecha_emision, m.fecha_toma) as request_date
+        r.fecha_solicitud as request_date
       FROM resultado r
-      JOIN muestra m ON r.id_muestra = m.id_muestra
       JOIN tipo_analisis ta ON r.id_tipo_analisis = ta.id_tipo_analisis
       JOIN tipo_estado te ON r.id_estado = te.id_tipo_estado
       JOIN animal a ON r.id_animal = a.id_animal
       JOIN propietario p ON a.id_propietario = p.id_propietario
-      ORDER BY request_date DESC
+      ORDER BY r.fecha_solicitud DESC
       LIMIT ?
     `;
 
