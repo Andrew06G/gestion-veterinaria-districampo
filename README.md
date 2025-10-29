@@ -51,7 +51,7 @@ Página de inicio que presenta la plataforma de gestión de laboratorio veterina
 ### 2. Módulo de Propietarios
 
 #### Vista de Inicio de Sesión - Propietarios
-![Vista de Inicio de Sesión](docs/screenshots/inicio-de-sesion.png)
+![Vista de Inicio de Sesión](docs/screenshots/Propietarios_login.png)
 
 Interfaz de autenticación que permite a los propietarios de animales acceder a su panel personalizado con credenciales seguras.
 
