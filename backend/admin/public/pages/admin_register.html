@@ -240,6 +240,18 @@
                             <p class="mt-1 text-sm text-text-secondary-light dark:text-text-secondary-dark">Los Super Administradores pueden crear otros administradores</p>
                         </div>
 
+                        <!-- Aceptación de Términos y Condiciones (obligatorio) -->
+                        <div class="mt-2">
+                            <div class="flex items-start">
+                              <input class="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded mt-1" type="checkbox" id="aceptoTerminosAdmin" required>
+                              <label class="ml-2 block text-sm text-text-secondary-light dark:text-text-secondary-dark" for="aceptoTerminosAdmin">
+                                Declaro que he leído y acepto los 
+                                <a href="#" class="text-primary hover:underline" onclick="openTermsModal(event)">Términos y Condiciones</a>
+                                de uso y la Política de Tratamiento de Datos Personales de Districampo.
+                              </label>
+                            </div>
+                        </div>
+
                         <div class="mt-8 flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-4">
                             <button class="w-full sm:w-auto px-6 py-2.5 text-center text-sm font-medium text-text-light dark:text-text-dark bg-gray-200 dark:bg-accent/50 rounded-full hover:bg-gray-300 dark:hover:bg-accent/80 transition-colors" 
                                     type="button" onclick="clearForm()">Cancelar</button>
@@ -254,6 +266,27 @@
                 </div>
             </main>
         </div>
+    </div>
+
+    <!-- Modal de Términos y Condiciones (Tailwind) -->
+    <div id="terminosModal" class="fixed inset-0 z-50 hidden" aria-hidden="true">
+      <div class="flex items-center justify-center min-h-screen px-4">
+        <div class="fixed inset-0 bg-black/60" onclick="closeTermsModal()"></div>
+        <div class="relative w-full max-w-5xl rounded-xl shadow-2xl overflow-hidden bg-white dark:bg-card-dark">
+          <div class="sticky top-0 flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-accent bg-white/90 dark:bg-card-dark/90 backdrop-blur-sm">
+            <h5 class="text-lg font-semibold text-text-light dark:text-text-dark">Términos y Condiciones</h5>
+            <button type="button" class="text-gray-600 hover:text-gray-900 dark:text-text-secondary-dark" onclick="closeTermsModal()" aria-label="Cerrar">
+              <span class="material-symbols-outlined">close</span>
+            </button>
+          </div>
+          <div class="p-0">
+            <div class="max-h-[75vh] overflow-y-auto px-6 py-5">
+              <div id="terminosContent" class="prose max-w-none prose-headings:mt-6 prose-headings:mb-3 prose-p:leading-relaxed prose-li:leading-relaxed prose-invert:dark text-sm text-text-light dark:text-text-dark">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Include session management -->
@@ -488,7 +521,36 @@
                 document.getElementById('adminName').textContent = admin.nombres + ' ' + admin.apellidos;
                 document.getElementById('adminNameMobile').textContent = admin.nombres + ' ' + admin.apellidos;
             }
+
+            // Cargar contenido de términos
+            loadTermsContent();
         });
+
+        function openTermsModal(event) {
+            if (event) event.preventDefault();
+            const modal = document.getElementById('terminosModal');
+            modal.classList.remove('hidden');
+            document.body.classList.add('overflow-hidden');
+        }
+
+        function closeTermsModal() {
+            const modal = document.getElementById('terminosModal');
+            modal.classList.add('hidden');
+            document.body.classList.remove('overflow-hidden');
+        }
+
+        async function loadTermsContent() {
+            try {
+                const response = await fetch('/pages/terminos-condiciones.html');
+                if (!response.ok) throw new Error('No se pudo cargar el documento');
+                const html = await response.text();
+                const container = document.getElementById('terminosContent');
+                container.innerHTML = html;
+            } catch (err) {
+                const container = document.getElementById('terminosContent');
+                container.textContent = 'No se pudieron cargar los Términos y Condiciones. Por favor, intente más tarde.';
+            }
+        }
     </script>
 </body>
 </html>

@@ -23,6 +23,9 @@ app.use(express.static(path.join(__dirname, 'public'), {
   }
 }));
 
+// Servir archivos de documentación (PDFs legales, etc.)
+app.use('/docs', express.static(path.join(__dirname, '..', 'docs')));
+
 
 // Importar rutas
 const userRoutes = require('./src/routes/userRoutes');
